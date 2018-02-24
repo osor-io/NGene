@@ -27,6 +27,11 @@
 #ifndef SOL_SINGLE_INCLUDE_HPP
 #define SOL_SINGLE_INCLUDE_HPP
 
+#pragma warning(push, 0)
+#include <CppCoreCheck/Warnings.h>
+#pragma warning(disable: ALL_CPPCORECHECK_WARNINGS)
+
+
 // beginning of sol.hpp
 
 #ifndef SOL_HPP
@@ -21049,5 +21054,9 @@ namespace sol {
 
 #endif // SOL_HPP
 // end of sol.hpp
+
+
+#pragma warning(pop)
+
 
 #endif // SOL_SINGLE_INCLUDE_HPP
