@@ -119,8 +119,8 @@ int testDependencies() {
 }
 
 
-#include "./entity/Entity.h"
-#include "./component/components/SimplePhraseComponent.h"
+#include "./_entity/Entity.h"
+#include "./_component/components/SimplePhraseComponent.h"
 
 int testECS() {
 

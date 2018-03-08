@@ -162,21 +162,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\entity\Entity.cpp" />
-    <ClCompile Include="src\component\components\SimpleGraphicsComponent.cpp" />
-    <ClCompile Include="src\component\components\SimplePhraseComponent.cpp" />
-    <ClCompile Include="src\component\Component.cpp" />
+    <ClCompile Include="src\math\OtherMath.cpp" />
+    <ClCompile Include="src\memory\Pool.cpp" />
+    <ClCompile Include="src\_component\ComponentFactory.cpp" />
+    <ClCompile Include="src\memory\Memory.cpp" />
+    <ClCompile Include="src\memory\SmallMemoryAllocator.cpp" />
+    <ClCompile Include="src\_entity\Entity.cpp" />
+    <ClCompile Include="src\_component\components\SimpleGraphicsComponent.cpp" />
+    <ClCompile Include="src\_component\components\SimplePhraseComponent.cpp" />
+    <ClCompile Include="src\_component\Component.cpp" />
     <ClCompile Include="dep\src\imgui-SFML.cpp" />
     <ClCompile Include="dep\src\imgui.cpp" />
     <ClCompile Include="dep\src\imgui_demo.cpp" />
     <ClCompile Include="dep\src\imgui_draw.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\_system\System.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\entity\Entity.h" />
-    <ClInclude Include="src\component\components\SimpleGraphicsComponent.h" />
-    <ClInclude Include="src\component\components\SimplePhraseComponent.h" />
-    <ClInclude Include="src\component\Component.h" />
+    <ClInclude Include="src\math\OtherMath.h" />
+    <ClInclude Include="src\memory\Pool.h" />
+    <ClInclude Include="src\types\def.h" />
+    <ClInclude Include="src\utils\CRSP.h" />
+    <ClInclude Include="src\_component\ComponentFactory.h" />
+    <ClInclude Include="src\memory\Memory.h" />
+    <ClInclude Include="src\memory\SmallMemoryAllocator.h" />
+    <ClInclude Include="src\_entity\Entity.h" />
+    <ClInclude Include="src\_component\components\SimpleGraphicsComponent.h" />
+    <ClInclude Include="src\_component\components\SimplePhraseComponent.h" />
+    <ClInclude Include="src\_component\Component.h" />
     <ClInclude Include="dep\include\detail\MetaHolder.h" />
     <ClInclude Include="dep\include\detail\template_helpers.h" />
     <ClInclude Include="dep\include\imconfig.h" />
@@ -189,6 +202,8 @@
     <ClInclude Include="dep\include\stb_rect_pack.h" />
     <ClInclude Include="dep\include\stb_textedit.h" />
     <ClInclude Include="dep\include\stb_truetype.h" />
+    <ClInclude Include="src\_system\System.h" />
+    <ClInclude Include="src\containers\Stack.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dep\include\detail\template_helpers.inl" />
