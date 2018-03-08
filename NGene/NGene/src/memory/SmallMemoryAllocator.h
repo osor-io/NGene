@@ -4,6 +4,7 @@
 #include <memory>
 #include <iostream>
 #include <array>
+#include <gsl\gsl>
 #include "../utils/CRSP.h"
 #include "./Pool.h"
 #include "../math/OtherMath.h"
@@ -50,7 +51,7 @@ public:
 
 private:
     size_t getPoolIndex(size_t size) const {
-        return static_cast<size_t>(std::log2(static_cast<double>(nextPowerOf2(static_cast<size_t>(size)))));
+        return gsl::narrow_cast<size_t>(std::log2(static_cast<double>(nextPowerOf2(static_cast<unsigned int>(size)))));
     }
 
     std::array<std::unique_ptr<Pool>, 10> m_poolArray{};

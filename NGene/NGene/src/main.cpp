@@ -121,6 +121,7 @@ int testDependencies() {
 
 #include "./_entity/Entity.h"
 #include "./_component/components/SimplePhraseComponent.h"
+#include "./_entity/EntityFactory.h"
 
 int testECS() {
 
@@ -135,6 +136,12 @@ int testECS() {
         std::cout << e.getComponent<SimplePhraseComponent>()->getPhrase() << std::endl;
     }
 
+    {
+        auto e = Entity{};
+        auto t = sol::table{};
+        EntityFactory::get().addComponentToEntity<SimpleGraphicsComponent>(e, t); // the extraterrestrial
+        EntityFactory::get().addComponentToEntity<SimplePhraseComponent>(e, t); // the extraterrestrial
+    }
 
     return 0;
 }

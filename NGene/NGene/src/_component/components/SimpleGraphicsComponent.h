@@ -1,8 +1,10 @@
 #pragma once
 #include "../Component.h"
 #include <string>
+#include <meta.h>
 
 class SimpleGraphicsComponent : public Component {
+    friend auto meta::registerMembers<SimpleGraphicsComponent>();
 public:
     SimpleGraphicsComponent();
     ~SimpleGraphicsComponent();
@@ -14,4 +16,16 @@ public:
 private:
     std::string m_filename;
 };
+
+template<>
+inline auto meta::registerName<SimpleGraphicsComponent>() {
+    return "SimpleGraphicsComponent";
+}
+
+template<>
+inline auto meta::registerMembers<SimpleGraphicsComponent>() {
+    return members(
+        member("File Name", &SimpleGraphicsComponent::m_filename)
+    );
+}
 

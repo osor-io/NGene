@@ -164,7 +164,7 @@
   <ItemGroup>
     <ClCompile Include="src\math\OtherMath.cpp" />
     <ClCompile Include="src\memory\Pool.cpp" />
-    <ClCompile Include="src\_component\ComponentFactory.cpp" />
+    <ClCompile Include="src\_entity\EntityFactory.cpp" />
     <ClCompile Include="src\memory\Memory.cpp" />
     <ClCompile Include="src\memory\SmallMemoryAllocator.cpp" />
     <ClCompile Include="src\_entity\Entity.cpp" />
@@ -183,7 +183,7 @@
     <ClInclude Include="src\memory\Pool.h" />
     <ClInclude Include="src\types\def.h" />
     <ClInclude Include="src\utils\CRSP.h" />
-    <ClInclude Include="src\_component\ComponentFactory.h" />
+    <ClInclude Include="src\_entity\EntityFactory.h" />
     <ClInclude Include="src\memory\Memory.h" />
     <ClInclude Include="src\memory\SmallMemoryAllocator.h" />
     <ClInclude Include="src\_entity\Entity.h" />

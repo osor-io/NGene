@@ -6,7 +6,9 @@ SmallMemoryAllocator::SmallMemoryAllocator() {
     auto currOrigin = m_pGeneralPool;
     for (auto i = 0; i < m_poolArray.size();
         ++i, currOrigin += config::sma_pool_size) {
-        m_poolArray[i] = std::make_unique<Pool>(currOrigin, std::pow(2, i),
+        m_poolArray[i] = std::make_unique<Pool>(
+            currOrigin,
+            gsl::narrow<size_t>(std::pow(2, i)),
             config::sma_pool_size >> i);
     }
 }
