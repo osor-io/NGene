@@ -1,7 +1,5 @@
 #include <iostream>
 
-
-
 #include "imgui.h"
 #include "imgui-SFML.h"
 
@@ -13,8 +11,6 @@
 #include <sol.hpp> // http://sol2.readthedocs.io/en/latest/tutorial/getting-started.html
 
 #include <meta.h>
-
-
 
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
@@ -43,7 +39,7 @@ inline auto meta::registerMembers<ExampleStruct>() {
 	);
 }
 
-int main() {
+int testDependencies() {
 	{ //Testing lua
 		std::cout << " ====== " << "TESTING LUA" << " ====== " << std::endl;
 		sol::state lua;
@@ -119,6 +115,32 @@ int main() {
 		ImGui::SFML::Shutdown();
 	}
 
+	return 0;
+}
+
+
+#include "./entity/Entity.h"
+#include "./component/components/SimplePhraseComponent.h"
+
+int testECS() {
+
+	{
+		auto e = Entity{};
+
+		auto comp = e.addComponent<SimplePhraseComponent>();
+		comp = e.addComponent<SimplePhraseComponent>();
+
+		comp->setPhrase("This is ma phrase");
+
+		std::cout << e.getComponent<SimplePhraseComponent>()->getPhrase() << std::endl;
+	}
+
+
+	return 0;
+}
+
+int main() {
+	testECS();
 	pressToContinue();
 	return 0;
 }

@@ -162,6 +162,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\entity\Entity.cpp" />
+    <ClCompile Include="src\component\components\SimpleGraphicsComponent.cpp" />
+    <ClCompile Include="src\component\components\SimplePhraseComponent.cpp" />
+    <ClCompile Include="src\component\Component.cpp" />
     <ClCompile Include="dep\src\imgui-SFML.cpp" />
     <ClCompile Include="dep\src\imgui.cpp" />
     <ClCompile Include="dep\src\imgui_demo.cpp" />
@@ -169,6 +173,10 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\entity\Entity.h" />
+    <ClInclude Include="src\component\components\SimpleGraphicsComponent.h" />
+    <ClInclude Include="src\component\components\SimplePhraseComponent.h" />
+    <ClInclude Include="src\component\Component.h" />
     <ClInclude Include="dep\include\detail\MetaHolder.h" />
     <ClInclude Include="dep\include\detail\template_helpers.h" />
     <ClInclude Include="dep\include\imconfig.h" />
