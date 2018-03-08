@@ -1,8 +1,10 @@
 #pragma once
-class ComponentFactory
-{
+
+#include "../utils/CRSP.h"
+
+class ComponentFactory : CRSP<ComponentFactory> {
 public:
-	ComponentFactory();
-	~ComponentFactory();
+    ComponentFactory();
+    ~ComponentFactory();
 };
 

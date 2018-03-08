@@ -5,9 +5,9 @@
 template <typename T>
 class System : public CRSP<T> {
 public:
-	System() {}
-	virtual ~System() {}
+    System() {}
+    virtual ~System() {}
 
-	virtual void startUp() = 0;
-	virtual void shutDown() = 0;
+    virtual void startUp() = 0;
+    virtual void shutDown() = 0;
 };

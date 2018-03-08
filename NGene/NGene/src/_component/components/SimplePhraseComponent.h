@@ -4,14 +4,14 @@
 
 class SimplePhraseComponent : public Component {
 public:
-	SimplePhraseComponent();
-	~SimplePhraseComponent();
+    SimplePhraseComponent();
+    ~SimplePhraseComponent();
 
-	std::string getPhrase() const;
-	void setPhrase(const std::string& phrase);
-	void setPhrase(std::string&& phrase);
+    std::string getPhrase() const;
+    void setPhrase(const std::string& phrase);
+    void setPhrase(std::string&& phrase);
 
 private:
-	std::string m_phrase;
+    std::string m_phrase;
 };
 

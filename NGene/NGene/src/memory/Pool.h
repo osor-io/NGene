@@ -9,37 +9,37 @@ Represents one of our memory pools for a particular block size.
 */
 class Pool {
 public:
-	Pool(byte* origin, const size_t& blockSize, const size_t& blockAmount);
-	~Pool();
+    Pool(byte* origin, const size_t& blockSize, const size_t& blockAmount);
+    ~Pool();
 
-	bool allFreed() const;
+    bool allFreed() const;
 
-	size_t usedBlocks() const;
+    size_t usedBlocks() const;
 
-	bool couldBeInPool(byte* elem) const;
+    bool couldBeInPool(byte* elem) const;
 
-	size_t blockSize() const;
+    size_t blockSize() const;
 
-	byte* alloc();
+    byte* alloc();
 
-	/**
-	@NOTE: Expensive function, only for debugging purposes
-	*/
-	bool isBlockUsed(byte* elem) const;
+    /**
+    @NOTE: Expensive function, only for debugging purposes
+    */
+    bool isBlockUsed(byte* elem) const;
 
-	void free(byte* elem);
+    void free(byte* elem);
 
-	void printNextPossibleElements(size_t count) const;
+    void printNextPossibleElements(size_t count) const;
 
-	void* operator new(std::size_t count);
+    void* operator new(std::size_t count);
 
-	void operator delete(void* ptr);
+    void operator delete(void* ptr);
 
 private:
-	Stack<byte*> m_freePositions{};
-	byte* m_origin{};
-	byte* m_last{};
-	size_t m_blockSize{};
-	size_t m_blockAmount{};
+    Stack<byte*> m_freePositions{};
+    byte* m_origin{};
+    byte* m_last{};
+    size_t m_blockSize{};
+    size_t m_blockAmount{};
 };
 

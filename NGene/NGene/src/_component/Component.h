@@ -1,6 +1,6 @@
 #pragma once
 class Component {
 public:
-	virtual ~Component() = 0;
+    virtual ~Component() = 0;
 };
 
