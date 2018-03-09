@@ -10,6 +10,13 @@ ComponentManager::~ComponentManager() {
 
 }
 
+void ComponentManager::startUp() {
+}
+
+void ComponentManager::shutDown() {
+    m_instanceMap.clear();
+}
+
 void ComponentManager::addComponentInstance(const std::type_index& type, Component* component) {
     m_instanceMap[type].push_back(component);
 }

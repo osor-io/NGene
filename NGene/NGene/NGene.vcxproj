@@ -121,6 +121,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)dep\include;C:\dep\sfml\include;C:\dep\GSL\include;$(ProjectDir)src\utils;C:\dep\LuaJIT\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\dep\LuaJIT\lib;C:\dep\sfml\lib</AdditionalLibraryDirectories>
@@ -153,6 +154,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)dep\include;C:\dep\sfml\include;C:\dep\GSL\include;$(ProjectDir)src\utils;C:\dep\LuaJIT\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -162,6 +164,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\lua\LuaManager.cpp" />
     <ClCompile Include="src\_system\systems\RenderSystem.cpp" />
     <ClCompile Include="src\utils\Debug.cpp" />
     <ClCompile Include="src\math\OtherMath.cpp" />
@@ -183,6 +186,8 @@
     <ClCompile Include="src\_system\System.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\lua\LuaManager.h" />
+    <ClInclude Include="src\utils\Manager.h" />
     <ClInclude Include="src\_system\systems\RenderSystem.h" />
     <ClInclude Include="src\utils\Debug.h" />
     <ClInclude Include="src\math\OtherMath.h" />
@@ -217,6 +222,7 @@
     <None Include="dep\include\detail\template_helpers.inl" />
     <None Include="dep\include\Member.inl" />
     <None Include="dep\include\Meta.inl" />
+    <None Include="src\test\testmain.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

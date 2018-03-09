@@ -8,12 +8,14 @@
 
 class Entity {
 public:
+    Entity();
     ~Entity();
 
     std::string getType() const;
     void setType(const std::string& type);
     void setType(std::string&& type);
 
+    void exposeToLua();
 
     template<typename T, typename ... Args>
     T* makeComponent(Args&& ... args) {
@@ -30,7 +32,6 @@ public:
         }
         return nullptr;
     }
-
 
 private:
     std::string m_type;

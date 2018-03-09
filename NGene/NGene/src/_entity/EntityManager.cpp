@@ -6,6 +6,14 @@ EntityManager::EntityManager() {}
 
 EntityManager::~EntityManager() {}
 
+void EntityManager::startUp() {
+
+}
+
+void EntityManager::shutDown() {
+    m_topEntities.clear();
+}
+
 Entity * EntityManager::loadEntity(const sol::table & table, const std::string & name)
 {
     auto e = new Entity();

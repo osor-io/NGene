@@ -2,7 +2,7 @@
 
 #include <sol.hpp>
 #include "../_entity/Entity.h"
-#include "../utils/CRSP.h"
+#include <Manager.h>
 
 
 /**
@@ -15,7 +15,7 @@ data read from the Lua script.
 
 @see Entity
 */
-class EntityManager : public CRSP<EntityManager> {
+class EntityManager : public Manager<EntityManager> {
     using OwningVector = std::vector<std::unique_ptr<Entity>>;
 
 private:
@@ -24,6 +24,9 @@ private:
     ~EntityManager();
 
 public:
+
+    void startUp() override;
+    void shutDown() override;
 
     /*
     @@DOING: Implementing the loadEntity and addComponentToEntity

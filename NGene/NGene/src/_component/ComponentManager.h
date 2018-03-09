@@ -7,13 +7,13 @@
 #include <meta.h>
 #include <Debug.h>
 
-#include "../utils/CRSP.h"
+#include <Manager.h>
 #include "../_entity/Entity.h"
 
 #include "./components/SimpleGraphicsComponent.h"
 #include "./components/SimplePhraseComponent.h"
 
-class ComponentManager : public CRSP<ComponentManager> {
+class ComponentManager : public Manager<ComponentManager> {
     using ComponentVector = std::vector<Component*>;
     using InstanceMap = std::unordered_map<std::type_index, ComponentVector>;
     using TypeMap = std::unordered_map<std::string, std::type_index>;
@@ -23,7 +23,11 @@ private:
     friend class CRSP <ComponentManager>;
     ComponentManager();
     ~ComponentManager();
+
 public:
+
+    void startUp() override;
+    void shutDown() override;
 
     void addComponentInstance(const std::type_index& type, Component* component);
     void removeComponentInstance(const std::type_index& type, Component* component);
