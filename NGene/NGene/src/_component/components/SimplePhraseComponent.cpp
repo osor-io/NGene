@@ -3,13 +3,23 @@
 #include <iostream>
 
 
-SimplePhraseComponent::SimplePhraseComponent(){
-    std::cout << "created: " << (void*)this << std::endl;
+SimplePhraseComponent::SimplePhraseComponent() : Component(std::type_index(typeid(SimplePhraseComponent))) {
 }
 
+SimplePhraseComponent::SimplePhraseComponent(const sol::table& table)
+    : Component(std::type_index(typeid(SimplePhraseComponent))) {
 
-SimplePhraseComponent::~SimplePhraseComponent(){
-    std::cout << "deleted: " << (void*)this << std::endl;
+    meta::doForAllMembers<SimplePhraseComponent>([this,&table](auto& member) {
+        using MemberT = meta::get_member_type<decltype(member)>;
+        auto name = member.getName();
+        sol::object value_obj = table[name];
+        auto value = value_obj.as<std::string>();
+        member.set(*this, value);
+    });
+
+}
+
+SimplePhraseComponent::~SimplePhraseComponent() {
 }
 
 

@@ -1,4 +1,7 @@
 #include "SmallMemoryAllocator.h"
+#include <cassert>
+#include "../utils/OtherUtils.h"
+
 
 SmallMemoryAllocator::SmallMemoryAllocator() {
     m_pGeneralPool =
@@ -13,7 +16,11 @@ SmallMemoryAllocator::SmallMemoryAllocator() {
     }
 }
 
-SmallMemoryAllocator::~SmallMemoryAllocator() { free(m_pGeneralPool); }
+SmallMemoryAllocator::~SmallMemoryAllocator() {
+    printStatus(std::cout);
+    pressToContinue();
+    free(m_pGeneralPool);
+}
 
 Pool* SmallMemoryAllocator::getPoolForSize(size_t size) {
     auto index = getPoolIndex(size);
@@ -47,9 +54,14 @@ void* SmallMemoryAllocator::alloc(size_t size) {
         //
         //  The element is in one of our pools
         //
+
+        if (m_poolArray[index].get()->usedBlocks() > m_maxAllocatedElements[index]) {
+            m_maxAllocatedElements[index] = m_poolArray[index].get()->usedBlocks();
+        }
         return ptr;
     }
     else {
+        ++m_extraRequestedElements[index];
         //
         //  The pool couldn't allocate the element (was full)
         //
@@ -58,7 +70,8 @@ void* SmallMemoryAllocator::alloc(size_t size) {
 }
 
 void SmallMemoryAllocator::dealloc(void* elem) {
-    for (auto& pool : m_poolArray) {
+    for (auto i = 0; i < m_poolArray.size(); ++i) {
+        auto& pool = m_poolArray[i];
         if (pool.get()->couldBeInPool((byte*)elem)) {
             //
             //  The element should be in this pool
@@ -75,24 +88,46 @@ void SmallMemoryAllocator::dealloc(void* elem) {
     free(elem);
 }
 
-void SmallMemoryAllocator::printStatus(void* elem) const {
+void SmallMemoryAllocator::printStatus(std::ostream& stream) {
+
+    for (auto i = 0; i < m_poolArray.size(); ++i) {
+        const auto& pool = m_poolArray[i].get();
+        stream << "Pool with chunk size [" << pool->blockSize() <<
+            "] ranging from [" << static_cast<void*>(pool->getOrigin()) <<
+            "] to [" << static_cast<void*>(pool->getEnd()) << "]" << std::endl;
+
+        stream << "\t" << "It can hold up to [" <<
+            pool->getMaxElements() << "] and [" <<
+            m_extraRequestedElements[i] + m_maxAllocatedElements[i] <<
+            "] have been required, meaning that we needed [" <<
+            (m_extraRequestedElements[i] > 0 ? m_extraRequestedElements[i] : 0) << "] extra elements" << std::endl;
+
+        stream << std::endl;
+    }
+}
+
+void SmallMemoryAllocator::printStatus(void* elem, std::ostream& stream) const {
     for (auto& pool : m_poolArray) {
         if (pool.get()->couldBeInPool((byte*)elem)) {
-            std::cout << "Address " << elem
+            stream << "Address " << elem
                 << " would fit in pool with a block size of "
                 << pool.get()->blockSize() << " which is currently ";
             if (pool.get()->isBlockUsed((byte*)elem)) {
-                std::cout << "IN USE";
+                stream << "IN USE";
             }
             else {
-                std::cout << "NOT IN USE";
+                stream << "NOT IN USE";
             }
-            std::cout << std::endl;
+            stream << std::endl;
             return;
         }
     }
-    std::cout << "Address " << elem
+    stream << "Address " << elem
         << " can't be in any of our pools so it might be managed with "
         "normal malloc/free dynamic allocation"
         << std::endl;
+}
+
+size_t SmallMemoryAllocator::getPoolIndex(size_t size) const {
+    return gsl::narrow_cast<size_t>(std::log2(static_cast<double>(nextPowerOf2(static_cast<unsigned int>(size)))));
 }

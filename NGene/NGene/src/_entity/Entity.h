@@ -15,9 +15,9 @@ public:
     void setType(std::string&& type);
 
 
-    template<typename T>
-    T* addComponent() {
-        auto ptr = new T();
+    template<typename T, typename ... Args>
+    T* makeComponent(Args&& ... args) {
+        auto ptr = new T(std::forward<Args>(args)...);
         m_components[std::type_index(typeid(T))] = std::unique_ptr<T>(ptr);
         return ptr;
     }

@@ -2,11 +2,13 @@
 #include "../Component.h"
 #include <string>
 #include <meta.h>
+#include <sol.hpp>
 
 class SimplePhraseComponent : public Component {
     friend auto meta::registerMembers<SimplePhraseComponent>();
 public:
     SimplePhraseComponent();
+    SimplePhraseComponent(const sol::table& table);
     ~SimplePhraseComponent();
 
     std::string getPhrase() const;

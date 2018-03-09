@@ -12,12 +12,8 @@
 
 #include <meta.h>
 
-
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-auto pressToContinue() noexcept -> void { system("pause"); }
-#else
-auto pressToContinue() noexcept -> void { system("read"); }
-#endif
+#include <Debug.h>
+#include "./utils/OtherUtils.h"
 
 struct ExampleStruct {
     friend auto meta::registerMembers<ExampleStruct>();
@@ -121,27 +117,70 @@ int testDependencies() {
 
 #include "./_entity/Entity.h"
 #include "./_component/components/SimplePhraseComponent.h"
-#include "./_entity/EntityFactory.h"
+#include "./_component/components/SimpleGraphicsComponent.h"
+#include "./_entity/EntityManager.h"
 
 int testECS() {
 
     {
         auto e = Entity{};
 
-        auto comp = e.addComponent<SimplePhraseComponent>();
-        comp = e.addComponent<SimplePhraseComponent>();
+        auto comp = e.makeComponent<SimplePhraseComponent>();
+        comp = e.makeComponent<SimplePhraseComponent>();
 
         comp->setPhrase("This is ma phrase");
 
         std::cout << e.getComponent<SimplePhraseComponent>()->getPhrase() << std::endl;
     }
+    std::cout << std::endl << std::endl;
 
     {
         auto e = Entity{};
         auto t = sol::table{};
-        EntityFactory::get().addComponentToEntity<SimpleGraphicsComponent>(e, t); // the extraterrestrial
-        EntityFactory::get().addComponentToEntity<SimplePhraseComponent>(e, t); // the extraterrestrial
+        //EntityFactory::get().addComponentToEntity<SimpleGraphicsComponent>(e, t); // the extraterrestrial
+        //EntityFactory::get().addComponentToEntity<SimplePhraseComponent>(e, t); // the extraterrestrial
+
+        auto c = std::make_unique<SimpleGraphicsComponent>();
     }
+
+    {
+        auto arr = new std::array<bool*, 1048893>();
+
+        for (auto elem : *arr) {
+            elem = new bool;
+        }
+
+        for (auto elem : *arr) {
+            delete elem;
+        }
+    }
+    std::cout << std::endl << std::endl;
+
+    {
+        sol::state lua;
+        lua.open_libraries(sol::lib::base);
+
+        lua.script(R"(
+            Entities = {
+                Cosa = {
+                    SimplePhraseComponent = {
+                        Phrase = "I'm saying hi from this lua Object!! :D"
+                    },
+                    SimpleGraphicsComponent = {
+                        Filename = "file.png"
+                    }
+                }
+            }
+        )");
+
+        auto e = EntityManager::get().loadEntity(lua["Entities"], "Cosa");
+
+        LOG_NAMED(e->getComponent<SimplePhraseComponent>()->getPhrase());
+        LOG_NAMED(e->getComponent<SimpleGraphicsComponent>()->getFilename());
+
+
+    }
+    std::cout << std::endl << std::endl;
 
     return 0;
 }

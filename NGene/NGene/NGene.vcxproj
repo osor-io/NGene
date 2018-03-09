@@ -119,7 +119,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;C:\dep\sfml\include;C:\dep\GSL\include;C:\dep\LuaJIT\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;C:\dep\sfml\include;C:\dep\GSL\include;$(ProjectDir)src\utils;C:\dep\LuaJIT\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -151,7 +151,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;C:\dep\sfml\include;C:\dep\GSL\include;C:\dep\LuaJIT\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;C:\dep\sfml\include;C:\dep\GSL\include;$(ProjectDir)src\utils;C:\dep\LuaJIT\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -162,9 +162,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\utils\Debug.cpp" />
     <ClCompile Include="src\math\OtherMath.cpp" />
     <ClCompile Include="src\memory\Pool.cpp" />
-    <ClCompile Include="src\_entity\EntityFactory.cpp" />
+    <ClCompile Include="src\utils\OtherUtils.cpp" />
+    <ClCompile Include="src\_component\ComponentManager.cpp" />
+    <ClCompile Include="src\_entity\EntityManager.cpp" />
     <ClCompile Include="src\memory\Memory.cpp" />
     <ClCompile Include="src\memory\SmallMemoryAllocator.cpp" />
     <ClCompile Include="src\_entity\Entity.cpp" />
@@ -179,11 +182,14 @@
     <ClCompile Include="src\_system\System.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\utils\Debug.h" />
     <ClInclude Include="src\math\OtherMath.h" />
     <ClInclude Include="src\memory\Pool.h" />
     <ClInclude Include="src\types\def.h" />
     <ClInclude Include="src\utils\CRSP.h" />
-    <ClInclude Include="src\_entity\EntityFactory.h" />
+    <ClInclude Include="src\utils\OtherUtils.h" />
+    <ClInclude Include="src\_component\ComponentManager.h" />
+    <ClInclude Include="src\_entity\EntityManager.h" />
     <ClInclude Include="src\memory\Memory.h" />
     <ClInclude Include="src\memory\SmallMemoryAllocator.h" />
     <ClInclude Include="src\_entity\Entity.h" />

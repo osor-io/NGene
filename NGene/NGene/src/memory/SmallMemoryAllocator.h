@@ -16,6 +16,7 @@ namespace config {
     Default pool size for our Small Memory Allocator pools.
     */
     constexpr size_t sma_pool_size = 1024 * 1024;
+	constexpr size_t sma_pool_amount = 10;
 }  // namespace config
 
 
@@ -47,14 +48,18 @@ public:
 
     void dealloc(void* elem);
 
-    void printStatus(void* elem) const;
+    void printStatus(std::ostream& stream = std::cout);
+
+    void printStatus(void* elem, std::ostream& stream = std::cout) const;
 
 private:
-    size_t getPoolIndex(size_t size) const {
-        return gsl::narrow_cast<size_t>(std::log2(static_cast<double>(nextPowerOf2(static_cast<unsigned int>(size)))));
-    }
+	size_t getPoolIndex(size_t size) const;
 
-    std::array<std::unique_ptr<Pool>, 10> m_poolArray{};
+    std::array<std::unique_ptr<Pool>, config::sma_pool_amount> m_poolArray{};
+	std::array<size_t, config::sma_pool_amount> m_extraRequestedElements{};
+    std::array<size_t, config::sma_pool_amount> m_maxAllocatedElements{};
+
+
     byte* m_pGeneralPool{ nullptr };
 };
 

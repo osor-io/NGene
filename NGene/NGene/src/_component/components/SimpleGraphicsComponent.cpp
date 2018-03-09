@@ -1,11 +1,22 @@
 #include "SimpleGraphicsComponent.h"
+#include <Debug.h>
 
-
-SimpleGraphicsComponent::SimpleGraphicsComponent(){
+SimpleGraphicsComponent::SimpleGraphicsComponent() : Component(std::type_index(typeid(SimpleGraphicsComponent))) {
 }
 
 
-SimpleGraphicsComponent::~SimpleGraphicsComponent(){
+SimpleGraphicsComponent::SimpleGraphicsComponent(const sol::table& table)
+    : Component(std::type_index(typeid(SimpleGraphicsComponent))) {
+    meta::doForAllMembers<SimpleGraphicsComponent>([this, &table](auto& member) {
+        using MemberT = meta::get_member_type<decltype(member)>;
+        auto name = member.getName();
+        sol::object value_obj = table[name];
+        auto value = value_obj.as<std::string>();
+        member.set(*this, value);
+    });
+}
+
+SimpleGraphicsComponent::~SimpleGraphicsComponent() {
 }
 
 

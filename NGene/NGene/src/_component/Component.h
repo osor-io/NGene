@@ -1,4 +1,5 @@
 #pragma once
+#include <typeindex>
 
 /**
 Class that every component in this engine should inherit from. In order to
@@ -28,15 +29,18 @@ correctly register everything in a component the usage is as follows:
         }
 
 -If we want the Entity Factory to be able to instantiate the entity, which we
-probably do, we need to go to the EntityFactory.h file and register the component
+probably do, we need to go to the ComponentManager.h file and register the component
 class in both the (name, typeid) map and the (typeid, function) map with the function
 implementing the way we can instantiate the component based on a Lua script
 
-@see EntityFactory
+@see ComponentManager
 */
 class Component {
 public:
-    virtual ~Component() = 0;
+    Component(std::type_index type);
+    virtual ~Component();
+private:
+    std::type_index m_type;
 };
 
 

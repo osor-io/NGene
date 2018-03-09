@@ -16,7 +16,15 @@ public:
 
     size_t usedBlocks() const;
 
+    size_t freeBlocks() const;
+
     bool couldBeInPool(byte* elem) const;
+
+    byte* getOrigin() const;
+
+    byte* getEnd() const;
+
+    size_t getMaxElements() const;
 
     size_t blockSize() const;
 

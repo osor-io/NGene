@@ -6,9 +6,6 @@ Pool::Pool(byte* origin, const size_t& blockSize, const size_t& blockAmount) {
     m_origin = origin;
     m_last = origin + (blockAmount * blockSize);
 
-    /*
-    We may be able to remove these two members.
-    */
     m_blockSize = blockSize;
     m_blockAmount = blockAmount;
 
@@ -19,7 +16,7 @@ Pool::Pool(byte* origin, const size_t& blockSize, const size_t& blockAmount) {
 
 Pool::~Pool() {
     if (!allFreed()) {
-        std::cout << "Destroying pool with blocksize " << m_blockSize << " with "
+        std::cerr << "Destroying pool with blocksize " << m_blockSize << " with "
             << usedBlocks() << " blocks currently in use" << std::endl;
     }
 }
@@ -28,9 +25,24 @@ bool Pool::allFreed() const { return (usedBlocks() == 0); }
 
 size_t Pool::usedBlocks() const { return m_blockAmount - m_freePositions.size(); }
 
+size_t Pool::freeBlocks() const { return m_freePositions.size(); }
+
+
 bool Pool::couldBeInPool(byte* elem) const {
     return (uintptr_t)(elem) >= (uintptr_t)(m_origin) &&
         (uintptr_t)(elem) < (uintptr_t)(m_last);
+}
+
+byte* Pool::getOrigin() const {
+    return m_origin;
+}
+
+byte* Pool::getEnd() const {
+    return m_last - 1;
+}
+
+size_t Pool::getMaxElements() const {
+    return m_blockAmount;
 }
 
 size_t Pool::blockSize() const { return m_blockSize; }

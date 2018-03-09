@@ -57,7 +57,16 @@
     <ClCompile Include="src\math\OtherMath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\_entity\EntityFactory.cpp">
+    <ClCompile Include="src\utils\OtherUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_entity\EntityManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_component\ComponentManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\Debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -134,7 +143,16 @@
     <ClInclude Include="src\types\def.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\_entity\EntityFactory.h">
+    <ClInclude Include="src\utils\OtherUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\_entity\EntityManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\_component\ComponentManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

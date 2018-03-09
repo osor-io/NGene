@@ -2,11 +2,13 @@
 #include "../Component.h"
 #include <string>
 #include <meta.h>
+#include <sol.hpp>
 
 class SimpleGraphicsComponent : public Component {
     friend auto meta::registerMembers<SimpleGraphicsComponent>();
 public:
     SimpleGraphicsComponent();
+    SimpleGraphicsComponent(const sol::table& table);
     ~SimpleGraphicsComponent();
 
     std::string getFilename() const;
@@ -25,7 +27,7 @@ inline auto meta::registerName<SimpleGraphicsComponent>() {
 template<>
 inline auto meta::registerMembers<SimpleGraphicsComponent>() {
     return members(
-        member("File Name", &SimpleGraphicsComponent::m_filename)
+        member("Filename", &SimpleGraphicsComponent::m_filename)
     );
 }
 
