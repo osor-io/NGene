@@ -36,7 +36,7 @@ inline auto meta::registerMembers<ExampleStruct>() {
 }
 
 int testDependencies() {
-    { //Testing lua
+    { // Testing lua
         std::cout << " ====== " << "TESTING LUA" << " ====== " << std::endl;
         sol::state lua;
         lua.open_libraries(sol::lib::base);
@@ -46,7 +46,16 @@ int testDependencies() {
     }
 
 
-    { //Testing SFML + ImGUI + MetaStuff
+    { // Testing SFML + ImGUI + MetaStuff
+
+        /**
+        @@NOTE: GUI can be extended with ImGUI to do some pretty neat things:
+
+        Resources:
+
+            - https://eliasdaler.github.io/using-imgui-with-sfml-pt1/
+            - https://eliasdaler.github.io/using-imgui-with-sfml-pt2/
+        */
 
         ExampleStruct aux{};
         std::cout << " ====== " << "TESTING SFML, ImGUI and MetaStuff" << " ====== " << std::endl;
@@ -133,15 +142,6 @@ int testECS() {
         std::cout << e.getComponent<SimplePhraseComponent>()->getPhrase() << std::endl;
     }
     std::cout << std::endl << std::endl;
-
-    {
-        auto e = Entity{};
-        auto t = sol::table{};
-        //EntityFactory::get().addComponentToEntity<SimpleGraphicsComponent>(e, t); // the extraterrestrial
-        //EntityFactory::get().addComponentToEntity<SimplePhraseComponent>(e, t); // the extraterrestrial
-
-        auto c = std::make_unique<SimpleGraphicsComponent>();
-    }
 
     {
         auto arr = new std::array<bool*, 1048893>();

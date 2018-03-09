@@ -69,6 +69,9 @@
     <ClCompile Include="src\utils\Debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\_system\systems\RenderSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dep\include\sol.hpp">
@@ -153,6 +156,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\Debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\_system\systems\RenderSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

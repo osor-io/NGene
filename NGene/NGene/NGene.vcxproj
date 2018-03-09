@@ -162,6 +162,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\_system\systems\RenderSystem.cpp" />
     <ClCompile Include="src\utils\Debug.cpp" />
     <ClCompile Include="src\math\OtherMath.cpp" />
     <ClCompile Include="src\memory\Pool.cpp" />
@@ -182,6 +183,7 @@
     <ClCompile Include="src\_system\System.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\_system\systems\RenderSystem.h" />
     <ClInclude Include="src\utils\Debug.h" />
     <ClInclude Include="src\math\OtherMath.h" />
     <ClInclude Include="src\memory\Pool.h" />
