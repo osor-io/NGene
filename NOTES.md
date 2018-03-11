@@ -7,3 +7,4 @@
  	- Cross-Compiling for the RPi: https://blog.kitware.com/cross-compiling-for-raspberry-pi/
  	- SFML for RPi: https://github.com/mickelson/sfml-pi
  	- Use Visual Studio to develop for the RPi: https://raspberrypi.stackexchange.com/questions/58797/raspberry-pi-c-ide
+ 	- Article about LUA in general which mentions LuaJIT to RPi: https://cellux.github.io/articles/introduction-to-luajit-part-1/
