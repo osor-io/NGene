@@ -1,9 +1,10 @@
 #include "Memory.h"
 #include "./SmallMemoryAllocator.h"
+#include <Debug.h>
+
 
 void* operator new(std::size_t count) {
-    auto ptr = SmallMemoryAllocator::get().alloc(count);
-    return ptr;
+    return SmallMemoryAllocator::get().alloc(count);
 }
 
 void operator delete(void* ptr) {

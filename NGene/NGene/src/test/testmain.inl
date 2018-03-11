@@ -132,17 +132,6 @@ int testDependencies() {
 
 int testECS() {
 
-    {
-        auto e = Entity{};
-
-        auto comp = e.makeComponent<SimplePhraseComponent>();
-        comp = e.makeComponent<SimplePhraseComponent>();
-
-        comp->setPhrase("This is ma phrase");
-
-        std::cout << e.getComponent<SimplePhraseComponent>()->getPhrase() << std::endl;
-    }
-    std::cout << std::endl << std::endl;
 
     {
         auto arr = new std::array<bool*, 1048893>();
@@ -161,7 +150,7 @@ int testECS() {
 }
 
 
-void testSystems() {
+void test() {
 
     {
         LUA.script(R"(
@@ -183,4 +172,34 @@ void testSystems() {
         LOG_NAMED(e->getComponent<SimpleGraphicsComponent>()->getFilename());
     }
 
+
+    LUA.script(R"(
+            print("Do we have an entity with the id 0? ", hasEntity(0))
+            print("Do we have an entity with the id 1? ", hasEntity(1))
+
+            print("Loading Entity 0, we expect this one to exist")
+            local entity = getEntity(0);
+            print("Entity returned: ", entity)
+            if(entity) then
+                print("The entity existed, lets see if it has a phrase component")
+                local phrase = entity:getSimplePhraseComponent()
+                if(phrase) then
+                    print("It does! So let's hear what it has to say")
+                    print("Our phrase is: ", phrase.phrase)
+                else
+                    print("It doesn't, so it'll just shut up")
+                end
+            end
+
+            print("Loading Entity 1, we expect this one to return nullptr/nil")
+            entity = getEntity(1);
+            print("Entity returned: ", entity)
+            if(entity) then
+                local phrase = entity:getSimplePhraseComponent()
+                if(phrase) then
+                    print("Our phrase is: ", phrase.phrase)
+                end
+            end
+
+        )");
 }

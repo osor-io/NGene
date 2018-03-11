@@ -56,7 +56,7 @@ private:
 	size_t getPoolIndex(size_t size) const;
 
     std::array<std::unique_ptr<Pool>, config::sma_pool_amount> m_poolArray{};
-	std::array<size_t, config::sma_pool_amount> m_extraRequestedElements{};
+	std::array<size_t, config::sma_pool_amount + 1> m_extraRequestedElements{};
     std::array<size_t, config::sma_pool_amount> m_maxAllocatedElements{};
 
 

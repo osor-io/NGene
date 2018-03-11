@@ -1,6 +1,8 @@
 #include "SmallMemoryAllocator.h"
 #include <cassert>
 #include "../utils/OtherUtils.h"
+#include <sstream>
+#include <File.h>
 
 
 SmallMemoryAllocator::SmallMemoryAllocator() {
@@ -16,9 +18,13 @@ SmallMemoryAllocator::SmallMemoryAllocator() {
     }
 }
 
+
 SmallMemoryAllocator::~SmallMemoryAllocator() {
-    printStatus(std::cout);
-    pressToContinue();
+    {
+        auto ss = std::stringstream{};
+        printStatus(ss);
+        writeToFile("memory.log", ss.str().c_str());
+    }
     free(m_pGeneralPool);
 }
 
@@ -46,6 +52,7 @@ void* SmallMemoryAllocator::alloc(size_t size) {
         //
         //  It doesn't fit in any of our pools
         //
+        ++m_extraRequestedElements[config::sma_pool_amount];
         return malloc(size);
     }
 
@@ -94,16 +101,28 @@ void SmallMemoryAllocator::printStatus(std::ostream& stream) {
         const auto& pool = m_poolArray[i].get();
         stream << "Pool with chunk size [" << pool->blockSize() <<
             "] ranging from [" << static_cast<void*>(pool->getOrigin()) <<
-            "] to [" << static_cast<void*>(pool->getEnd()) << "]" << std::endl;
+            "] to [" << static_cast<void*>(pool->getEnd()) << "]" << '\n';
 
         stream << "\t" << "It can hold up to [" <<
             pool->getMaxElements() << "] and [" <<
             m_extraRequestedElements[i] + m_maxAllocatedElements[i] <<
             "] have been required, meaning that we needed [" <<
-            (m_extraRequestedElements[i] > 0 ? m_extraRequestedElements[i] : 0) << "] extra elements" << std::endl;
+            (m_extraRequestedElements[i] > 0 ? m_extraRequestedElements[i] : 0) << "] extra elements" << '\n';
 
-        stream << std::endl;
+        stream << '\n';
     }
+
+    if (m_extraRequestedElements[config::sma_pool_amount] > 0) {
+        stream << "We had to allocate with the default malloc [" << m_extraRequestedElements[config::sma_pool_amount] <<
+            "] times because they were larger than our biggest pool (" << m_poolArray[m_poolArray.size() - 1]->getMaxElements() << ")." << '\n';
+        stream << "We know that at least 4 of these big allocations are to hold the stream and string to write this exact file so don't worry about those" << '\n';
+    }
+    else {
+        stream << "We didn't have to allocate anything with the default malloc" << '\n';
+    }
+
+    stream << std::endl;
+
 }
 
 void SmallMemoryAllocator::printStatus(void* elem, std::ostream& stream) const {
@@ -118,7 +137,7 @@ void SmallMemoryAllocator::printStatus(void* elem, std::ostream& stream) const {
             else {
                 stream << "NOT IN USE";
             }
-            stream << std::endl;
+            stream << '\n';
             return;
         }
     }

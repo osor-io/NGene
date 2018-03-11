@@ -164,6 +164,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\utils\File.cpp" />
     <ClCompile Include="src\lua\LuaManager.cpp" />
     <ClCompile Include="src\_system\systems\RenderSystem.cpp" />
     <ClCompile Include="src\utils\Debug.cpp" />
@@ -184,8 +185,10 @@
     <ClCompile Include="dep\src\imgui_draw.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\_system\System.cpp" />
+    <ClCompile Include="src\_system\SystemManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\utils\File.h" />
     <ClInclude Include="src\lua\LuaManager.h" />
     <ClInclude Include="src\utils\Manager.h" />
     <ClInclude Include="src\_system\systems\RenderSystem.h" />
@@ -217,6 +220,7 @@
     <ClInclude Include="dep\include\stb_truetype.h" />
     <ClInclude Include="src\_system\System.h" />
     <ClInclude Include="src\containers\Stack.h" />
+    <ClInclude Include="src\_system\SystemManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dep\include\detail\template_helpers.inl" />
