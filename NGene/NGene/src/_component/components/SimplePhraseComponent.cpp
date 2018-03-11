@@ -1,6 +1,5 @@
 #include "SimplePhraseComponent.h"
-
-#include <iostream>
+#include "../lua/LuaManager.h"
 
 
 SimplePhraseComponent::SimplePhraseComponent() : Component(std::type_index(typeid(SimplePhraseComponent))) {
@@ -22,6 +21,31 @@ SimplePhraseComponent::SimplePhraseComponent(const sol::table& table)
 SimplePhraseComponent::~SimplePhraseComponent() {
 }
 
+#define REGISTER_METHOD(method) #method , &SimplePhraseComponent::method
+
+
+void SimplePhraseComponent::exposeToLua()
+{
+
+    LUA.new_usertype<SimplePhraseComponent>("SimplePhraseComponent",
+
+
+        /*
+        Methods:
+        Add here all the functions we want to expose to lua with REGISTER_METHOD(methodName)
+        */
+
+        /*
+        Data Members:
+        Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
+        */
+
+        "phrase", sol::property(&SimplePhraseComponent::getPhrase, &SimplePhraseComponent::setPhrase)
+
+        );
+
+}
+
 
 std::string SimplePhraseComponent::getPhrase() const {
     return m_phrase;
@@ -30,9 +54,4 @@ std::string SimplePhraseComponent::getPhrase() const {
 
 void SimplePhraseComponent::setPhrase(const std::string& phrase) {
     m_phrase = phrase;
-}
-
-
-void SimplePhraseComponent::setPhrase(std::string&& phrase) {
-    m_phrase = std::move(phrase);
 }

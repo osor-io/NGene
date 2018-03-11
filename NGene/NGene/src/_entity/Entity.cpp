@@ -1,10 +1,15 @@
 #include "Entity.h"
 #include "../lua/LuaManager.h"
 
-Entity::Entity() {
+Entity::Entity(EntityId id) : m_id(id) {
 }
 
 Entity::~Entity() {
+}
+
+EntityId Entity::getId() const
+{
+    return m_id;
 }
 
 std::string Entity::getType() const {
@@ -20,7 +25,9 @@ void Entity::setType(std::string&& type) {
     m_type = std::move(type);
 }
 
+
 #include "../_component/components/SimpleGraphicsComponent.h"
+#include "../_component/components/SimplePhraseComponent.h"
 
 #define GET_COMPONENT_NAME(type) #type
 #define MAKE_STRING(s) #s
@@ -28,13 +35,28 @@ void Entity::setType(std::string&& type) {
 
 void Entity::exposeToLua() {
 
+    /*
+    Here we expose the members of the components
+    */
+    SimpleGraphicsComponent::exposeToLua();
+    SimplePhraseComponent::exposeToLua();
+
+    /*
+    And here a way to access them from the entity that contains them
+    */
     LUA.new_usertype<Entity>("Entity",
 
-        // Constructors
-        sol::constructors<Entity()>(),
+        /*
+        We don't allow constructors to be called from Lua since 
+        we want the EntityManager to act as a factory for all the entities
+        */
 
         // Members
-        REGISTER_GET_COMPONENT(SimpleGraphicsComponent)
+        /*
+        Add here all the components that we want to expose to Lua via "getComponentName()" functions
+        */
+        REGISTER_GET_COMPONENT(SimpleGraphicsComponent),
+        REGISTER_GET_COMPONENT(SimplePhraseComponent)
 
         );
 

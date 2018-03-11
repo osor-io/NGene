@@ -1,5 +1,6 @@
 #include "SimpleGraphicsComponent.h"
 #include <Debug.h>
+#include "../lua/LuaManager.h"
 
 SimpleGraphicsComponent::SimpleGraphicsComponent() : Component(std::type_index(typeid(SimpleGraphicsComponent))) {
 }
@@ -19,6 +20,27 @@ SimpleGraphicsComponent::SimpleGraphicsComponent(const sol::table& table)
 SimpleGraphicsComponent::~SimpleGraphicsComponent() {
 }
 
+void SimpleGraphicsComponent::exposeToLua() {
+
+    LUA.new_usertype<SimpleGraphicsComponent>("SimpleGraphicsComponent",
+
+
+        /*
+        Methods:
+        Add here all the functions we want to expose to lua with REGISTER_METHOD(methodName)
+        */
+
+        /*
+        Data Members:
+        Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
+        */
+
+        "filename", sol::property(&SimpleGraphicsComponent::getFilename, &SimpleGraphicsComponent::setFilename)
+
+        );
+
+}
+
 
 std::string SimpleGraphicsComponent::getFilename() const {
     return m_filename;
@@ -27,9 +49,4 @@ std::string SimpleGraphicsComponent::getFilename() const {
 
 void SimpleGraphicsComponent::setFilename(const std::string& filename) {
     m_filename = filename;
-}
-
-
-void SimpleGraphicsComponent::setFilename(std::string&& filename) {
-    m_filename = std::move(filename);
 }

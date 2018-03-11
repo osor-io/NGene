@@ -16,10 +16,9 @@ data read from the Lua script.
 @see Entity
 */
 class EntityManager : public Manager<EntityManager> {
-    using OwningVector = std::vector<std::unique_ptr<Entity>>;
-
+    using OwningEntitiesGroup = std::unordered_map<EntityId, std::unique_ptr<Entity>>;
 private:
-    friend class CRSP<EntityManager>;
+    friend class CRSP <EntityManager>;
     EntityManager();
     ~EntityManager();
 
@@ -28,21 +27,19 @@ public:
     void startUp() override;
     void shutDown() override;
 
-    /*
-    @@DOING: Implementing the loadEntity and addComponentToEntity
-    with the different arguments (taking the name of the Component
-    for example).
 
-    Useful resources:
-    - http://sol2.readthedocs.io/en/latest/tutorial/all-the-things.html
-    - https://eliasdaler.wordpress.com/2015/09/08/using-lua-with-cpp-in-practice-part-2/
-    */
+    Entity* loadEntity(const sol::table& table, const std::string& name);
 
+    bool hasEntity(EntityId id) const;
 
-    Entity * loadEntity(const sol::table& table, const std::string& name);
+    Entity* getEntity(EntityId id);
 
 private:
-    OwningVector m_topEntities{};
+
+    void exposeToLua();
+
+    OwningEntitiesGroup m_topEntities{};
+    EntityId m_nextId{ 0 };
 
 };
 

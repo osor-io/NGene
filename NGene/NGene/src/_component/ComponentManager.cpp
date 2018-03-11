@@ -11,6 +11,7 @@ ComponentManager::~ComponentManager() {
 }
 
 void ComponentManager::startUp() {
+
 }
 
 void ComponentManager::shutDown() {

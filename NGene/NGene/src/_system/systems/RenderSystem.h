@@ -9,13 +9,17 @@ System that handles all the rendering functionality in the application
 
 */
 class RenderSystem : public System<RenderSystem> {
-public:
+	friend class CRSP<RenderSystem>;
+private:
     RenderSystem();
     ~RenderSystem();
+public:
 
     void update() override; 
     void startUp() override;
     void shutDown() override;
+    void registerEntity(Entity& entity) override;
+
 
 private:
 

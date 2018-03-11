@@ -6,16 +6,24 @@
 #include <typeindex>
 #include <memory>
 
+class EntityManager;
+
+using EntityId = unsigned int;
+
 class Entity {
+    friend class EntityManager;
+private:
+    Entity(EntityId id);
 public:
-    Entity();
     ~Entity();
+
+    EntityId getId() const;
 
     std::string getType() const;
     void setType(const std::string& type);
     void setType(std::string&& type);
 
-    void exposeToLua();
+    static void exposeToLua();
 
     template<typename T, typename ... Args>
     T* makeComponent(Args&& ... args) {
@@ -33,7 +41,17 @@ public:
         return nullptr;
     }
 
+    template<typename T>
+    bool hasComponent() {
+        auto it = m_components.find(std::type_index(typeid(T)));
+        if (it != m_components.end()) {
+            return true;
+        }
+        return false;
+    }
+
 private:
+    unsigned int m_id;
     std::string m_type;
     std::unordered_map<std::type_index, std::unique_ptr<Component>> m_components;
 };

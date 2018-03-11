@@ -5,15 +5,22 @@
 Class that every component in this engine should inherit from. In order to
 correctly register everything in a component the usage is as follows:
 
--Include the <meta.h> header
+- Include the required headers in the .h or .hpp
 
+        #include "../Component.h"
+        #include <string>
         #include <meta.h>
+        #include <sol.hpp>
 
--Declare a friend registerMembers function:
+- Include the required headers in the .cpp
+
+        #include "../lua/LuaManager.h"
+
+- Declare a friend registerMembers function:
 
         friend auto meta::registerMembers<SimpleGraphicsComponent>();
 
--Implement registerName and registerMembers functions:
+- Implement registerName and registerMembers functions:
 
         template<>
         inline auto meta::registerName<ConcreteComponent>() {
@@ -27,13 +34,36 @@ correctly register everything in a component the usage is as follows:
                 member("Some Other Member", &SimplePhraseComponent::m_someOtherMember),
             );
         }
+        
+- Implement the "exposeToLua" function if we want to expose it
 
--If we want the Entity Factory to be able to instantiate the entity, which we
+        void SimplePhraseComponent::exposeToLua() {
+
+            LUA.new_usertype<SimplePhraseComponent>("SimplePhraseComponent",
+
+                 
+            Methods:
+            Add here all the functions we want to expose to lua with REGISTER_METHOD(methodName)
+        
+            Data Members:
+            Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
+        
+            
+                "member", sol::property(&SimplePhraseComponent::getPhrase, &SimplePhraseComponent::setPhrase)
+
+            );
+        }
+
+- If we want the Entity Factory to be able to instantiate the entity, which we
 probably do, we need to go to the ComponentManager.h file and register the component
 class in both the (name, typeid) map and the (typeid, function) map with the function
 implementing the way we can instantiate the component based on a Lua script
 
+- If we want to expose the component to lua we need to go to Entity.cpp and register it
+adding to the "exposeToLua" function.
+
 @see ComponentManager
+@see Entity
 */
 class Component {
 public:

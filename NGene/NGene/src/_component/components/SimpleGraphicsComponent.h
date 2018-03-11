@@ -11,9 +11,10 @@ public:
     SimpleGraphicsComponent(const sol::table& table);
     ~SimpleGraphicsComponent();
 
+    static void exposeToLua();
+
     std::string getFilename() const;
     void setFilename(const std::string& filename);
-    void setFilename(std::string&& filename);
 
 private:
     std::string m_filename;

@@ -1,6 +1,7 @@
 #pragma once
 #include <Manager.h>
 #include <sol.hpp>
+#include <memory>
 
 #define LUA LuaManager::get().getStateRef()
 
@@ -24,6 +25,6 @@ public:
 
     sol::state& getStateRef();
 private:
-    sol::state m_state{};
+    std::unique_ptr<sol::state> m_state{};
 };
 

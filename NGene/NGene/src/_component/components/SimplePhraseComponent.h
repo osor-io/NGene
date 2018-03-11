@@ -11,9 +11,10 @@ public:
     SimplePhraseComponent(const sol::table& table);
     ~SimplePhraseComponent();
 
+    static void exposeToLua();
+
     std::string getPhrase() const;
     void setPhrase(const std::string& phrase);
-    void setPhrase(std::string&& phrase);
 
 private:
     std::string m_phrase;
