@@ -1,6 +1,8 @@
 #include "Pool.h"
 #include <cstdlib>
 #include <iostream>
+#include "Debug.h"
+#include <gsl\gsl>
 
 Pool::Pool(byte* origin, const size_t& blockSize, const size_t& blockAmount) {
     m_origin = origin;
@@ -9,7 +11,12 @@ Pool::Pool(byte* origin, const size_t& blockSize, const size_t& blockAmount) {
     m_blockSize = blockSize;
     m_blockAmount = blockAmount;
 
-    for (size_t i = 0; i < blockAmount; ++i) {
+    /*
+    We insert the positions (blocks of size blockSize) in reverse order in the
+    stack so we retrieve them in forward order. We could also change it so we
+    are using a queue instead of a stack.
+    */
+    for (auto i = gsl::narrow_cast<int>(blockAmount) - 1; i >= 0; --i) {
         m_freePositions.push(origin + (i * blockSize));
     }
 }
