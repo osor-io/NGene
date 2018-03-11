@@ -10,6 +10,7 @@
 #include <Manager.h>
 #include "../_entity/Entity.h"
 
+#include "./components/TransformComponent.h"
 #include "./components/SimpleGraphicsComponent.h"
 #include "./components/SimplePhraseComponent.h"
 
@@ -33,7 +34,6 @@ public:
     void removeComponentInstance(const std::type_index& type, Component* component);
 
     void addComponentToEntity(Entity& entity, const std::string& name, const sol::table& table) {
-        LOG_NAMED(name);
         m_factoryMap.at(m_typeMap.at(name))(entity, table);
     }
 
@@ -41,6 +41,10 @@ private:
     InstanceMap m_instanceMap{};
 
     const TypeMap m_typeMap{
+
+        std::make_pair(
+            meta::getName<TransformComponent>(),
+            std::type_index(typeid(TransformComponent))),
 
         std::make_pair(
             meta::getName<SimpleGraphicsComponent>(),
@@ -52,6 +56,12 @@ private:
     };
 
     const FactoryMap m_factoryMap{
+
+        std::make_pair(std::type_index(typeid(
+            TransformComponent
+            )),[](Entity& entity ,const sol::table& table) {
+                entity.makeComponent<TransformComponent>(table);
+            }),
 
         std::make_pair(std::type_index(typeid(
             SimpleGraphicsComponent

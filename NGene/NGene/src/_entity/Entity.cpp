@@ -25,7 +25,7 @@ void Entity::setType(std::string&& type) {
     m_type = std::move(type);
 }
 
-
+#include "../_component/components/TransformComponent.h"
 #include "../_component/components/SimpleGraphicsComponent.h"
 #include "../_component/components/SimplePhraseComponent.h"
 
@@ -38,6 +38,7 @@ void Entity::exposeToLua() {
     /*
     Here we expose the members of the components
     */
+    TransformComponent::exposeToLua();
     SimpleGraphicsComponent::exposeToLua();
     SimplePhraseComponent::exposeToLua();
 
@@ -55,6 +56,7 @@ void Entity::exposeToLua() {
         /*
         Add here all the components that we want to expose to Lua via "getComponentName()" functions
         */
+        REGISTER_GET_COMPONENT(TransformComponent),
         REGISTER_GET_COMPONENT(SimpleGraphicsComponent),
         REGISTER_GET_COMPONENT(SimplePhraseComponent)
 

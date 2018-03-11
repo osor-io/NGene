@@ -186,6 +186,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\_system\System.cpp" />
     <ClCompile Include="src\_system\SystemManager.cpp" />
+    <ClCompile Include="src\_component\components\TransformComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\utils\File.h" />
@@ -221,6 +222,7 @@
     <ClInclude Include="src\_system\System.h" />
     <ClInclude Include="src\containers\Stack.h" />
     <ClInclude Include="src\_system\SystemManager.h" />
+    <ClInclude Include="src\_component\components\TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dep\include\detail\template_helpers.inl" />

@@ -12,6 +12,7 @@ SimplePhraseComponent::SimplePhraseComponent(const sol::table& table)
         using MemberT = meta::get_member_type<decltype(member)>;
         auto name = member.getName();
         sol::object value_obj = table[name];
+        assert(value_obj.valid());
         auto value = value_obj.as<std::string>();
         member.set(*this, value);
     });

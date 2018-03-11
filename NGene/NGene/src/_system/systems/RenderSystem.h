@@ -1,5 +1,6 @@
 #pragma once
 #include "../System.h"
+#include <map>
 
 /**
 System that handles all the rendering functionality in the application
@@ -9,6 +10,8 @@ System that handles all the rendering functionality in the application
 
 */
 class RenderSystem : public System<RenderSystem> {
+    using EntitiesGroup = std::map<EntityId, Entity*>;
+
 	friend class CRSP<RenderSystem>;
 private:
     RenderSystem();
@@ -22,6 +25,7 @@ public:
 
 
 private:
+    EntitiesGroup m_entities;
 
 };
 

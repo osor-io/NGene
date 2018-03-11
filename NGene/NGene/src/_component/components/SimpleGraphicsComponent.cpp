@@ -8,10 +8,12 @@ SimpleGraphicsComponent::SimpleGraphicsComponent() : Component(std::type_index(t
 
 SimpleGraphicsComponent::SimpleGraphicsComponent(const sol::table& table)
     : Component(std::type_index(typeid(SimpleGraphicsComponent))) {
+
     meta::doForAllMembers<SimpleGraphicsComponent>([this, &table](auto& member) {
         using MemberT = meta::get_member_type<decltype(member)>;
         auto name = member.getName();
         sol::object value_obj = table[name];
+        assert(value_obj.valid());
         auto value = value_obj.as<std::string>();
         member.set(*this, value);
     });
@@ -49,4 +51,16 @@ std::string SimpleGraphicsComponent::getFilename() const {
 
 void SimpleGraphicsComponent::setFilename(const std::string& filename) {
     m_filename = filename;
+}
+
+sf::Sprite SimpleGraphicsComponent::getSprite() const {
+    return m_sprite;
+}
+
+void SimpleGraphicsComponent::setSprite(const sf::Sprite & sprite) {
+    m_sprite = sprite;
+}
+
+void SimpleGraphicsComponent::moveSprite(sf::Sprite && sprite) {
+    m_sprite = std::move(sprite);
 }

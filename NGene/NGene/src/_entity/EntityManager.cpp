@@ -14,7 +14,7 @@ void EntityManager::startUp() {
 }
 
 void EntityManager::shutDown() {
-    m_topEntities.clear();
+    m_entities.clear();
 }
 
 Entity * EntityManager::loadEntity(const sol::table & table, const std::string & name)
@@ -34,7 +34,7 @@ Entity * EntityManager::loadEntity(const sol::table & table, const std::string &
 
     });
 
-    m_topEntities[e->getId()] = std::unique_ptr<Entity>(e);
+    m_entities[e->getId()] = std::unique_ptr<Entity>(e);
 
     SystemManager::get().registerEntityInSystems(*e);
 
@@ -42,19 +42,33 @@ Entity * EntityManager::loadEntity(const sol::table & table, const std::string &
 }
 
 bool EntityManager::hasEntity(EntityId id) const {
-    auto it = m_topEntities.find(id);
-    if (it != m_topEntities.end()) {
+    auto it = m_entities.find(id);
+    if (it != m_entities.end()) {
         return true;
     }
     return false;
 }
 
 Entity* EntityManager::getEntity(EntityId id) {
-    auto it = m_topEntities.find(id);
-    if (it != m_topEntities.end()) {
+    auto it = m_entities.find(id);
+    if (it != m_entities.end()) {
         return (it->second.get());
     }
     return nullptr;
+}
+
+size_t EntityManager::numberOfEntities() const {
+    return m_entities.size();
+}
+
+std::vector<EntityId> EntityManager::getEntityKeys() const {
+    auto vec = std::vector<EntityId>();
+    vec.resize(m_entities.size());
+    auto i = 0;
+    for (const auto& e : m_entities) {
+        vec[i++] = e.first;
+    }
+    return vec;
 }
 
 void EntityManager::exposeToLua() {

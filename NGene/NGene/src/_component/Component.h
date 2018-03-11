@@ -62,8 +62,8 @@ implementing the way we can instantiate the component based on a Lua script
 - If we want to expose the component to lua we need to go to Entity.cpp and register it
 adding to the "exposeToLua" function.
 
-@see ComponentManager
-@see Entity
+@see ComponentManager @ ComponentManager.h
+@see Entity @ Entity.cpp
 */
 class Component {
 public:

@@ -3,6 +3,7 @@
 #include <sol.hpp>
 #include "../_entity/Entity.h"
 #include <Manager.h>
+#include <map>
 
 
 /**
@@ -16,7 +17,7 @@ data read from the Lua script.
 @see Entity
 */
 class EntityManager : public Manager<EntityManager> {
-    using OwningEntitiesGroup = std::unordered_map<EntityId, std::unique_ptr<Entity>>;
+    using OwningEntitiesGroup = std::map<EntityId, std::unique_ptr<Entity>>;
 private:
     friend class CRSP <EntityManager>;
     EntityManager();
@@ -34,11 +35,15 @@ public:
 
     Entity* getEntity(EntityId id);
 
+    size_t numberOfEntities() const;
+
+    std::vector<EntityId> getEntityKeys() const;
+
 private:
 
     void exposeToLua();
 
-    OwningEntitiesGroup m_topEntities{};
+    OwningEntitiesGroup m_entities{};
     EntityId m_nextId{ 0 };
 
 };

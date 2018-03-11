@@ -162,14 +162,42 @@ void test() {
                     SimpleGraphicsComponent = {
                         Filename = "file.png"
                     }
+                },
+                OtraCosa = {
+                    SimplePhraseComponent = {
+                        Phrase = "I'm saying hi from this lua Object!! :D"
+                    },
+                    SimpleGraphicsComponent = {
+                        Filename = "file.png"
+                    }
+                },
+                YOtraMas = {
+                    SimplePhraseComponent = {
+                        Phrase = "I'm saying hi from this lua Object!! :D"
+                    },
+                    SimpleGraphicsComponent = {
+                        Filename = "file.png"
+                    }
                 }
             }
         )");
 
         auto e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().loadEntity(LUA["Entities"], "OtraCosa");
+        e = EntityManager::get().loadEntity(LUA["Entities"], "YOtraMas");
+        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().loadEntity(LUA["Entities"], "YOtraMas");
+        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
 
-        LOG_NAMED(e->getComponent<SimplePhraseComponent>()->getPhrase());
-        LOG_NAMED(e->getComponent<SimpleGraphicsComponent>()->getFilename());
+        for (const auto& id : EntityManager::get().getEntityKeys()) {
+            LOG_NAMED(id);
+        }
+
     }
 
 
