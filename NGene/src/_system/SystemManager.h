@@ -6,7 +6,9 @@
 #include "../_entity/Entity.h"
 
 class SystemManager : public Manager<SystemManager> {
-	using SystemVector = std::vector< std::function<void(Entity& entity)> >;
+	using RegisterFuncVector = std::vector< std::function<void(Entity& entity)> >;
+    using DeregisterFuncVector = std::vector< std::function<void(EntityId id)> >;
+
 private:
     friend class CRSP <SystemManager>;
     SystemManager();
@@ -16,11 +18,15 @@ public:
     void startUp() override;
     void shutDown() override;
 
-    void registerSystemFunc(std::function<void(Entity& entity)> funct);
+    void addSystemRegisterFunc(std::function<void(Entity& entity)> funct);
+    void addSystemDeregisterFunc(std::function<void(EntityId id)> funct);
+
 
     void registerEntityInSystems(Entity& entity);
+    void deregisterEntityInSystems(EntityId id);
 
 private:
-	SystemVector m_systems{};
+    RegisterFuncVector m_registerFuncs{};
+    DeregisterFuncVector m_deregisterFuncs{};
 };
 

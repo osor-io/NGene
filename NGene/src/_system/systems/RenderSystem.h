@@ -22,7 +22,8 @@ public:
     void startUp() override;
     void shutDown() override;
     void registerEntity(Entity& entity) override;
-
+    void deregisterEntity(EntityId id) override;
+    void registerSystem() override;
 
 private:
     EntitiesGroup m_entities;

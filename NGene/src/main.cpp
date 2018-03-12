@@ -40,27 +40,27 @@ void loadEntities() {
                         x = 0,
                         y = 10
                     },
-                    SimplePhraseComponent = {
-                        Phrase = "I'm saying hi from this lua Object!! :D"
+                    PhraseComponent = {
+                        phrase = "I'm saying hi from this lua Object!! :D"
                     },
-                    SimpleGraphicsComponent = {
-                        Filename = "file.png"
+                    SpriteComponent = {
+                        filename = "file.png"
                     }
                 },
                 OtraCosa = {
-                    SimplePhraseComponent = {
-                        Phrase = "I'm saying hi from this lua Object!! :D"
+                    PhraseComponent = {
+                        phrase = "I'm saying hi from this lua Object!! :D"
                     },
-                    SimpleGraphicsComponent = {
-                        Filename = "file.png"
+                    SpriteComponent = {
+                        filename = "file.png"
                     }
                 },
                 YOtraMas = {
-                    SimplePhraseComponent = {
-                        Phrase = "I'm saying hi from this lua Object!! :D"
+                    PhraseComponent = {
+                        phrase = "I'm saying hi from this lua Object!! :D"
                     },
-                    SimpleGraphicsComponent = {
-                        Filename = "file.png"
+                    SpriteComponent = {
+                        filename = "file.png"
                     }
                 }
             }
@@ -77,7 +77,11 @@ void loadEntities() {
         e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
         e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
         e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-    
+
+        EntityManager::get().removeEntity(e);
+        EntityManager::get().removeEntity(5);
+
+        EntityManager::get().updateEntities();
 }
 
 
@@ -91,7 +95,7 @@ void accessEntitiesFromLua() {
             print("Entity returned: ", entity)
             if(entity) then
                 print("The entity existed, lets see if it has a phrase component")
-                local phrase = entity:getSimplePhraseComponent()
+                local phrase = entity:getPhraseComponent()
                 if(phrase) then
                     print("It does! So let's hear what it has to say")
                     print("Our phrase is: ", phrase.phrase)
@@ -113,17 +117,22 @@ void accessEntitiesFromLua() {
 }
 
 void tickSystems() {
+
     RenderSystem::get().update();
+    EntityManager::get().updateEntities();
+
 }
 
 
 int main() {
     startUp();
-
-    loadEntities();
-    accessEntitiesFromLua();
-    tickSystems();
-
+    {
+        loadEntities();
+        accessEntitiesFromLua();
+        {
+            tickSystems();
+        }
+    }
     shutDown();
     
     ENDL;

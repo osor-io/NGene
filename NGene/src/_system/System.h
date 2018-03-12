@@ -24,4 +24,7 @@ public:
     virtual void startUp() = 0;
     virtual void shutDown() = 0;
     virtual void registerEntity(Entity& entity) = 0;
+    virtual void deregisterEntity(EntityId id) = 0;
+    virtual void registerSystem() = 0;
+
 };

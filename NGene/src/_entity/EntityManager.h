@@ -4,6 +4,7 @@
 #include "../_entity/Entity.h"
 #include <Manager.h>
 #include <map>
+#include <future>
 
 
 /**
@@ -18,6 +19,8 @@ data read from the Lua script.
 */
 class EntityManager : public Manager<EntityManager> {
     using OwningEntitiesGroup = std::map<EntityId, std::unique_ptr<Entity>>;
+    using PendingEntitiesToAdd = std::vector<Entity*>;
+    using PendingEntitiesToDelete = std::vector<EntityId>;
 private:
     friend class CRSP <EntityManager>;
     EntityManager();
@@ -28,8 +31,11 @@ public:
     void startUp() override;
     void shutDown() override;
 
+    void updateEntities();
 
-    Entity* loadEntity(const sol::table& table, const std::string& name);
+    EntityId loadEntity(const sol::table& table, const std::string& name);
+
+    void removeEntity(EntityId id);
 
     bool hasEntity(EntityId id) const;
 
@@ -44,6 +50,9 @@ private:
     void exposeToLua();
 
     OwningEntitiesGroup m_entities{};
+    PendingEntitiesToAdd m_entitiesToAdd{};
+    PendingEntitiesToDelete m_entitieIdsToRemove{};
+
     EntityId m_nextId{ 0 };
 
 };

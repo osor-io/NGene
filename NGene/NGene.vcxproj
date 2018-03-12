@@ -176,8 +176,8 @@
     <ClCompile Include="src\memory\Memory.cpp" />
     <ClCompile Include="src\memory\SmallMemoryAllocator.cpp" />
     <ClCompile Include="src\_entity\Entity.cpp" />
-    <ClCompile Include="src\_component\components\SimpleGraphicsComponent.cpp" />
-    <ClCompile Include="src\_component\components\SimplePhraseComponent.cpp" />
+    <ClCompile Include="src\_component\components\SpriteComponent.cpp" />
+    <ClCompile Include="src\_component\components\PhraseComponent.cpp" />
     <ClCompile Include="src\_component\Component.cpp" />
     <ClCompile Include="dep\src\imgui-SFML.cpp" />
     <ClCompile Include="dep\src\imgui.cpp" />
@@ -204,8 +204,8 @@
     <ClInclude Include="src\memory\Memory.h" />
     <ClInclude Include="src\memory\SmallMemoryAllocator.h" />
     <ClInclude Include="src\_entity\Entity.h" />
-    <ClInclude Include="src\_component\components\SimpleGraphicsComponent.h" />
-    <ClInclude Include="src\_component\components\SimplePhraseComponent.h" />
+    <ClInclude Include="src\_component\components\SpriteComponent.h" />
+    <ClInclude Include="src\_component\components\PhraseComponent.h" />
     <ClInclude Include="src\_component\Component.h" />
     <ClInclude Include="dep\include\detail\MetaHolder.h" />
     <ClInclude Include="dep\include\detail\template_helpers.h" />

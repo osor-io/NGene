@@ -5,12 +5,12 @@
 #include <sol.hpp>
 #include <SFML\Graphics.hpp>
 
-class SimpleGraphicsComponent : public Component {
-    friend auto meta::registerMembers<SimpleGraphicsComponent>();
+class SpriteComponent : public Component {
+    friend auto meta::registerMembers<SpriteComponent>();
 public:
-    SimpleGraphicsComponent();
-    SimpleGraphicsComponent(const sol::table& table);
-    ~SimpleGraphicsComponent();
+    SpriteComponent();
+    SpriteComponent(const sol::table& table);
+    ~SpriteComponent();
 
     static void exposeToLua();
 
@@ -27,14 +27,14 @@ private:
 };
 
 template<>
-inline auto meta::registerName<SimpleGraphicsComponent>() {
-    return "SimpleGraphicsComponent";
+inline auto meta::registerName<SpriteComponent>() {
+    return "SpriteComponent";
 }
 
 template<>
-inline auto meta::registerMembers<SimpleGraphicsComponent>() {
+inline auto meta::registerMembers<SpriteComponent>() {
     return members(
-        member("Filename", &SimpleGraphicsComponent::m_filename)
+        member("filename", &SpriteComponent::m_filename)
     );
 }
 

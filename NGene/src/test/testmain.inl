@@ -125,8 +125,8 @@ int testDependencies() {
 
 
 #include "./_entity/Entity.h"
-#include "./_component/components/SimplePhraseComponent.h"
-#include "./_component/components/SimpleGraphicsComponent.h"
+#include "./_component/components/PhraseComponent.h"
+#include "./_component/components/SpriteComponent.h"
 #include "./_entity/EntityManager.h"
 #include "./lua/LuaManager.h"
 

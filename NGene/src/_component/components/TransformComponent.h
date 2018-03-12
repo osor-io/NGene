@@ -43,7 +43,7 @@ inline auto meta::registerName<TransformComponent>() {
 template<>
 inline auto meta::registerMembers<TransformComponent>() {
     return members(
-        member("Position", &TransformComponent::m_position)
+        member("position", &TransformComponent::m_position)
     );
 }
 

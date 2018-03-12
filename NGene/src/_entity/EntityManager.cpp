@@ -2,6 +2,7 @@
 #include "../_component/ComponentManager.h"
 #include "../_system/SystemManager.h"
 #include "../lua/LuaManager.h"
+#include <experimental\coroutine>
 
 EntityManager::EntityManager() {}
 
@@ -17,15 +18,34 @@ void EntityManager::shutDown() {
     m_entities.clear();
 }
 
-Entity * EntityManager::loadEntity(const sol::table & table, const std::string & name)
+void EntityManager::updateEntities() {
+
+    for (auto entity : m_entitiesToAdd) {
+        m_entities[entity->getId()] = std::unique_ptr<Entity>(entity);
+        SystemManager::get().registerEntityInSystems(*entity);
+    }
+    m_entitiesToAdd.clear();
+
+    for (auto id : m_entitieIdsToRemove) {
+        SystemManager::get().deregisterEntityInSystems(id);
+        m_entities.erase(id);
+    }
+    m_entitieIdsToRemove.clear();
+
+}
+
+
+EntityId EntityManager::loadEntity(const sol::table & table, const std::string & name)
 {
-    auto e = new Entity(m_nextId++);
+    auto id = m_nextId++;
+    auto e = new Entity(id);
     e->setType(name);
     const sol::table componentTable = table[name];
     componentTable.for_each([&e](const auto& key, const auto& value) {
 
         if (key.is<std::string>()) {
             auto component_name = key.as<std::string>();
+            // @@TODO: Check if component name exists
             ComponentManager::get().addComponentToEntity(*e, component_name, value.as<sol::table>());
         }
         else {
@@ -34,11 +54,12 @@ Entity * EntityManager::loadEntity(const sol::table & table, const std::string &
 
     });
 
-    m_entities[e->getId()] = std::unique_ptr<Entity>(e);
+    m_entitiesToAdd.push_back(e);
+    return id;
+}
 
-    SystemManager::get().registerEntityInSystems(*e);
-
-    return e;
+void EntityManager::removeEntity(EntityId id) {
+    m_entitieIdsToRemove.push_back(id);
 }
 
 bool EntityManager::hasEntity(EntityId id) const {
@@ -92,3 +113,4 @@ void EntityManager::exposeToLua() {
     });
 
 }
+

@@ -11,8 +11,8 @@
 #include "../_entity/Entity.h"
 
 #include "./components/TransformComponent.h"
-#include "./components/SimpleGraphicsComponent.h"
-#include "./components/SimplePhraseComponent.h"
+#include "./components/SpriteComponent.h"
+#include "./components/PhraseComponent.h"
 
 class ComponentManager : public Manager<ComponentManager> {
     using ComponentVector = std::vector<Component*>;
@@ -47,12 +47,12 @@ private:
             std::type_index(typeid(TransformComponent))),
 
         std::make_pair(
-            meta::getName<SimpleGraphicsComponent>(),
-            std::type_index(typeid(SimpleGraphicsComponent))),
+            meta::getName<SpriteComponent>(),
+            std::type_index(typeid(SpriteComponent))),
 
         std::make_pair(
-            meta::getName<SimplePhraseComponent>(),
-            std::type_index(typeid(SimplePhraseComponent))),
+            meta::getName<PhraseComponent>(),
+            std::type_index(typeid(PhraseComponent))),
     };
 
     const FactoryMap m_factoryMap{
@@ -64,15 +64,15 @@ private:
             }),
 
         std::make_pair(std::type_index(typeid(
-            SimpleGraphicsComponent
+            SpriteComponent
             )),[](Entity& entity ,const sol::table& table) {
-                entity.makeComponent<SimpleGraphicsComponent>(table);
+                entity.makeComponent<SpriteComponent>(table);
             }),
 
         std::make_pair(std::type_index(typeid(
-            SimplePhraseComponent
+            PhraseComponent
             )),[](Entity& entity ,const sol::table& table) {
-                entity.makeComponent<SimplePhraseComponent>(table);
+                entity.makeComponent<PhraseComponent>(table);
             }),
 
     };
