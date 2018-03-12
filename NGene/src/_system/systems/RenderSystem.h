@@ -1,6 +1,10 @@
 #pragma once
 #include "../System.h"
 #include <map>
+#include <imgui.h>
+#include <imgui-SFML.h>
+#include <SFML/Graphics.hpp>
+#include <memory>
 
 /**
 System that handles all the rendering functionality in the application
@@ -12,13 +16,13 @@ System that handles all the rendering functionality in the application
 class RenderSystem : public System<RenderSystem> {
     using EntitiesGroup = std::map<EntityId, Entity*>;
 
-	friend class CRSP<RenderSystem>;
+    friend class CRSP<RenderSystem>;
 private:
     RenderSystem();
     ~RenderSystem();
 public:
 
-    void update() override; 
+    void update() override;
     void startUp() override;
     void shutDown() override;
     void registerEntity(Entity& entity) override;

@@ -23,6 +23,9 @@ public:
     void setType(const std::string& type);
     void setType(std::string&& type);
 
+    void setEnabled(bool);
+    bool isEnabled();
+
     static void exposeToLua();
 
     template<typename T, typename ... Args>
@@ -52,6 +55,7 @@ public:
 
 private:
     unsigned int m_id;
+    bool m_enabled{ true };
     std::string m_type;
     std::unordered_map<std::type_index, std::unique_ptr<Component>> m_components;
 };

@@ -1,6 +1,6 @@
 #include "SmallMemoryAllocator.h"
 #include <cassert>
-#include "../utils/OtherUtils.h"
+#include "Debug.h"
 #include <sstream>
 #include <File.h>
 

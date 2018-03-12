@@ -1,14 +1,21 @@
+#include "./utils/Debug.h"
 
-#include "./test/testmain.inl"
+#include "./time/TimeManager.h"
+#include "./render/RenderManager.h"
+#include "./debug/AppGUIManager.h"
+#include "./lua/LuaManager.h"
 
-#include "./_component/ComponentManager.h"
 #include "./_entity/EntityManager.h"
+#include "./_component/ComponentManager.h"
 #include "./_system/SystemManager.h"
 
 #include "./_system/systems/RenderSystem.h"
 
 void startUp() {
 
+    TimeManager::get().startUp();
+    RenderManager::get().startUp();
+    AppGUIManager::get().startUp();
     LuaManager::get().startUp();
 
     RenderSystem::get().startUp();
@@ -28,12 +35,15 @@ void shutDown() {
     RenderSystem::get().shutDown();
 
     LuaManager::get().shutDown();
+    AppGUIManager::get().shutDown();
+    RenderManager::get().shutDown();
+    TimeManager::get().shutDown();
 
 }
 
 void loadEntities() {
-    
-        LUA.script(R"(
+
+    LUA.script(R"(
             Entities = {
                 Cosa = {
                     TransformComponent = {
@@ -66,35 +76,37 @@ void loadEntities() {
             }
         )");
 
-        auto e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "OtraCosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "YOtraMas");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "YOtraMas");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+    auto e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+    e = EntityManager::get().loadEntity(LUA["Entities"], "OtraCosa");
+    e = EntityManager::get().loadEntity(LUA["Entities"], "YOtraMas");
+    e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+    e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+    e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+    e = EntityManager::get().loadEntity(LUA["Entities"], "YOtraMas");
+    e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+    e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+    e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+    e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
 
-        EntityManager::get().removeEntity(e);
-        EntityManager::get().removeEntity(5);
+    EntityManager::get().removeEntity(e);
+    EntityManager::get().removeEntity(5);
 
-        EntityManager::get().updateEntities();
+    EntityManager::get().updateEntities();
 }
 
 
 void accessEntitiesFromLua() {
     LUA.script(R"(
             print("Do we have an entity with the id 0? ", hasEntity(0))
-            print("Do we have an entity with the id 1? ", hasEntity(1))
-
-            print("Loading Entity 0, we expect this one to exist")
+            print("Getting Entity 0")
             local entity = getEntity(0);
             print("Entity returned: ", entity)
             if(entity) then
-                print("The entity existed, lets see if it has a phrase component")
+                print("The entity ", entity.type , " with the id " , entity.id , " existed, lets see if it has a phrase component")
+                entity.enabled = false
+                print("Is our entity enabled? ", entity.enabled)
+                entity.enabled = true
+                print("Is it now? ", entity.enabled)
                 local phrase = entity:getPhraseComponent()
                 if(phrase) then
                     print("It does! So let's hear what it has to say")
@@ -116,26 +128,35 @@ void accessEntitiesFromLua() {
         )");
 }
 
-void tickSystems() {
+inline void tick() {
 
-    RenderSystem::get().update();
+    { // ====== BEG OF RENDER ======
+        RenderManager::get().beginFrame();
+        /*
+        Everything that renders something goes in the
+        next scope
+        */
+        {
+            RenderSystem::get().update();
+        }
+        RenderManager::get().endFrame();
+    } // ====== END OF RENDER ======
+
     EntityManager::get().updateEntities();
-
 }
 
 
 int main() {
     startUp();
-    {
-        loadEntities();
-        accessEntitiesFromLua();
-        {
-            tickSystems();
-        }
+    loadEntities();
+
+    while (RenderManager::get().isWindowOpen()) {
+        tick();
     }
+
     shutDown();
-    
-    ENDL;
-    pressToContinue();
+
+    //ENDL;
+    //pressToContinue();
     return 0;
 }

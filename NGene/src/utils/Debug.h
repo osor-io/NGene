@@ -23,3 +23,5 @@
 #define LOG_PTR(x)
 
 #endif
+
+void pressToContinue() noexcept;

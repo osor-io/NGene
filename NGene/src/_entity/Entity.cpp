@@ -25,6 +25,14 @@ void Entity::setType(std::string&& type) {
     m_type = std::move(type);
 }
 
+void Entity::setEnabled(bool enabled) {
+    m_enabled = enabled;
+}
+
+bool Entity::isEnabled() {
+    return m_enabled;
+}
+
 #include "../_component/components/TransformComponent.h"
 #include "../_component/components/SpriteComponent.h"
 #include "../_component/components/PhraseComponent.h"
@@ -48,7 +56,7 @@ void Entity::exposeToLua() {
     LUA.new_usertype<Entity>("Entity",
 
         /*
-        We don't allow constructors to be called from Lua since 
+        We don't allow constructors to be called from Lua since
         we want the EntityManager to act as a factory for all the entities
         */
 
@@ -58,7 +66,11 @@ void Entity::exposeToLua() {
         */
         REGISTER_GET_COMPONENT(TransformComponent),
         REGISTER_GET_COMPONENT(SpriteComponent),
-        REGISTER_GET_COMPONENT(PhraseComponent)
+        REGISTER_GET_COMPONENT(PhraseComponent),
+
+        "id", sol::readonly_property(&Entity::getId),
+        "type", sol::readonly_property(&Entity::getType),
+        "enabled", sol::property(&Entity::isEnabled, &Entity::setEnabled)
 
         );
 
