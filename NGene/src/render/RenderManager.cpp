@@ -15,7 +15,7 @@ void RenderManager::startUp() {
     */
     m_renderWindow = std::make_unique<sf::RenderWindow>(sf::VideoMode(1200, 800), "NGene");
     m_renderWindow->setFramerateLimit(60);
-
+     
     ImGui::SFML::Init(*m_renderWindow);
 }
 
