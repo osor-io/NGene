@@ -1,12 +1,9 @@
 #pragma once
-#include "../Component.h"
-#include <string>
-#include <meta.h>
-#include <sol.hpp>
+#include "../ComponentTemplate.h"
 #include <SFML\Graphics.hpp>
 
 
-namespace config{
+namespace config {
 
     const sf::Vector2f minPosition(-2048.0f, -2048.0f);
     const sf::Vector2f maxPosition(2048.0f, 2048.0f);
@@ -22,17 +19,11 @@ struct LuaVector2f {
 };
 
 
-class TransformComponent : public Component {
-    friend auto meta::registerMembers<TransformComponent>();
+class TransformComponent : public ComponentTemplate<TransformComponent> {
 public:
     TransformComponent(EntityId id);
     TransformComponent(EntityId id, const sol::table& table);
     ~TransformComponent();
-
-    void drawDebugGUI() override;
-    void drawComponentInspector() override;
-
-    static void exposeToLua();
 
     sf::Vector2f getPosition() const;
     void setPosition(const sf::Vector2f& position);
@@ -40,8 +31,16 @@ public:
     LuaVector2f luaGetPosition() const;
     void luaSetPosition(const LuaVector2f& position);
 
-private:
+    // ====== BEG OF REQUIREMENTS ======
+    void drawComponentInspector() override;
+    static void exposeToLua();
+    friend auto meta::registerMembers<TransformComponent>();
+    // ====== END OF REQUIREMENTS ======
+
+    // ====== BEG OF MEMBERS ======
     sf::Vector2f m_position;
+    // ====== END OF MEMBERS ======
+
 };
 
 template<>

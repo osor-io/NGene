@@ -1,44 +1,48 @@
-#include "PhraseComponent.h"
+#include "ExampleComponent.h"
 #include "../lua/LuaManager.h"
 
+#define COMPONENT_TYPE ExampleComponent
+#define CTOR(x) x##::##x
+#define DTOR(x) x##::##~##x
+#define STRINGIFY(s) #s
 
-PhraseComponent::PhraseComponent(EntityId id) : ComponentTemplate(id, std::type_index(typeid(PhraseComponent))) {
-}
+CTOR(COMPONENT_TYPE)(EntityId id) : ComponentTemplate(id, std::type_index(typeid(COMPONENT_TYPE))) {}
 
-PhraseComponent::PhraseComponent(EntityId id, const sol::table& table)
-    : ComponentTemplate(id, std::type_index(typeid(PhraseComponent))) {
+CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
+    : ComponentTemplate(id, std::type_index(typeid(COMPONENT_TYPE))) {
 
-    meta::doForAllMembers<PhraseComponent>([this, &table](auto& member) {
+    meta::doForAllMembers<COMPONENT_TYPE>([this, &table](auto& member) {
         using MemberT = meta::get_member_type<decltype(member)>;
         auto name = member.getName();
         sol::object value_obj = table[name];
         assert(value_obj.valid());
-        auto value = value_obj.as<std::string>();
+        auto value = value_obj.as<MemberT>();
         member.set(*this, value);
     });
 
 }
 
-PhraseComponent::~PhraseComponent(){
+
+DTOR(COMPONENT_TYPE)() {
 }
 
 
-std::string PhraseComponent::getPhrase() const {
-    return m_phrase;
+int COMPONENT_TYPE::getMember() const {
+    return m_member;
 }
 
 
-void PhraseComponent::setPhrase(const std::string& phrase) {
-    m_phrase = phrase;
+void COMPONENT_TYPE::setMember(int member) {
+    m_member = member;
 }
 
 
-void PhraseComponent::drawComponentInspector() {
+void COMPONENT_TYPE::drawComponentInspector() {
 
     ImGui::SetNextWindowSize(ImVec2(400, 100), ImGuiCond_FirstUseEver);
     ImGui::Begin(calculateShowname().c_str(), &m_guiOpen);
 
-    ImGui::Text("Phrase: %s", m_phrase.c_str());
+    ImGui::Text("Example Member (int): %d", m_member);
 
     /*
     //To Check the window size and adjust default sizes:
@@ -50,10 +54,10 @@ void PhraseComponent::drawComponentInspector() {
 
 #define REGISTER_METHOD(method) #method , &PhraseComponent::method
 
-void PhraseComponent::exposeToLua()
+void COMPONENT_TYPE::exposeToLua()
 {
 
-    LUA.new_usertype<PhraseComponent>("PhraseComponent",
+    LUA.new_usertype<COMPONENT_TYPE>(STRINGIFY(COMPONENT_TYPE),
 
 
         /*
@@ -66,7 +70,7 @@ void PhraseComponent::exposeToLua()
         Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
         */
 
-        "phrase", sol::property(&PhraseComponent::getPhrase, &PhraseComponent::setPhrase)
+        "member", sol::property(&COMPONENT_TYPE::getMember, &COMPONENT_TYPE::setMember)
 
         );
 

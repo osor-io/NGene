@@ -1,25 +1,20 @@
 #pragma once
-#include "../Component.h"
-#include <string>
-#include <meta.h>
-#include <sol.hpp>
+#include "../ComponentTemplate.h"
 
-class PhraseComponent : public Component {
+class PhraseComponent : public ComponentTemplate<PhraseComponent> {
     friend auto meta::registerMembers<PhraseComponent>();
 public:
     PhraseComponent(EntityId id);
     PhraseComponent(EntityId id, const sol::table& table);
     ~PhraseComponent();
-    
-    void drawDebugGUI() override;
-    void drawComponentInspector() override;
-
-    static void exposeToLua();
 
     std::string getPhrase() const;
     void setPhrase(const std::string& phrase);
 
-private:
+    void drawComponentInspector() override;
+
+    static void exposeToLua();
+
     std::string m_phrase;
 };
 

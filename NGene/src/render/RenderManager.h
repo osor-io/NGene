@@ -19,6 +19,7 @@ public:
     void shutDown() override;
 
     bool isWindowOpen() const;
+    sf::RenderTarget* getMainRenderTarget();
 
     void beginFrame();
     void endFrame();

@@ -35,6 +35,10 @@ bool RenderManager::isWindowOpen() const {
     return m_renderWindow->isOpen();
 }
 
+sf::RenderTarget* RenderManager::getMainRenderTarget() {
+    return m_renderWindow.get();
+}
+
 void RenderManager::beginFrame() {
     sf::Event event;
     while (m_renderWindow->pollEvent(event)) {

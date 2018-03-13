@@ -1,8 +1,5 @@
 #pragma once
-#include "../Component.h"
-#include <string>
-#include <meta.h>
-#include <sol.hpp>
+#include "../ComponentTemplate.h"
 #include <SFML\Graphics.hpp>
 
 namespace config {
@@ -10,29 +7,30 @@ namespace config {
 }
 
 
-class SpriteComponent : public Component {
+class SpriteComponent : public ComponentTemplate<SpriteComponent> {
     friend auto meta::registerMembers<SpriteComponent>();
 public:
     SpriteComponent(EntityId id);
     SpriteComponent(EntityId id, const sol::table& table);
     ~SpriteComponent();
 
-    void drawDebugGUI() override;
-    void drawComponentInspector() override;
-
-    static void exposeToLua();
-
     std::string getFilename() const;
     void setFilename(const std::string& filename);
 
+    sf::Sprite* getSpritePtr();
     sf::Sprite getSprite() const;
     void setSprite(const sf::Sprite& sprite);
     void moveSprite(sf::Sprite&& sprite);
 
-private:
+    void drawComponentInspector() override;
+
+    static void exposeToLua();
+
     std::string m_filename;
     sf::Sprite m_sprite;
     sf::Texture m_texture;
+    unsigned int m_layer{1000};
+
 };
 
 template<>
@@ -43,7 +41,8 @@ inline auto meta::registerName<SpriteComponent>() {
 template<>
 inline auto meta::registerMembers<SpriteComponent>() {
     return members(
-        member("filename", &SpriteComponent::m_filename)
+        member("filename", &SpriteComponent::m_filename),
+        member("layer", &SpriteComponent::m_layer)
     );
 }
 

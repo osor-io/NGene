@@ -108,6 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)dep\include;C:\dep\sfml\include;$(ProjectDir)src\utils;C:\dep\GSL\include;C:\dep\LuaJIT\include</AdditionalIncludeDirectories>
+      <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>C:\dep\LuaJIT\lib;C:\dep\sfml\lib</AdditionalLibraryDirectories>
@@ -166,6 +167,7 @@
   <ItemGroup>
     <ClCompile Include="dep\src\ImGuizmo.cpp" />
     <ClCompile Include="dep\src\ImSequencer.cpp" />
+    <ClCompile Include="src\_component\examples\ExampleComponent.cpp" />
     <ClCompile Include="src\config\Config.cpp" />
     <ClCompile Include="src\debug\cafe.inl" />
     <ClCompile Include="src\render\RenderManager.cpp" />
@@ -197,12 +199,14 @@
   <ItemGroup>
     <ClInclude Include="dep\include\ImGuizmo.h" />
     <ClInclude Include="dep\include\ImSequencer.h" />
+    <ClInclude Include="src\_component\examples\ExampleComponent.h" />
     <ClInclude Include="src\config\Config.h" />
     <ClInclude Include="src\render\RenderManager.h" />
     <ClInclude Include="src\debug\AppGUIManager.h" />
     <ClInclude Include="src\utils\File.h" />
     <ClInclude Include="src\lua\LuaManager.h" />
     <ClInclude Include="src\utils\Manager.h" />
+    <ClInclude Include="src\_component\ComponentTemplate.h" />
     <ClInclude Include="src\_system\systems\RenderSystem.h" />
     <ClInclude Include="src\utils\Debug.h" />
     <ClInclude Include="src\math\OtherMath.h" />

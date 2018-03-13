@@ -5,6 +5,7 @@
 #include <imgui-SFML.h>
 #include <SFML/Graphics.hpp>
 #include <memory>
+#include <../_component/components/TransformComponent.h>
 
 /**
 System that handles all the rendering functionality in the application
@@ -15,6 +16,8 @@ System that handles all the rendering functionality in the application
 */
 class RenderSystem : public System<RenderSystem> {
     using EntitiesGroup = std::map<EntityId, Entity*>;
+    using LayerVectors = std::map<unsigned int, std::vector<Entity*>>;
+
 
     friend class CRSP<RenderSystem>;
 private:
@@ -31,6 +34,6 @@ public:
 
 private:
     EntitiesGroup m_entities;
-
+    LayerVectors m_sortedEntities;
 };
 
