@@ -1,5 +1,6 @@
 #include "Entity.h"
 #include "../lua/LuaManager.h"
+#include <sstream>
 
 Entity::Entity(EntityId id) : m_id(id) {
 }
@@ -20,13 +21,21 @@ void Entity::setType(const std::string& type) {
     m_type = type;
 }
 
-
 void Entity::setType(std::string&& type) {
     m_type = std::move(type);
 }
 
 void Entity::setEnabled(bool enabled) {
     m_enabled = enabled;
+}
+
+std::string Entity::getShowName() {
+    if (m_showName.size() == 0) {
+        auto ss = std::stringstream{};
+        ss << "[" << m_id << "] " << m_type << " (" << m_components.size() << ")";
+        m_showName = ss.str();
+    }
+    return m_showName;
 }
 
 bool Entity::isEnabled() {
@@ -74,4 +83,58 @@ void Entity::exposeToLua() {
 
         );
 
+}
+
+#include <imgui.h>
+#include <imgui-SFML.h>
+#include <SFML/Graphics.hpp>
+#include "../config/Config.h"
+
+void Entity::drawDebugGUI() {
+
+
+    //ImGui::PushID(this);
+    auto rustyPalette = config::getRustyPalette();
+
+    auto open = ImGui::CollapsingHeader(getShowName().c_str());
+   
+    if (open)
+    {
+
+        ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth());
+
+        for (auto& c : m_components) {
+            c.second->drawDebugGUI();
+        }
+
+        ImGui::PopItemWidth();
+    }
+
+    //ImGui::PopID();
+
+
+    /*
+
+    //Implementation for tree view
+
+    ImGui::PushID(getId());                      // Use object uid as identifier. Most commonly you could also use the object pointer as a base ID.
+    ImGui::AlignTextToFramePadding();  // Text and Tree nodes are less high than regular widgets, here we add vertical spacing to make the tree lines equal high.
+    bool node_open = ImGui::TreeNode("Entity", "[%u] %s", getId(), this->getType().c_str());
+    ImGui::NextColumn();
+    ImGui::AlignTextToFramePadding();
+    ImGui::Text("Entity with the id [%d] of type [%s] with [%d] components", getId(), getType().c_str(), m_components.size());
+    ImGui::NextColumn();
+    if (node_open)
+    {
+        for (auto& c : m_components){
+
+            auto component = c.second.get();
+
+            component->drawDebugGUI();
+
+        }
+        ImGui::TreePop();
+    }
+    ImGui::PopID();
+    */
 }

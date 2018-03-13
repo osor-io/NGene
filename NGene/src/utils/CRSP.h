@@ -1,4 +1,5 @@
 #pragma once
+#include "Debug.h"
 
 /**
 Curiously Recurring Template Pattern applyed to Singletons
@@ -21,7 +22,6 @@ public:
         static T s_instance;
         return s_instance;
     }
-
 protected:
     CRSP() {}
     virtual ~CRSP() {}
@@ -32,4 +32,5 @@ private:
 
     CRSP(const CRSP&&) = delete;
     CRSP& operator=(const CRSP&&) = delete;
+
 };

@@ -164,6 +164,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="dep\src\ImGuizmo.cpp" />
+    <ClCompile Include="dep\src\ImSequencer.cpp" />
+    <ClCompile Include="src\config\Config.cpp" />
     <ClCompile Include="src\render\RenderManager.cpp" />
     <ClCompile Include="src\debug\AppGUIManager.cpp" />
     <ClCompile Include="src\utils\File.cpp" />
@@ -191,6 +194,9 @@
     <ClCompile Include="src\time\TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dep\include\ImGuizmo.h" />
+    <ClInclude Include="dep\include\ImSequencer.h" />
+    <ClInclude Include="src\config\Config.h" />
     <ClInclude Include="src\render\RenderManager.h" />
     <ClInclude Include="src\debug\AppGUIManager.h" />
     <ClInclude Include="src\utils\File.h" />

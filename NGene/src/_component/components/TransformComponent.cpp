@@ -1,23 +1,48 @@
 #include "TransformComponent.h"
 #include "../lua/LuaManager.h"
 #include <Debug.h>
+#include <imgui.h>
+#include <imgui-SFML.h>
+#include <SFML/Graphics.hpp>
+#include "../_entity/Entity.h"
+#include <sstream>
+#include <ImGuizmo.h>
 
-TransformComponent::TransformComponent() : Component(std::type_index(typeid(TransformComponent))) {}
+TransformComponent::TransformComponent(EntityId id) : Component(id, std::type_index(typeid(TransformComponent))) {
+}
 
 
-TransformComponent::TransformComponent(const sol::table& table) : Component(std::type_index(typeid(TransformComponent))) {
+TransformComponent::TransformComponent(EntityId id, const sol::table& table) : Component(id, std::type_index(typeid(TransformComponent))) {
 
- 
+
     sol::object value_x = table["x"];
     sol::object value_y = table["y"];
     assert(value_x.valid() && value_y.valid());
 
     m_position = sf::Vector2f(value_x.as<float>(), value_y.as<float>());
-    
+
 }
 
 
 TransformComponent::~TransformComponent() {}
+
+void TransformComponent::drawComponentInspector() {
+
+    ImGui::SetNextWindowSize(ImVec2(400, 90), ImGuiCond_FirstUseEver);
+    ImGui::Begin(calculateShowname<TransformComponent>(m_parentId).c_str(), &m_guiOpen);
+    ImGui::Text("Position: "); ImGui::SameLine(100); ImGui::DragFloat2("##Position", &(m_position.x), 1.0f, config::minPosition.x, config::maxPosition.x);
+
+    /*
+    //To Check the window size and adjust default sizes: 
+    ImGui::Text("Window Size: (%f, %f)", ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+    */
+    ImGui::End();
+
+}
+
+void TransformComponent::drawDebugGUI() {
+    return Component::drawBullet<TransformComponent>(m_parentId);
+}
 
 
 sf::Vector2f TransformComponent::getPosition() const {

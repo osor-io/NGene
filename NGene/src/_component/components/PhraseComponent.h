@@ -7,9 +7,12 @@
 class PhraseComponent : public Component {
     friend auto meta::registerMembers<PhraseComponent>();
 public:
-    PhraseComponent();
-    PhraseComponent(const sol::table& table);
+    PhraseComponent(EntityId id);
+    PhraseComponent(EntityId id, const sol::table& table);
     ~PhraseComponent();
+    
+    void drawDebugGUI() override;
+    void drawComponentInspector() override;
 
     static void exposeToLua();
 

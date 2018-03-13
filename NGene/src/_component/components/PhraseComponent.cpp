@@ -1,14 +1,16 @@
 #include "PhraseComponent.h"
 #include "../lua/LuaManager.h"
+#include <imgui.h>
+#include <imgui-SFML.h>
+#include <SFML/Graphics.hpp>
 
-
-PhraseComponent::PhraseComponent() : Component(std::type_index(typeid(PhraseComponent))) {
+PhraseComponent::PhraseComponent(EntityId id) : Component(id, std::type_index(typeid(PhraseComponent))) {
 }
 
-PhraseComponent::PhraseComponent(const sol::table& table)
-    : Component(std::type_index(typeid(PhraseComponent))) {
+PhraseComponent::PhraseComponent(EntityId id, const sol::table& table)
+    : Component(id, std::type_index(typeid(PhraseComponent))) {
 
-    meta::doForAllMembers<PhraseComponent>([this,&table](auto& member) {
+    meta::doForAllMembers<PhraseComponent>([this, &table](auto& member) {
         using MemberT = meta::get_member_type<decltype(member)>;
         auto name = member.getName();
         sol::object value_obj = table[name];
@@ -19,7 +21,27 @@ PhraseComponent::PhraseComponent(const sol::table& table)
 
 }
 
-PhraseComponent::~PhraseComponent() {
+PhraseComponent::~PhraseComponent(){
+}
+
+
+void PhraseComponent::drawDebugGUI() {
+    return Component::drawBullet<PhraseComponent>(m_parentId);
+}
+
+void PhraseComponent::drawComponentInspector() {
+
+    ImGui::SetNextWindowSize(ImVec2(400, 100), ImGuiCond_FirstUseEver);
+    ImGui::Begin(calculateShowname<PhraseComponent>(m_parentId).c_str(), &m_guiOpen);
+
+    ImGui::Text("Phrase: %s", m_phrase.c_str());
+
+    /*
+    //To Check the window size and adjust default sizes:
+    ImGui::Text("Window Size: (%f, %f)", ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+    */
+    ImGui::End();
+
 }
 
 #define REGISTER_METHOD(method) #method , &PhraseComponent::method

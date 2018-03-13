@@ -483,7 +483,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
             ImGui::Checkbox("Enable extra group", &closable_group);
             if (ImGui::CollapsingHeader("Header"))
             {
-                ImGui::Text("IsItemHovered: %d", IsItemHovered());
+                ImGui::Text("IsItemHovered: %d", ImGui::IsItemHovered());
                 for (int i = 0; i < 5; i++)
                     ImGui::Text("Some content %d", i);
             }

@@ -5,12 +5,20 @@
 #include <sol.hpp>
 #include <SFML\Graphics.hpp>
 
+namespace config {
+    const float sprite_padding = 20.0f;
+}
+
+
 class SpriteComponent : public Component {
     friend auto meta::registerMembers<SpriteComponent>();
 public:
-    SpriteComponent();
-    SpriteComponent(const sol::table& table);
+    SpriteComponent(EntityId id);
+    SpriteComponent(EntityId id, const sol::table& table);
     ~SpriteComponent();
+
+    void drawDebugGUI() override;
+    void drawComponentInspector() override;
 
     static void exposeToLua();
 
@@ -24,6 +32,7 @@ public:
 private:
     std::string m_filename;
     sf::Sprite m_sprite;
+    sf::Texture m_texture;
 };
 
 template<>

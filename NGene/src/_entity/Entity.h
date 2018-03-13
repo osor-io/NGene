@@ -1,12 +1,14 @@
 #pragma once
 
-#include "../_component/Component.h"
 #include <unordered_map>
 #include <string>
 #include <typeindex>
 #include <memory>
+#include "../memory/SmallMemoryAllocator.h"
 
 class EntityManager;
+
+class Component;
 
 using EntityId = unsigned int;
 
@@ -16,6 +18,14 @@ private:
     Entity(EntityId id);
 public:
     ~Entity();
+    
+    void* operator new(size_t count) {
+        return SmallMemoryAllocator::get().alloc(count);
+    }
+
+    void operator delete(void* ptr) {
+        return SmallMemoryAllocator::get().dealloc(ptr);
+    }
 
     EntityId getId() const;
 
@@ -27,6 +37,9 @@ public:
     bool isEnabled();
 
     static void exposeToLua();
+
+    void drawDebugGUI();
+    std::string getShowName();
 
     template<typename T, typename ... Args>
     T* makeComponent(Args&& ... args) {
@@ -54,6 +67,7 @@ public:
     }
 
 private:
+    std::string m_showName;
     unsigned int m_id;
     bool m_enabled{ true };
     std::string m_type;

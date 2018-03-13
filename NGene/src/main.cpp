@@ -54,7 +54,7 @@ void loadEntities() {
                         phrase = "I'm saying hi from this lua Object!! :D"
                     },
                     SpriteComponent = {
-                        filename = "file.png"
+                        filename = "C:/tmp/test.png"
                     }
                 },
                 OtraCosa = {

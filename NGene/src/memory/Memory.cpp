@@ -3,6 +3,7 @@
 #include <Debug.h>
 
 
+/*
 void* operator new(std::size_t count) {
     return SmallMemoryAllocator::get().alloc(count);
 }
@@ -10,3 +11,5 @@ void* operator new(std::size_t count) {
 void operator delete(void* ptr) {
     SmallMemoryAllocator::get().dealloc(ptr);
 }
+*/
+

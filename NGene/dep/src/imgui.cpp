@@ -6411,12 +6411,15 @@ bool ImGui::CloseButton(ImGuiID id, const ImVec2& pos, float radius)
     const ImVec2 center = bb.GetCenter();
     window->DrawList->AddCircleFilled(center, ImMax(2.0f, radius), col, 12);
 
+    /*
+    //@@CHANGED: I don't like how that cross looks here, I much prefer to just have the circle with the colors
     const float cross_extent = (radius * 0.7071f) - 1.0f;
     if (hovered)
     {
         window->DrawList->AddLine(center + ImVec2(+cross_extent,+cross_extent), center + ImVec2(-cross_extent,-cross_extent), GetColorU32(ImGuiCol_Text));
         window->DrawList->AddLine(center + ImVec2(+cross_extent,-cross_extent), center + ImVec2(-cross_extent,+cross_extent), GetColorU32(ImGuiCol_Text));
     }
+    */
 
     return pressed;
 }
@@ -6784,7 +6787,18 @@ bool ImGui::CollapsingHeader(const char* label, ImGuiTreeNodeFlags flags)
     if (window->SkipItems)
         return false;
 
-    return TreeNodeBehavior(window->GetID(label), flags | ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_NoTreePushOnOpen, label);
+    //@@CHANGED
+    ImGui::PushStyleColor(ImGuiCol_Header, (ImVec4)ImColor(255, 233, 221));
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, (ImVec4)ImColor(255, 218, 197));
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, (ImVec4)ImColor(255, 127, 74));
+    ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4)ImColor(10, 10, 10));
+    
+    auto ret = TreeNodeBehavior(window->GetID(label), flags | ImGuiTreeNodeFlags_CollapsingHeader | ImGuiTreeNodeFlags_NoTreePushOnOpen, label);
+
+    //@@CHANGED
+    ImGui::PopStyleColor(4);
+    
+    return ret;
 }
 
 bool ImGui::CollapsingHeader(const char* label, bool* p_open, ImGuiTreeNodeFlags flags)

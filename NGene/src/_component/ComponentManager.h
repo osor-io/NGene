@@ -60,19 +60,19 @@ private:
         std::make_pair(std::type_index(typeid(
             TransformComponent
             )),[](Entity& entity ,const sol::table& table) {
-                entity.makeComponent<TransformComponent>(table);
+                entity.makeComponent<TransformComponent>(entity.getId(), table);
             }),
 
         std::make_pair(std::type_index(typeid(
             SpriteComponent
             )),[](Entity& entity ,const sol::table& table) {
-                entity.makeComponent<SpriteComponent>(table);
+                entity.makeComponent<SpriteComponent>(entity.getId(), table);
             }),
 
         std::make_pair(std::type_index(typeid(
             PhraseComponent
             )),[](Entity& entity ,const sol::table& table) {
-                entity.makeComponent<PhraseComponent>(table);
+                entity.makeComponent<PhraseComponent>(entity.getId(), table);
             }),
 
     };

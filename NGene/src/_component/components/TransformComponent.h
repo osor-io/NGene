@@ -6,6 +6,13 @@
 #include <SFML\Graphics.hpp>
 
 
+namespace config{
+
+    const sf::Vector2f minPosition(-2048.0f, -2048.0f);
+    const sf::Vector2f maxPosition(2048.0f, 2048.0f);
+
+}
+
 struct LuaVector2f {
     static sf::Vector2f toSf(LuaVector2f vector) { return sf::Vector2f(vector.x, vector.y); }
     LuaVector2f() {}
@@ -15,13 +22,15 @@ struct LuaVector2f {
 };
 
 
-
 class TransformComponent : public Component {
     friend auto meta::registerMembers<TransformComponent>();
 public:
-    TransformComponent();
-    TransformComponent(const sol::table& table);
+    TransformComponent(EntityId id);
+    TransformComponent(EntityId id, const sol::table& table);
     ~TransformComponent();
+
+    void drawDebugGUI() override;
+    void drawComponentInspector() override;
 
     static void exposeToLua();
 
