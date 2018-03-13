@@ -99,6 +99,9 @@
     <ClCompile Include="dep\src\ImSequencer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\debug\cafe.inl">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dep\include\sol.hpp">

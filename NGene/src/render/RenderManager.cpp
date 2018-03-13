@@ -13,7 +13,7 @@ void RenderManager::startUp() {
     /*
     We first initialize the window and the debug GUI.
     */
-    m_renderWindow = std::make_unique<sf::RenderWindow>(sf::VideoMode(1200, 800), "Furrula");
+    m_renderWindow = std::make_unique<sf::RenderWindow>(sf::VideoMode(1200, 800), "NGene");
     m_renderWindow->setFramerateLimit(60);
 
     ImGui::SFML::Init(*m_renderWindow);

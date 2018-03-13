@@ -4,6 +4,7 @@
 #include <imgui.h>
 #include <imgui-SFML.h>
 #include <SFML/Graphics.hpp>
+#include <fstream>
 
 SpriteComponent::SpriteComponent(EntityId id) : Component(id, std::type_index(typeid(SpriteComponent))) {
 }
@@ -22,7 +23,9 @@ SpriteComponent::SpriteComponent(EntityId id, const sol::table& table)
     });
 
     if (m_filename.size() > 0) {
-        if (m_texture.loadFromFile(m_filename)) {
+        std::ifstream f(m_filename.c_str());
+        
+        if (f.good() && m_texture.loadFromFile(m_filename)) {
             m_sprite = sf::Sprite(m_texture);
         }
     }
@@ -60,7 +63,7 @@ void SpriteComponent::drawComponentInspector() {
 
 
     //To Check the window size and adjust default sizes:
-    ImGui::Text("Window Size: (%f, %f)", ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+    //ImGui::Text("Window Size: (%f, %f)", ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
 
     ImGui::End();
 
