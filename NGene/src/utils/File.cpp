@@ -1,5 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS //Because we have to use fopen here
-
 #include "File.h"
 #include <Debug.h>
 #include <cstdio>

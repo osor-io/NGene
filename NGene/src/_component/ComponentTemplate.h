@@ -63,6 +63,11 @@ the inspector when using the debug GUI:
 
         void drawComponentInspector() override;
 
+- Implement the JSON serialization methods to save and load state of components:
+
+        json toJson() override;
+        void loadJson(const json& j) override;
+
 - If we want the Entity Factory to be able to instantiate the entity, which we
 probably do, we need to go to the ComponentManager.h file and register the component
 class in both the (name, typeid) map and the (typeid, function) map with the function
@@ -79,7 +84,7 @@ class ComponentTemplate : public Component {
 public:
     ComponentTemplate(EntityId id, std::type_index type) : Component(id, type) {}
     ~ComponentTemplate() {}
-    
+
     void drawDebugGUI() {
         ImGui::PushID(this);
         if (m_guiOpen) { drawComponentInspector(); }
@@ -95,6 +100,10 @@ public:
             m_guiOpen = true;
         };
         ImGui::PopID();
+    }
+
+    virtual std::string getComponentTypeName() {
+        return meta::getName<T>();
     }
 
 protected:

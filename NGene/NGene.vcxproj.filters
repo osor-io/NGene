@@ -105,6 +105,9 @@
     <ClCompile Include="src\_component\examples\ExampleComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="dep\src\StringCast.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dep\include\sol.hpp">
@@ -230,6 +233,15 @@
     <ClInclude Include="src\_component\examples\ExampleComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="dep\include\json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\JsonCast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dep\include\StringCast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="dep\include\Member.inl">
@@ -242,6 +254,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="src\test\testmain.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="dep\include\JsonCast.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

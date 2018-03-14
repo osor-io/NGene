@@ -32,6 +32,20 @@ SpriteComponent::SpriteComponent(EntityId id, const sol::table& table)
 SpriteComponent::~SpriteComponent() {
 }
 
+json SpriteComponent::toJson() {
+    auto j = json{};
+
+    j["filename"] = m_filename;
+    j["layer"] = m_layer;
+
+    return j;
+}
+
+void SpriteComponent::loadJson(const json & j) {
+    m_filename = j["filename"].get<std::string>();
+    m_layer = j["layer"];
+}
+
 
 std::string SpriteComponent::getFilename() const {
     return m_filename;
@@ -93,7 +107,7 @@ void SpriteComponent::drawComponentInspector() {
 
 void SpriteComponent::exposeToLua() {
 
-    LUA.new_usertype<SpriteComponent>("SpriteComponent",
+    LUA.new_usertype<SpriteComponent>(meta::getName<SpriteComponent>(),
 
 
         /*

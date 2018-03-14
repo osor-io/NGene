@@ -4,7 +4,7 @@
 #include <Debug.h>
 #include "../_entity/Entity.h"
 #include "../memory/SmallMemoryAllocator.h"
-
+#include "json.hpp"
 
 class Component {
 public:
@@ -20,6 +20,11 @@ public:
     }
 
     virtual void drawDebugGUI() = 0;
+
+    virtual json toJson() = 0;
+    virtual void loadJson(const json& j) = 0;
+
+    virtual std::string getComponentTypeName() = 0;
 
 protected:
     bool m_guiOpen{ false };

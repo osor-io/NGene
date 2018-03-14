@@ -14,6 +14,9 @@ public:
     SpriteComponent(EntityId id, const sol::table& table);
     ~SpriteComponent();
 
+    json toJson() override;
+    void loadJson(const json& j) override;
+
     std::string getFilename() const;
     void setFilename(const std::string& filename);
 

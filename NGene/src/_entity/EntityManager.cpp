@@ -2,7 +2,7 @@
 #include "../_component/ComponentManager.h"
 #include "../_system/SystemManager.h"
 #include "../lua/LuaManager.h"
-#include <experimental\coroutine>
+#include <sstream>
 
 EntityManager::EntityManager() {}
 
@@ -38,8 +38,12 @@ void EntityManager::updateEntities() {
 EntityId EntityManager::loadEntity(const sol::table & table, const std::string & name)
 {
     auto id = m_nextId++;
-    auto e = new Entity(id);
-    e->setType(name);
+
+    auto ss = std::stringstream{};
+    ss << name << "_" << id;
+
+    auto e = new Entity(id, ss.str(), name);
+
     const sol::table componentTable = table[name];
     componentTable.for_each([&e](const auto& key, const auto& value) {
 

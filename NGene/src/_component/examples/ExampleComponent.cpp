@@ -27,6 +27,13 @@ DTOR(COMPONENT_TYPE)() {
 }
 
 
+json COMPONENT_TYPE::toJson() {
+    return json();
+}
+
+void COMPONENT_TYPE::loadJson(const json& j) {
+}
+
 int COMPONENT_TYPE::getMember() const {
     return m_member;
 }

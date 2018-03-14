@@ -57,15 +57,6 @@ void RenderSystem::update() {
 }
 
 
-void RenderSystem::registerSystem() {
-    SystemManager::get().addSystemRegisterFunc([this](Entity& entity) {
-        registerEntity(entity);
-    });
-    SystemManager::get().addSystemDeregisterFunc([this](EntityId id) {
-        deregisterEntity(id);
-    });
-}
-
 void RenderSystem::registerEntity(Entity& entity) {
     if (entity.hasComponent<SpriteComponent>() && entity.hasComponent<TransformComponent>()) {
         m_entities[entity.getId()] = &entity;

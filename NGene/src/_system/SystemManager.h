@@ -2,7 +2,6 @@
 #include <vector>
 #include <functional>
 #include "Manager.h"
-#include "./System.h"
 #include "../_entity/Entity.h"
 
 class SystemManager : public Manager<SystemManager> {

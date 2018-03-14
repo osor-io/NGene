@@ -33,7 +33,7 @@ void TransformComponent::drawComponentInspector() {
     ImGui::Text("Position: "); ImGui::SameLine(100); ImGui::DragFloat2("##Position", &(m_position.x), 1.0f, config::minPosition.x, config::maxPosition.x);
 
     /*
-    //To Check the window size and adjust default sizes: 
+    //To Check the window size and adjust default sizes:
     ImGui::Text("Window Size: (%f, %f)", ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
     */
     ImGui::End();
@@ -41,6 +41,26 @@ void TransformComponent::drawComponentInspector() {
 }
 
 
+
+json TransformComponent::toJson() {
+
+    auto j = json{};
+
+    j["position"]["x"] = m_position.x;
+    j["position"]["y"] = m_position.y;
+
+    return j;
+}
+
+void TransformComponent::loadJson(const json& j) {
+
+    auto v = sf::Vector2f{};
+
+    v.x = j["position"]["x"];
+    v.y = j["position"]["y"];
+
+    setPosition(v);
+}
 
 sf::Vector2f TransformComponent::getPosition() const {
     return m_position;
@@ -81,7 +101,7 @@ void TransformComponent::exposeToLua() {
 
         );
 
-    LUA.new_usertype<TransformComponent>("TransformComponent",
+    LUA.new_usertype<TransformComponent>(meta::getName<TransformComponent>(),
 
 
         /*

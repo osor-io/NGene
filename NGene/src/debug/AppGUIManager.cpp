@@ -1,4 +1,3 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include "AppGUIManager.h"
 #include "../time/TimeManager.h"
 #include "../_entity/EntityManager.h"
@@ -21,7 +20,7 @@ void AppGUIManager::startUp() {
 
     style->WindowPadding = ImVec2(15, 15);
     style->WindowRounding = 5.0f;
-    style->FramePadding = ImVec2(5, 5);
+    style->FramePadding = ImVec2(10, 5);
     style->FrameRounding = 4.0f;
     style->ItemSpacing = ImVec2(12, 8);
     style->ItemInnerSpacing = ImVec2(8, 6);
@@ -119,19 +118,17 @@ void AppGUIManager::drawCornerOverlayDebugInfo() {
 void AppGUIManager::drawEntityComponentEditor() {
 
     ImGui::SetNextWindowSize(ImVec2(430, 450), ImGuiCond_FirstUseEver);
-    if (!ImGui::Begin("Entities"))
+    if (!ImGui::Begin("Entities & Components"))
     {
         ImGui::End();
         return;
     }
 
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
     for (auto key : EntityManager::get().getEntityKeys()) {
         EntityManager::get().getEntity(key)->drawDebugGUI();
     }
 
-    ImGui::PopStyleVar();
     ImGui::End();
 
 

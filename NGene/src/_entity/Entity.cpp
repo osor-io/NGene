@@ -1,9 +1,13 @@
 #include "Entity.h"
 #include "../lua/LuaManager.h"
 #include <sstream>
+#include <Debug.h>
 
-Entity::Entity(EntityId id) : m_id(id) {
+Entity::Entity(EntityId id, std::string&& name, const std::string& type) : m_id(id), m_type(type) {
+    setName(name);
+    generateShowName();
 }
+
 
 Entity::~Entity() {
 }
@@ -25,17 +29,34 @@ void Entity::setType(std::string&& type) {
     m_type = std::move(type);
 }
 
+
+std::string Entity::getName() const {
+    return m_name;
+}
+
+const std::string & Entity::getNameRef() const {
+    return m_name;
+}
+
+void Entity::setName(const std::string& name) {
+    m_name = name;
+    generateShowName();
+}
+
 void Entity::setEnabled(bool enabled) {
     m_enabled = enabled;
 }
 
 std::string Entity::getShowName() {
-    if (m_showName.size() == 0) {
-        auto ss = std::stringstream{};
-        ss << "[" << m_id << "] " << m_type << " (" << m_components.size() << ")";
-        m_showName = ss.str();
-    }
     return m_showName;
+}
+
+void Entity::generateShowName() {
+
+    auto ss = std::stringstream{};
+    ss << "[" << m_id << "] " << m_type << ": " << m_name << " (" << m_components.size() << ")";
+    m_showName = ss.str();
+
 }
 
 bool Entity::isEnabled() {
@@ -79,62 +100,71 @@ void Entity::exposeToLua() {
 
         "id", sol::readonly_property(&Entity::getId),
         "type", sol::readonly_property(&Entity::getType),
-        "enabled", sol::property(&Entity::isEnabled, &Entity::setEnabled)
+        "enabled", sol::property(&Entity::isEnabled, &Entity::setEnabled),
+        "name", sol::property(&Entity::getName, &Entity::setName)
 
         );
 
 }
 
-#include <imgui.h>
-#include <imgui-SFML.h>
-#include <SFML/Graphics.hpp>
-#include "../config/Config.h"
+
+int textEditCallback(ImGuiTextEditCallbackData *data) {
+    auto entity = reinterpret_cast<Entity*>(data->UserData);
+    entity->setName(std::string(data->Buf));
+    entity->generateShowName();
+    entity->m_changedHeader = true;
+    return 0;
+}
+
 
 void Entity::drawDebugGUI() {
 
-
-    //ImGui::PushID(this);
     auto rustyPalette = config::getRustyPalette();
 
-    auto open = ImGui::CollapsingHeader(getShowName().c_str());
-   
-    if (open)
-    {
+    char name_arr[config::max_name_length];
 
-        ImGui::PushItemWidth(ImGui::GetWindowContentRegionWidth());
+    strncpy(name_arr, m_name.c_str(), sizeof(name_arr));
+    name_arr[sizeof(name_arr) - 1] = 0;
+
+    auto open = ImGui::CollapsingHeader(name_arr);
+
+    if (open || m_changedHeader) {
+
+        m_changedHeader = false;
+
+        ImGui::Text("Id: %d", m_id); ImGui::SameLine(100); ImGui::Text("Type: %s", m_type.c_str());
+        ImGui::Text("Name: "); ImGui::SameLine(100); ImGui::InputText("##Name", name_arr, config::max_name_length, ImGuiInputTextFlags_CallbackAlways, textEditCallback, reinterpret_cast<void*>(this));
 
         for (auto& c : m_components) {
             c.second->drawDebugGUI();
         }
-
-        ImGui::PopItemWidth();
     }
 
-    //ImGui::PopID();
+}
 
+json Entity::toJson() {
+    auto j = json{};
+    auto content = json{};
 
-    /*
+    to_json(content, *this);
 
-    //Implementation for tree view
+    auto components = json{};
 
-    ImGui::PushID(getId());                      // Use object uid as identifier. Most commonly you could also use the object pointer as a base ID.
-    ImGui::AlignTextToFramePadding();  // Text and Tree nodes are less high than regular widgets, here we add vertical spacing to make the tree lines equal high.
-    bool node_open = ImGui::TreeNode("Entity", "[%u] %s", getId(), this->getType().c_str());
-    ImGui::NextColumn();
-    ImGui::AlignTextToFramePadding();
-    ImGui::Text("Entity with the id [%d] of type [%s] with [%d] components", getId(), getType().c_str(), m_components.size());
-    ImGui::NextColumn();
-    if (node_open)
-    {
-        for (auto& c : m_components){
-
-            auto component = c.second.get();
-
-            component->drawDebugGUI();
-
-        }
-        ImGui::TreePop();
+    for (const auto& c : m_components) {
+        components[c.second->getComponentTypeName()] = c.second->toJson();
     }
-    ImGui::PopID();
-    */
+
+    content["Components"] = components;
+    j["Entity"] = content;
+
+    return j;
+}
+
+void Entity::loadJson(const json & j){
+    auto content = j["Entity"];
+    from_json(content, *this);
+    auto components = content["Components"];
+    for (const auto& c : m_components) {
+        c.second->loadJson(components[c.second->getComponentTypeName()]);
+    }
 }

@@ -2,6 +2,7 @@
 
 #include "../utils/CRSP.h"
 #include "../_entity/Entity.h"
+#include "./SystemManager.h"
 
 /**
 Base Class for every system in the engine. They should be retrieved
@@ -24,5 +25,12 @@ public:
     virtual void shutDown() = 0;
     virtual void registerEntity(Entity& entity) = 0;
     virtual void deregisterEntity(EntityId id) = 0;
-    virtual void registerSystem() = 0;
+    void registerSystem() {
+        SystemManager::get().addSystemRegisterFunc([this](Entity& entity) {
+            registerEntity(entity);
+        });
+        SystemManager::get().addSystemDeregisterFunc([this](EntityId id) {
+            deregisterEntity(id);
+        });
+    }
 };

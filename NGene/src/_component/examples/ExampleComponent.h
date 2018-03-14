@@ -8,6 +8,9 @@ public:
     ExampleComponent(EntityId id, const sol::table& table);
     ~ExampleComponent();
 
+    json toJson() override;
+    void loadJson(const json& j) override;
+
     int getMember() const;
     void setMember(int member); // Use const& when appropriate
 

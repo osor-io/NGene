@@ -25,6 +25,9 @@ public:
     TransformComponent(EntityId id, const sol::table& table);
     ~TransformComponent();
 
+    json toJson() override;
+    void loadJson(const json& j) override;
+
     sf::Vector2f getPosition() const;
     void setPosition(const sf::Vector2f& position);
 

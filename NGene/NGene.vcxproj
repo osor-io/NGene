@@ -121,7 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)dep\include;C:\dep\sfml\include;$(ProjectDir)src\utils;C:\dep\GSL\include;$(ProjectDir)src\utils;C:\dep\LuaJIT\include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SFML_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
@@ -154,7 +154,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)dep\include;C:\dep\sfml\include;$(ProjectDir)src\utils;C:\dep\GSL\include;$(ProjectDir)src\utils;C:\dep\LuaJIT\include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>SFML_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SFML_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
@@ -167,6 +167,7 @@
   <ItemGroup>
     <ClCompile Include="dep\src\ImGuizmo.cpp" />
     <ClCompile Include="dep\src\ImSequencer.cpp" />
+    <ClCompile Include="dep\src\StringCast.cpp" />
     <ClCompile Include="src\_component\examples\ExampleComponent.cpp" />
     <ClCompile Include="src\config\Config.cpp" />
     <ClCompile Include="src\debug\cafe.inl" />
@@ -199,6 +200,9 @@
   <ItemGroup>
     <ClInclude Include="dep\include\ImGuizmo.h" />
     <ClInclude Include="dep\include\ImSequencer.h" />
+    <ClInclude Include="dep\include\json.hpp" />
+    <ClInclude Include="dep\include\JsonCast.h" />
+    <ClInclude Include="dep\include\StringCast.h" />
     <ClInclude Include="src\_component\examples\ExampleComponent.h" />
     <ClInclude Include="src\config\Config.h" />
     <ClInclude Include="src\render\RenderManager.h" />
@@ -241,6 +245,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="dep\include\detail\template_helpers.inl" />
+    <None Include="dep\include\JsonCast.inl" />
     <None Include="dep\include\Member.inl" />
     <None Include="dep\include\Meta.inl" />
     <None Include="src\test\testmain.inl" />
