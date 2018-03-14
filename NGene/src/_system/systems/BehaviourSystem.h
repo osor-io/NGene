@@ -1,22 +1,14 @@
 #pragma once
 #include "../System.h"
 #include <map>
-#include <imgui.h>
-#include <imgui-SFML.h>
-#include <SFML/Graphics.hpp>
 #include <memory>
-#include <../_component/components/TransformComponent.h>
 
-
-class RenderSystem : public System<RenderSystem> {
+class BehaviourSystem : public System<BehaviourSystem> {
     using EntitiesGroup = std::map<EntityId, Entity*>;
-    using LayerVectors = std::map<unsigned int, std::vector<Entity*>>;
-
-
-    friend class CRSP<RenderSystem>;
+    friend class CRSP<BehaviourSystem>;
 private:
-    RenderSystem();
-    ~RenderSystem();
+    BehaviourSystem();
+    ~BehaviourSystem();
 public:
 
     void update() override;
@@ -27,6 +19,5 @@ public:
 
 private:
     EntitiesGroup m_entities;
-    LayerVectors m_sortedEntities;
 };
 

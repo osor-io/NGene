@@ -10,6 +10,7 @@
 #include "./_component/ComponentManager.h"
 #include "./_system/SystemManager.h"
 
+#include "./_system/systems/BehaviourSystem.h"
 #include "./_system/systems/RenderSystem.h"
 
 void startUp() {
@@ -19,6 +20,7 @@ void startUp() {
     AppGUIManager::get().startUp();
     LuaManager::get().startUp();
 
+    BehaviourSystem::get().startUp();
     RenderSystem::get().startUp();
 
     SystemManager::get().startUp();
@@ -34,6 +36,7 @@ void shutDown() {
     SystemManager::get().shutDown();
 
     RenderSystem::get().shutDown();
+    BehaviourSystem::get().shutDown();
 
     LuaManager::get().shutDown();
     AppGUIManager::get().shutDown();
@@ -105,6 +108,7 @@ inline void tick() {
         next scope
         */
         {
+            BehaviourSystem::get().update();
             RenderSystem::get().update();
         }
         RenderManager::get().endFrame();

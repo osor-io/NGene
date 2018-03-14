@@ -108,6 +108,12 @@
     <ClCompile Include="dep\src\StringCast.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\_component\components\BehaviourComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_system\systems\BehaviourSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dep\include\sol.hpp">
@@ -240,6 +246,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dep\include\StringCast.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\_component\components\BehaviourComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\_system\systems\BehaviourSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

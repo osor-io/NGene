@@ -29,9 +29,10 @@ public:
     void loadJson(const json& j) override;
 
     sf::Vector2f getPosition() const;
+    sf::Vector2f& getPositionRef();
     void setPosition(const sf::Vector2f& position);
 
-    LuaVector2f luaGetPosition() const;
+    LuaVector2f& luaGetPosition();
     void luaSetPosition(const LuaVector2f& position);
 
     // ====== BEG OF REQUIREMENTS ======

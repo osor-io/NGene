@@ -165,9 +165,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\_system\systems\BehaviourSystem.cpp" />
     <ClCompile Include="dep\src\ImGuizmo.cpp" />
     <ClCompile Include="dep\src\ImSequencer.cpp" />
     <ClCompile Include="dep\src\StringCast.cpp" />
+    <ClCompile Include="src\_component\components\BehaviourComponent.cpp" />
     <ClCompile Include="src\_component\examples\ExampleComponent.cpp" />
     <ClCompile Include="src\config\Config.cpp" />
     <ClCompile Include="src\debug\cafe.inl" />
@@ -198,11 +200,13 @@
     <ClCompile Include="src\time\TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\_system\systems\BehaviourSystem.h" />
     <ClInclude Include="dep\include\ImGuizmo.h" />
     <ClInclude Include="dep\include\ImSequencer.h" />
     <ClInclude Include="dep\include\json.hpp" />
     <ClInclude Include="dep\include\JsonCast.h" />
     <ClInclude Include="dep\include\StringCast.h" />
+    <ClInclude Include="src\_component\components\BehaviourComponent.h" />
     <ClInclude Include="src\_component\examples\ExampleComponent.h" />
     <ClInclude Include="src\config\Config.h" />
     <ClInclude Include="src\render\RenderManager.h" />

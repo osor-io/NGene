@@ -66,14 +66,18 @@ sf::Vector2f TransformComponent::getPosition() const {
     return m_position;
 }
 
+sf::Vector2f & TransformComponent::getPositionRef() {
+    return m_position;
+}
+
 
 void TransformComponent::setPosition(const sf::Vector2f & position) {
     m_position = position;
 }
 
 
-LuaVector2f TransformComponent::luaGetPosition() const {
-    return m_position;
+LuaVector2f& TransformComponent::luaGetPosition() {
+    return (*reinterpret_cast<LuaVector2f*>(&m_position));
 }
 
 

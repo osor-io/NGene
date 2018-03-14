@@ -1,7 +1,8 @@
-#include "ExampleComponent.h"
+#include "BehaviourComponent.h"
 #include "../lua/LuaManager.h"
+#include <sstream>
 
-#define COMPONENT_TYPE ExampleComponent
+#define COMPONENT_TYPE BehaviourComponent
 #define CTOR(x) x##::##x
 #define DTOR(x) x##::##~##x
 #define STRINGIFY(s) #s
@@ -11,41 +12,42 @@ CTOR(COMPONENT_TYPE)(EntityId id) : ComponentTemplate(id, std::type_index(typeid
 CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
     : ComponentTemplate(id, std::type_index(typeid(COMPONENT_TYPE))) {
 
-    meta::doForAllMembers<COMPONENT_TYPE>([this, &table](auto& member) {
-        using MemberT = meta::get_member_type<decltype(member)>;
-        auto name = member.getName();
-        sol::object value_obj = table[name];
-        assert(value_obj.valid());
-        auto value = value_obj.as<MemberT>();
-        member.set(*this, value);
-    });
+    sol::function f = table["onUpdate"];
 
+    m_onUpdate = f;
+
+    auto ss = std::stringstream{};
+    ss << "Valid: " << f.valid() << " Registry Index: " <<  f.registry_index();
+    m_onUpdateString = ss.str();
 }
 
 
-DTOR(COMPONENT_TYPE)() {
-}
+DTOR(COMPONENT_TYPE)() {}
 
 
 json COMPONENT_TYPE::toJson() {
-    auto j = json{};
-
-    j["member"] = m_member;
-
-    return j;
+    return json{};
 }
 
 void COMPONENT_TYPE::loadJson(const json& j) {
-    m_member = j["member"];
 }
 
-int COMPONENT_TYPE::getMember() const {
-    return m_member;
+sol::function COMPONENT_TYPE::getOnUpdate() const {
+    return m_onUpdate;
 }
 
 
-void COMPONENT_TYPE::setMember(int member) {
-    m_member = member;
+void COMPONENT_TYPE::setOnUpdate(const sol::function& f) {
+    m_onUpdate = f;
+}
+
+std::string COMPONENT_TYPE::getOnUpdateString() const {
+    return m_onUpdateString;
+}
+
+
+void COMPONENT_TYPE::setOnUpdateString(const std::string& onUpdateString) {
+    m_onUpdateString = onUpdateString;
 }
 
 
@@ -54,7 +56,7 @@ void COMPONENT_TYPE::drawComponentInspector() {
     ImGui::SetNextWindowSize(ImVec2(400, 100), ImGuiCond_FirstUseEver);
     ImGui::Begin(calculateShowname().c_str(), &m_guiOpen);
 
-    ImGui::Text("Example Member (int): %d", m_member);
+    ImGui::Text("%s", m_onUpdateString.c_str());
 
     /*
     //To Check the window size and adjust default sizes:
@@ -82,7 +84,7 @@ void COMPONENT_TYPE::exposeToLua()
         Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
         */
 
-        "member", sol::property(&COMPONENT_TYPE::getMember, &COMPONENT_TYPE::setMember)
+        "onUpdate", sol::property(&COMPONENT_TYPE::getOnUpdate, &COMPONENT_TYPE::setOnUpdate)
 
         );
 

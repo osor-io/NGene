@@ -4,6 +4,7 @@
 #include <memory>
 
 #define DELTA_TIME TimeManager::get().getDeltaTime()
+#define DELTA_SECONDS TimeManager::get().getDeltaTime().asSeconds()
 
 class TimeManager : public Manager<TimeManager> {
     friend class CRSP<TimeManager>;

@@ -26,6 +26,16 @@ void EntityManager::startUp() {
                     },
                     SpriteComponent = {
                         filename = "C:/tmp/test.png"
+                    },
+                    BehaviourComponent = {
+                        onUpdate = function (this, deltaTime)
+                            transform = this:getTransformComponent()  
+                            if(transform) then
+                                transform.position.y = transform.position.y + (10 * deltaTime) 
+                            else    
+                                print("We got no transform")
+                            end
+                        end
                     }
                 },
                 OtraCosa = {

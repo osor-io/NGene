@@ -63,6 +63,7 @@ bool Entity::isEnabled() {
     return m_enabled;
 }
 
+#include "../_component/components/BehaviourComponent.h"
 #include "../_component/components/TransformComponent.h"
 #include "../_component/components/SpriteComponent.h"
 #include "../_component/components/PhraseComponent.h"
@@ -76,6 +77,7 @@ void Entity::exposeToLua() {
     /*
     Here we expose the members of the components
     */
+    BehaviourComponent::exposeToLua();
     TransformComponent::exposeToLua();
     SpriteComponent::exposeToLua();
     PhraseComponent::exposeToLua();
@@ -85,15 +87,7 @@ void Entity::exposeToLua() {
     */
     LUA.new_usertype<Entity>("Entity",
 
-        /*
-        We don't allow constructors to be called from Lua since
-        we want the EntityManager to act as a factory for all the entities
-        */
-
-        // Members
-        /*
-        Add here all the components that we want to expose to Lua via "getComponentName()" functions
-        */
+        REGISTER_GET_COMPONENT(BehaviourComponent),
         REGISTER_GET_COMPONENT(TransformComponent),
         REGISTER_GET_COMPONENT(SpriteComponent),
         REGISTER_GET_COMPONENT(PhraseComponent),

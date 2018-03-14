@@ -10,6 +10,7 @@
 #include <Manager.h>
 #include "../_entity/Entity.h"
 
+#include "./components/BehaviourComponent.h"
 #include "./components/TransformComponent.h"
 #include "./components/SpriteComponent.h"
 #include "./components/PhraseComponent.h"
@@ -43,6 +44,10 @@ private:
     const TypeMap m_typeMap{
 
         std::make_pair(
+            meta::getName<BehaviourComponent>(),
+            std::type_index(typeid(BehaviourComponent))),
+
+        std::make_pair(
             meta::getName<TransformComponent>(),
             std::type_index(typeid(TransformComponent))),
 
@@ -56,6 +61,12 @@ private:
     };
 
     const FactoryMap m_factoryMap{
+
+        std::make_pair(std::type_index(typeid(
+            BehaviourComponent
+            )),[](Entity& entity ,const sol::table& table) {
+                entity.makeComponent<BehaviourComponent>(entity.getId(), table);
+            }),
 
         std::make_pair(std::type_index(typeid(
             TransformComponent
