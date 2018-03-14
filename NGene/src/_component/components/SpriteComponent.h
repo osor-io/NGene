@@ -34,6 +34,9 @@ public:
     sf::Texture m_texture;
     unsigned int m_layer{1000};
 
+private:
+    void loadSprite();
+
 };
 
 template<>

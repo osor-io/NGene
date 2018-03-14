@@ -19,7 +19,13 @@ SpriteComponent::SpriteComponent(EntityId id, const sol::table& table)
             member.set(*this, value);
         }
     });
+    loadSprite();
+}
 
+SpriteComponent::~SpriteComponent() {
+}
+
+void SpriteComponent::loadSprite() {
     if (m_filename.size() > 0) {
         std::ifstream f(m_filename.c_str());
 
@@ -29,8 +35,6 @@ SpriteComponent::SpriteComponent(EntityId id, const sol::table& table)
     }
 }
 
-SpriteComponent::~SpriteComponent() {
-}
 
 json SpriteComponent::toJson() {
     auto j = json{};
@@ -44,6 +48,7 @@ json SpriteComponent::toJson() {
 void SpriteComponent::loadJson(const json & j) {
     m_filename = j["filename"].get<std::string>();
     m_layer = j["layer"];
+    loadSprite();
 }
 
 
