@@ -1,4 +1,5 @@
 #include "./utils/Debug.h"
+#include "./File.h"
 
 #include "./time/TimeManager.h"
 #include "./render/RenderManager.h"
@@ -43,50 +44,17 @@ void shutDown() {
 
 void loadEntities() {
 
-    LUA.script(R"(
-            Entities = {
-                Cosa = {
-                    TransformComponent = {
-                        x = 0,
-                        y = 10
-                    },
-                    PhraseComponent = {
-                        phrase = "I'm saying hi from this lua Object!! :D"
-                    },
-                    SpriteComponent = {
-                        filename = "C:/tmp/test.png"
-                    }
-                },
-                OtraCosa = {
-                    PhraseComponent = {
-                        phrase = "I'm saying hi from this lua Object!! :D"
-                    },
-                    SpriteComponent = {
-                        filename = "file.png"
-                    }
-                },
-                YOtraMas = {
-                    PhraseComponent = {
-                        phrase = "I'm saying hi from this lua Object!! :D"
-                    },
-                    SpriteComponent = {
-                        filename = "file.png"
-                    }
-                }
-            }
-        )");
-
-    auto e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-    e = EntityManager::get().loadEntity(LUA["Entities"], "OtraCosa");
-    e = EntityManager::get().loadEntity(LUA["Entities"], "YOtraMas");
-    e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-    e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-    e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-    e = EntityManager::get().loadEntity(LUA["Entities"], "YOtraMas");
-    e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-    e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-    e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-    e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+    auto e = EntityManager::get().loadEntity( "Cosa");
+    e = EntityManager::get().loadEntity("OtraCosa");
+    e = EntityManager::get().loadEntity("YOtraMas");
+    e = EntityManager::get().loadEntity("Cosa");
+    e = EntityManager::get().loadEntity("Cosa");
+    e = EntityManager::get().loadEntity("Cosa");
+    e = EntityManager::get().loadEntity("YOtraMas");
+    e = EntityManager::get().loadEntity("Cosa");
+    e = EntityManager::get().loadEntity("Cosa");
+    e = EntityManager::get().loadEntity("Cosa");
+    e = EntityManager::get().loadEntity("Cosa");
 
     EntityManager::get().removeEntity(e);
     EntityManager::get().removeEntity(5);
@@ -150,9 +118,14 @@ int main() {
     startUp();
     loadEntities();
 
+
     while (RenderManager::get().isWindowOpen()) {
         tick();
     }
+
+    auto es = EntityManager::get().serializeEntities();
+    writeToFile("lastRunState.json", es.dump(4).c_str());
+
 
     shutDown();
 

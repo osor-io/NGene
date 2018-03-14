@@ -5,6 +5,8 @@
 #include <Manager.h>
 #include <map>
 #include <future>
+#include "../lua/LuaManager.h"
+
 
 
 /**
@@ -33,7 +35,7 @@ public:
 
     void updateEntities();
 
-    EntityId loadEntity(const sol::table& table, const std::string& name);
+    EntityId loadEntity(const std::string & type, const sol::table & table= LUA["Entities"]);
 
     void removeEntity(EntityId id);
 
@@ -45,6 +47,10 @@ public:
 
     std::vector<EntityId> getEntityKeys() const;
 
+    json serializeEntities() const;
+
+    void clearAndloadEntities(const json& j);
+
 private:
 
     void exposeToLua();
@@ -54,6 +60,11 @@ private:
     PendingEntitiesToDelete m_entitieIdsToRemove{};
 
     EntityId m_nextId{ 0 };
+
+    bool m_requestedClearAndLoad{ false };
+    json m_loadEntityData{};
+
+    Entity* createEntityInternal(const std::string & type, const sol::table & table = LUA["Entities"]);
 
 };
 

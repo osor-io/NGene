@@ -143,7 +143,6 @@ void Entity::drawDebugGUI() {
 }
 
 json Entity::toJson() {
-    auto j = json{};
     auto content = json{};
 
     to_json(content, *this);
@@ -155,13 +154,12 @@ json Entity::toJson() {
     }
 
     content["Components"] = components;
-    j["Entity"] = content;
 
-    return j;
+    return content;
 }
 
 void Entity::loadJson(const json & j){
-    auto content = j["Entity"];
+    auto content = j;
     from_json(content, *this);
     auto components = content["Components"];
     for (const auto& c : m_components) {
