@@ -44,19 +44,19 @@ private:
     const TypeMap m_type_map{
 
         std::make_pair(
-            meta::getName<BehaviourComponent>(),
+            meta::get_name<BehaviourComponent>(),
             std::type_index(typeid(BehaviourComponent))),
 
         std::make_pair(
-            meta::getName<TransformComponent>(),
+            meta::get_name<TransformComponent>(),
             std::type_index(typeid(TransformComponent))),
 
         std::make_pair(
-            meta::getName<SpriteComponent>(),
+            meta::get_name<SpriteComponent>(),
             std::type_index(typeid(SpriteComponent))),
 
         std::make_pair(
-            meta::getName<PhraseComponent>(),
+            meta::get_name<PhraseComponent>(),
             std::type_index(typeid(PhraseComponent))),
     };
 
@@ -65,25 +65,25 @@ private:
         std::make_pair(std::type_index(typeid(
             BehaviourComponent
             )),[](Entity& entity ,const sol::table& table) {
-                entity.makeComponent<BehaviourComponent>(entity.getId(), table);
+                entity.make_component<BehaviourComponent>(entity.get_id(), table);
             }),
 
         std::make_pair(std::type_index(typeid(
             TransformComponent
             )),[](Entity& entity ,const sol::table& table) {
-                entity.makeComponent<TransformComponent>(entity.getId(), table);
+                entity.make_component<TransformComponent>(entity.get_id(), table);
             }),
 
         std::make_pair(std::type_index(typeid(
             SpriteComponent
             )),[](Entity& entity ,const sol::table& table) {
-                entity.makeComponent<SpriteComponent>(entity.getId(), table);
+                entity.make_component<SpriteComponent>(entity.get_id(), table);
             }),
 
         std::make_pair(std::type_index(typeid(
             PhraseComponent
             )),[](Entity& entity ,const sol::table& table) {
-                entity.makeComponent<PhraseComponent>(entity.getId(), table);
+                entity.make_component<PhraseComponent>(entity.get_id(), table);
             }),
 
     };

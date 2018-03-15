@@ -13,7 +13,7 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
 
     meta::doForAllMembers<COMPONENT_TYPE>([this, &table](auto& member) {
         using MemberT = meta::get_member_type<decltype(member)>;
-        auto name = member.getName();
+        auto name = member.get_name();
         sol::object value_obj = table[name];
         assert(value_obj.valid());
         auto value = value_obj.as<MemberT>();

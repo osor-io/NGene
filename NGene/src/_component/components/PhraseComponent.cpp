@@ -10,7 +10,7 @@ PhraseComponent::PhraseComponent(EntityId id, const sol::table& table)
 
     meta::doForAllMembers<PhraseComponent>([this, &table](auto& member) {
         using MemberT = meta::get_member_type<decltype(member)>;
-        auto name = member.getName();
+        auto name = member.get_name();
         sol::object value_obj = table[name];
         assert(value_obj.valid());
         auto value = value_obj.as<std::string>();
@@ -80,7 +80,7 @@ void PhraseComponent::draw_component_inspector() {
 void PhraseComponent::expose_to_lua()
 {
 
-    LUA.new_usertype<PhraseComponent>(meta::getName<PhraseComponent>(),
+    LUA.new_usertype<PhraseComponent>(meta::get_name<PhraseComponent>(),
 
 
         /*

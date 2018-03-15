@@ -1,57 +1,62 @@
 #include "Entity.h"
-#include "../lua/LuaManager.h"
+
 #include <sstream>
 #include <Debug.h>
+#include <imgui.h>
+#include <imgui-SFML.h>
+#include <SFML/Graphics.hpp>
+#include "../lua/LuaManager.h"
+
 
 Entity::Entity(EntityId id, std::string&& name, const std::string& type) : m_id(id), m_type(type) {
-    setName(name);
-    generateShowName();
+    set_name(name);
+    generate_show_name();
 }
 
 
 Entity::~Entity() {
 }
 
-EntityId Entity::getId() const
+EntityId Entity::get_id() const
 {
     return m_id;
 }
 
-std::string Entity::getType() const {
+std::string Entity::get_type() const {
     return m_type;
 }
 
-void Entity::setType(const std::string& type) {
+void Entity::set_type(const std::string& type) {
     m_type = type;
 }
 
-void Entity::setType(std::string&& type) {
+void Entity::set_type(std::string&& type) {
     m_type = std::move(type);
 }
 
 
-std::string Entity::getName() const {
+std::string Entity::get_name() const {
     return m_name;
 }
 
-const std::string & Entity::getNameRef() const {
+const std::string & Entity::get_name_ref() const {
     return m_name;
 }
 
-void Entity::setName(const std::string& name) {
+void Entity::set_name(const std::string& name) {
     m_name = name;
-    generateShowName();
+    generate_show_name();
 }
 
-void Entity::setEnabled(bool enabled) {
+void Entity::set_enabled(bool enabled) {
     m_enabled = enabled;
 }
 
-std::string Entity::getShowName() {
+std::string Entity::get_show_name() const {
     return m_showName;
 }
 
-void Entity::generateShowName() {
+void Entity::generate_show_name() {
 
     auto ss = std::stringstream{};
     ss << "[" << m_id << "] " << m_type << ": " << m_name << " (" << m_components.size() << ")";
@@ -59,7 +64,7 @@ void Entity::generateShowName() {
 
 }
 
-bool Entity::isEnabled() {
+bool Entity::is_enabled() const {
     return m_enabled;
 }
 
@@ -70,9 +75,9 @@ bool Entity::isEnabled() {
 
 #define GET_COMPONENT_NAME(type) #type
 #define MAKE_STRING(s) #s
-#define REGISTER_GET_COMPONENT(type) "get" #type , &Entity::getComponent< ## type ## >
+#define REGISTER_GET_COMPONENT(type) "get" #type , &Entity::get_component< ## type ## >
 
-void Entity::exposeToLua() {
+void Entity::expose_to_lua() {
 
     /*
     Here we expose the members of the components
@@ -92,10 +97,10 @@ void Entity::exposeToLua() {
         REGISTER_GET_COMPONENT(SpriteComponent),
         REGISTER_GET_COMPONENT(PhraseComponent),
 
-        "id", sol::readonly_property(&Entity::getId),
-        "type", sol::readonly_property(&Entity::getType),
-        "enabled", sol::property(&Entity::isEnabled, &Entity::setEnabled),
-        "name", sol::property(&Entity::getName, &Entity::setName)
+        "id", sol::readonly_property(&Entity::get_id),
+        "type", sol::readonly_property(&Entity::get_type),
+        "enabled", sol::property(&Entity::is_enabled, &Entity::set_enabled),
+        "name", sol::property(&Entity::get_name, &Entity::set_name)
 
         );
 
@@ -104,14 +109,14 @@ void Entity::exposeToLua() {
 
 int textEditCallback(ImGuiTextEditCallbackData *data) {
     auto entity = reinterpret_cast<Entity*>(data->UserData);
-    entity->setName(std::string(data->Buf));
-    entity->generateShowName();
-    entity->m_changedHeader = true;
+    entity->set_name(std::string(data->Buf));
+    entity->generate_show_name();
+    entity->m_changed_header = true;
     return 0;
 }
 
 
-void Entity::drawDebugGUI() {
+void Entity::draw_debug_gui() {
 
     auto rustyPalette = config::getRustyPalette();
 
@@ -122,9 +127,9 @@ void Entity::drawDebugGUI() {
 
     auto open = ImGui::CollapsingHeader(name_arr);
 
-    if (open || m_changedHeader) {
+    if (open || m_changed_header) {
 
-        m_changedHeader = false;
+        m_changed_header = false;
 
         ImGui::Text("Id: %d", m_id); ImGui::SameLine(100); ImGui::Text("Type: %s", m_type.c_str());
         ImGui::Text("Name: "); ImGui::SameLine(100); ImGui::InputText("##Name", name_arr, config::max_name_length, ImGuiInputTextFlags_CallbackAlways, textEditCallback, reinterpret_cast<void*>(this));
@@ -136,10 +141,10 @@ void Entity::drawDebugGUI() {
 
 }
 
-json Entity::toJson() {
+json Entity::to_json() {
     auto content = json{};
 
-    to_json(content, *this);
+    ::to_json(content, *this);
 
     auto components = json{};
 
@@ -152,7 +157,7 @@ json Entity::toJson() {
     return content;
 }
 
-void Entity::loadJson(const json & j){
+void Entity::load_json(const json & j){
     auto content = j;
     from_json(content, *this);
     auto components = content["Components"];

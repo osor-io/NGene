@@ -12,7 +12,7 @@ SpriteComponent::SpriteComponent(EntityId id, const sol::table& table)
 
     meta::doForAllMembers<SpriteComponent>([this, &table](auto& member) {
         using MemberT = meta::get_member_type<decltype(member)>;
-        auto name = member.getName();
+        auto name = member.get_name();
         sol::object value_obj = table[name];
         if (value_obj.valid()) {
             auto value = value_obj.as<MemberT>();
@@ -112,7 +112,7 @@ void SpriteComponent::draw_component_inspector() {
 
 void SpriteComponent::expose_to_lua() {
 
-    LUA.new_usertype<SpriteComponent>(meta::getName<SpriteComponent>(),
+    LUA.new_usertype<SpriteComponent>(meta::get_name<SpriteComponent>(),
 
 
         /*

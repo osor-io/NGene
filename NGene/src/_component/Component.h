@@ -21,8 +21,8 @@ public:
 
     virtual void draw_debug_gui() = 0;
 
-    virtual json to_json() = 0;
-    virtual void load_json(const json& j) = 0;
+    virtual nlohmann::json to_json() = 0;
+    virtual void load_json(const nlohmann::json& j) = 0;
 
     virtual std::string get_component_type_name() = 0;
 

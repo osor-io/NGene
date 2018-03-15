@@ -25,15 +25,15 @@ void BehaviourSystem::shut_down() {
 void BehaviourSystem::update() {
 
     for (auto& e : m_entities) {
-        e.second->getComponent<BehaviourComponent>()->get_on_update()(*(e.second), DELTA_SECONDS);
+        e.second->get_component<BehaviourComponent>()->get_on_update()(*(e.second), DELTA_SECONDS);
     }
 
 }
 
 
 void BehaviourSystem::registerEntity(Entity& entity) {
-    if (entity.hasComponent<BehaviourComponent>()) {
-        m_entities[entity.getId()] = &entity;
+    if (entity.has_component<BehaviourComponent>()) {
+        m_entities[entity.get_id()] = &entity;
     }
 }
 

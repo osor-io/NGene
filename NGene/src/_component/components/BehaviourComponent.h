@@ -31,7 +31,7 @@ public:
 
     /*
     When adding a member reMember to consider registering it
-    in "exposeToLua()" and in "meta::registerMembers" as well
+    in "expose_to_lua()" and in "meta::registerMembers" as well
     as add it in "drawComponentInspector()" to be able to see it
     */
     // ====== BEG OF MEMBERS ======

@@ -39,10 +39,10 @@ correctly register everything in a component the usage is as follows:
             );
         }
 
-- Implement the "exposeToLua" function if we want to expose it and then
-go to Entity.cpp and register it adding to the "exposeToLua" function.
+- Implement the "expose_to_lua" function if we want to expose it and then
+go to Entity.cpp and register it adding to the "expose_to_lua" function.
 
-        void SimplePhraseComponent::exposeToLua() {
+        void SimplePhraseComponent::expose_to_lua() {
 
             LUA.new_usertype<SimplePhraseComponent>("SimplePhraseComponent",
 
@@ -65,8 +65,8 @@ the inspector when using the debug GUI:
 
 - Implement the JSON serialization methods to save and load state of components:
 
-        json toJson() override;
-        void loadJson(const json& j) override;
+        json to_json() override;
+        void load_json(const json& j) override;
 
 - If we want the Entity Factory to be able to instantiate the entity, which we
 probably do, we need to go to the ComponentManager.h file and register the component
@@ -89,7 +89,7 @@ public:
         ImGui::PushID(this);
         if (m_gui_open) { draw_component_inspector(); }
         ImGui::Bullet();
-        auto name = std::string(meta:: template getName<T>());
+        auto name = std::string(meta:: template get_name<T>());
         auto size = name.size();
         auto ss = std::make_unique<std::stringstream>();
         for (int i = 0; i < size; ++i) {
@@ -103,13 +103,13 @@ public:
     }
 
     virtual std::string get_component_type_name() {
-        return meta::getName<T>();
+        return meta::get_name<T>();
     }
 
 protected:
     std::string calculate_showname() {
 
-        auto name = std::string(meta:: template getName<T>());
+        auto name = std::string(meta:: template get_name<T>());
         auto size = name.size();
         auto ssn = std::stringstream{};
         for (int i = 0; i < size; ++i) {

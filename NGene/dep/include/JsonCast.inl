@@ -25,7 +25,7 @@ json serialize(const Class& obj)
     meta::doForAllMembers<Class>(
         [&obj, &value](auto& member)
         {
-            auto& valueName = value[member.getName()];
+            auto& valueName = value[member.get_name()];
             if (member.canGetConstRef()) {
                 valueName = member.get(obj);
             } else if (member.hasGetter()) {
@@ -91,7 +91,7 @@ void deserialize(Class& obj, const json& object)
         meta::doForAllMembers<Class>(
             [&obj, &object](auto& member)
             {
-                auto& objName = object[member.getName()];
+                auto& objName = object[member.get_name()];
                 if (!objName.is_null()) {
                     using MemberT = meta::get_member_type<decltype(member)>;
                     if (member.hasSetter()) {

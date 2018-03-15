@@ -47,22 +47,22 @@ void shut_down() {
 
 void loadEntities() {
 
-    auto e = EntityManager::get().loadEntity( "Cosa");
-    e = EntityManager::get().loadEntity("OtraCosa");
-    e = EntityManager::get().loadEntity("YOtraMas");
-    e = EntityManager::get().loadEntity("Cosa");
-    e = EntityManager::get().loadEntity("Cosa");
-    e = EntityManager::get().loadEntity("Cosa");
-    e = EntityManager::get().loadEntity("YOtraMas");
-    e = EntityManager::get().loadEntity("Cosa");
-    e = EntityManager::get().loadEntity("Cosa");
-    e = EntityManager::get().loadEntity("Cosa");
-    e = EntityManager::get().loadEntity("Cosa");
+    auto e = EntityManager::get().load_entity( "Cosa");
+    e = EntityManager::get().load_entity("OtraCosa");
+    e = EntityManager::get().load_entity("YOtraMas");
+    e = EntityManager::get().load_entity("Cosa");
+    e = EntityManager::get().load_entity("Cosa");
+    e = EntityManager::get().load_entity("Cosa");
+    e = EntityManager::get().load_entity("YOtraMas");
+    e = EntityManager::get().load_entity("Cosa");
+    e = EntityManager::get().load_entity("Cosa");
+    e = EntityManager::get().load_entity("Cosa");
+    e = EntityManager::get().load_entity("Cosa");
 
-    EntityManager::get().removeEntity(e);
-    EntityManager::get().removeEntity(5);
+    EntityManager::get().remove_entity(e);
+    EntityManager::get().remove_entity(5);
 
-    EntityManager::get().updateEntities();
+    EntityManager::get().update_entities();
 }
 
 
@@ -114,7 +114,7 @@ inline void tick() {
         RenderManager::get().endFrame();
     } // ====== END OF RENDER ======
 
-    EntityManager::get().updateEntities();
+    EntityManager::get().update_entities();
 }
 
 
@@ -127,7 +127,7 @@ int main() {
         tick();
     }
 
-    auto es = EntityManager::get().serializeEntities();
+    auto es = EntityManager::get().serialize_entities();
     writeToFile("lastRunState.json", es.dump(4).c_str());
 
 

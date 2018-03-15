@@ -32,7 +32,7 @@ void RenderSystem::update() {
 
     for (auto& v : m_sortedEntities) {
         std::sort(v.second.begin(), v.second.end(), [](Entity * a, Entity * b) ->bool {
-            return a->getComponent<TransformComponent>()->m_position.y < b->getComponent<TransformComponent>()->m_position.y;
+            return a->get_component<TransformComponent>()->m_position.y < b->get_component<TransformComponent>()->m_position.y;
         });
     }
 
@@ -42,9 +42,9 @@ void RenderSystem::update() {
     for (auto& v : m_sortedEntities) {
 
         for (auto& entity : v.second) {
-            if (entity->isEnabled()) {
-                auto graphicsComponent = entity->getComponent<SpriteComponent>();
-                auto transformComponent = entity->getComponent<TransformComponent>();
+            if (entity->is_enabled()) {
+                auto graphicsComponent = entity->get_component<SpriteComponent>();
+                auto transformComponent = entity->get_component<TransformComponent>();
 
                 auto sprite = graphicsComponent->get_sprite_ptr();
                 sprite->setPosition(transformComponent->get_position());
@@ -58,17 +58,17 @@ void RenderSystem::update() {
 
 
 void RenderSystem::registerEntity(Entity& entity) {
-    if (entity.hasComponent<SpriteComponent>() && entity.hasComponent<TransformComponent>()) {
-        m_entities[entity.getId()] = &entity;
-        auto spriteComponent = entity.getComponent<SpriteComponent>();
+    if (entity.has_component<SpriteComponent>() && entity.has_component<TransformComponent>()) {
+        m_entities[entity.get_id()] = &entity;
+        auto spriteComponent = entity.get_component<SpriteComponent>();
         m_sortedEntities[spriteComponent->m_layer].push_back(&entity);
     }
 }
 
 void RenderSystem::deregisterEntity(EntityId id) {
     m_entities.erase(id);
-    auto e = EntityManager::get().getEntity(id);
-    auto& vec = m_sortedEntities[e->getComponent<SpriteComponent>()->m_layer];
+    auto e = EntityManager::get().get_entity(id);
+    auto& vec = m_sortedEntities[e->get_component<SpriteComponent>()->m_layer];
     vec.erase(std::remove(vec.begin(), vec.end(), e), vec.end());
 }
 

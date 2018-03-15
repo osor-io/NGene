@@ -4,7 +4,6 @@
 #include "../_entity/Entity.h"
 #include <Manager.h>
 #include <map>
-#include <future>
 #include "../lua/LuaManager.h"
 
 
@@ -33,38 +32,38 @@ public:
     void start_up() override;
     void shut_down() override;
 
-    void updateEntities();
+    void update_entities();
 
-    EntityId loadEntity(const std::string & type, const sol::table & table= LUA["Entities"]);
+    EntityId load_entity(const std::string & type, const sol::table & table= LUA["Entities"]);
 
-    void removeEntity(EntityId id);
+    void remove_entity(EntityId id);
 
-    bool hasEntity(EntityId id) const;
+    bool has_entity(EntityId id) const;
 
-    Entity* getEntity(EntityId id);
+    Entity* get_entity(EntityId id);
 
-    size_t numberOfEntities() const;
+    size_t entity_size() const;
 
-    std::vector<EntityId> getEntityKeys() const;
+    std::vector<EntityId> get_entity_keys() const;
 
-    json serializeEntities() const;
+    json serialize_entities() const;
 
-    void clearAndloadEntities(const json& j);
+    void clear_and_load_entities(const json& j);
 
 private:
 
-    void exposeToLua();
+    void expose_to_lua();
 
     OwningEntitiesGroup m_entities{};
-    PendingEntitiesToAdd m_entitiesToAdd{};
-    PendingEntitiesToDelete m_entitieIdsToRemove{};
+    PendingEntitiesToAdd m_entities_to_add{};
+    PendingEntitiesToDelete m_entity_ids_to_remove{};
 
-    EntityId m_nextId{ 0 };
+    EntityId m_next_id{ 0 };
 
-    bool m_requestedClearAndLoad{ false };
-    json m_loadEntityData{};
+    bool m_requested_clear_and_load{ false };
+    json m_unprocessed_load_entity_data{};
 
-    Entity* createEntityInternal(const std::string & type, const sol::table & table = LUA["Entities"]);
+    Entity* create_entity_internal(const std::string & type, const sol::table & table = LUA["Entities"]);
 
 };
 

@@ -35,7 +35,7 @@ constexpr auto registerName()
 }
 
 template <typename Class>
-constexpr auto getName()
+constexpr auto get_name()
 {
     return detail::MetaHolder<Class, decltype(registerMembers<Class>())>::name();
 }
@@ -72,7 +72,7 @@ bool hasMember(const char* name)
     doForAllMembers<Class>(
         [&found, &name](const auto& member)
         {
-            if (!strcmp(name, member.getName())) {
+            if (!strcmp(name, member.get_name())) {
                 found = true;
             }
         }
@@ -100,7 +100,7 @@ void doForMember(const char* name, F&& f)
     doForAllMembers<Class>(
         [&](const auto& member)
         {
-            if (!strcmp(name, member.getName())) {
+            if (!strcmp(name, member.get_name())) {
                 using MemberT = meta::get_member_type<decltype(member)>;
                 assert((std::is_same<MemberT, T>::value) && "Member doesn't have type T");
                 detail::call_if<std::is_same<MemberT, T>::value>(std::forward<F>(f), member);

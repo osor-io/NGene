@@ -63,7 +63,7 @@ int testDependencies() {
         std::cout << "The initial values for the ExampleClass are:" << std::endl;
         meta::doForAllMembers<ExampleStruct>([&aux](auto& member) {
             using MemberT = meta::get_member_type<decltype(member)>;
-            auto name = member.getName();
+            auto name = member.get_name();
             std::cout << name << ": " << member.get(aux) << std::endl;
         });
         std::cout << "Change the values in the debug window and close the main window" << std::endl;
@@ -87,10 +87,10 @@ int testDependencies() {
 
             ImGui::SFML::Update(window, deltaClock.restart());
 
-            ImGui::Begin(meta::getName<ExampleStruct>());
+            ImGui::Begin(meta::get_name<ExampleStruct>());
             meta::doForAllMembers<ExampleStruct>([&aux](auto& member) {
                 using MemberT = meta::get_member_type<decltype(member)>;
-                auto name = member.getName();
+                auto name = member.get_name();
 
                 if (std::is_same<MemberT, int>::value) {
                     ImGui::InputInt(name, (int*)&member.get(aux));
@@ -112,7 +112,7 @@ int testDependencies() {
         std::cout << "The final values for the ExampleClass are:" << std::endl;
         meta::doForAllMembers<ExampleStruct>([&aux](auto& member) {
             using MemberT = meta::get_member_type<decltype(member)>;
-            auto name = member.getName();
+            auto name = member.get_name();
             std::cout << name << ": " << member.get(aux) << std::endl;
         });
         std::cout << std::endl;
@@ -182,19 +182,19 @@ void test() {
             }
         )");
 
-        auto e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "OtraCosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "YOtraMas");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "YOtraMas");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().loadEntity(LUA["Entities"], "Cosa");
+        auto e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().load_entity(LUA["Entities"], "OtraCosa");
+        e = EntityManager::get().load_entity(LUA["Entities"], "YOtraMas");
+        e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().load_entity(LUA["Entities"], "YOtraMas");
+        e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
 
-        for (const auto& id : EntityManager::get().getEntityKeys()) {
+        for (const auto& id : EntityManager::get().get_entity_keys()) {
             LOG_NAMED(id);
         }
 

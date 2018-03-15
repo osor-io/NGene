@@ -125,8 +125,8 @@ void AppGUIManager::drawEntityComponentEditor() {
     }
 
 
-    for (auto key : EntityManager::get().getEntityKeys()) {
-        EntityManager::get().getEntity(key)->drawDebugGUI();
+    for (auto key : EntityManager::get().get_entity_keys()) {
+        EntityManager::get().get_entity(key)->draw_debug_gui();
     }
 
     ImGui::End();

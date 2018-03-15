@@ -4,12 +4,11 @@
 #include <string>
 #include <typeindex>
 #include <memory>
-#include "../memory/SmallMemoryAllocator.h"
-#include <imgui.h>
-#include <imgui-SFML.h>
-#include <SFML/Graphics.hpp>
-#include "../config/Config.h"
+#include <Meta.h>
 #include <JsonCast.h>
+#include "../memory/SmallMemoryAllocator.h"
+#include "../config/Config.h"
+
 
 class EntityManager;
 
@@ -24,14 +23,14 @@ namespace config {
 class Entity {
     friend auto meta::registerMembers<Entity>();
     friend class EntityManager;
-    friend int textEditCallback(ImGuiTextEditCallbackData *data);
+    friend int text_edit_callback(ImGuiTextEditCallbackData *data);
 private:
     Entity(EntityId id, std::string&& name, const std::string& type);
 public:
     ~Entity();
 
-    json toJson();
-    void loadJson(const json& j);
+    nlohmann::json to_json();
+    void load_json(const nlohmann::json& j);
 
     void* operator new(size_t count) {
         return SmallMemoryAllocator::get().alloc(count);
@@ -41,33 +40,33 @@ public:
         return SmallMemoryAllocator::get().dealloc(ptr);
     }
 
-    EntityId getId() const;
+    EntityId get_id() const;
 
-    std::string getType() const;
-    void setType(const std::string& type);
-    void setType(std::string&& type);
+    std::string get_type() const;
+    void set_type(const std::string& type);
+    void set_type(std::string&& type);
 
-    std::string getName() const;
-    const std::string& getNameRef() const;
-    void setName(const std::string& name);
+    std::string get_name() const;
+    const std::string& get_name_ref() const;
+    void set_name(const std::string& name);
 
-    void setEnabled(bool);
-    bool isEnabled();
+    void set_enabled(bool);
+    bool is_enabled() const;
 
-    static void exposeToLua();
+    static void expose_to_lua();
 
-    void drawDebugGUI();
-    std::string getShowName();
+    void draw_debug_gui();
+    std::string get_show_name() const;
 
     template<typename T, typename ... Args>
-    T* makeComponent(Args&& ... args) {
+    T* make_component(Args&& ... args) {
         auto ptr = new T(std::forward<Args>(args)...);
         m_components[std::type_index(typeid(T))] = std::unique_ptr<T>(ptr);
         return ptr;
     }
 
     template<typename T>
-    T* getComponent() {
+    T* get_component() {
         auto it = m_components.find(std::type_index(typeid(T)));
         if (it != m_components.end()) {
             return dynamic_cast<T*>(it->second.get());
@@ -76,7 +75,7 @@ public:
     }
 
     template<typename T>
-    bool hasComponent() {
+    bool has_component() const {
         auto it = m_components.find(std::type_index(typeid(T)));
         if (it != m_components.end()) {
             return true;
@@ -87,14 +86,14 @@ public:
 private:
     std::string m_name;
     std::string m_showName;
-    bool m_changedHeader{ false };
+    bool m_changed_header{ false };
     unsigned int m_id;
     bool m_enabled{ true };
     std::string m_type;
     std::unordered_map<std::type_index, std::unique_ptr<Component>> m_components;
 
 
-    void generateShowName();
+    void generate_show_name();
 };
 
 template<>
@@ -106,7 +105,7 @@ template<>
 inline auto meta::registerMembers<Entity>() {
     return members(
         member("id", &Entity::m_id),
-        member("name", &Entity::getNameRef, &Entity::setName),
+        member("name", &Entity::get_name_ref, &Entity::set_name),
         member("type", &Entity::m_type)
     );
 }

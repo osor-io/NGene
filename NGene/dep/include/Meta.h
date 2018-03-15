@@ -71,7 +71,7 @@ constexpr auto registerName();
 
 // returns set name for class
 template <typename Class>
-constexpr auto getName();
+constexpr auto get_name();
 
 // returns the number of registered members of the class
 template <typename Class>

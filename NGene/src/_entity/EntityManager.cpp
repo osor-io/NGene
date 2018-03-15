@@ -58,37 +58,37 @@ void EntityManager::start_up() {
         )");
 
 
-    Entity::exposeToLua();
-    exposeToLua();
+    Entity::expose_to_lua();
+    expose_to_lua();
 }
 
 void EntityManager::shut_down() {
     m_entities.clear();
 }
 
-void EntityManager::updateEntities() {
+void EntityManager::update_entities() {
 
-    if (m_requestedClearAndLoad) {
-        m_requestedClearAndLoad = false;
+    if (m_requested_clear_and_load) {
+        m_requested_clear_and_load = false;
         
         /*
         First we clear all the entities currently in the system.
         */
         for (auto& e : m_entities) {
-            assert(e.second->getId() == e.first);
-            SystemManager::get().deregisterEntityInSystems(e.second->getId());
+            assert(e.second->get_id() == e.first);
+            SystemManager::get().deregisterEntityInSystems(e.second->get_id());
         }
         m_entities.clear();
-        m_nextId = 0;
+        m_next_id = 0;
 
         /*
         We create the entities depending on their type and
         then load their data from the json file.
         */
-        for (const auto& json_entity : m_loadEntityData["Entities"]) {
-            auto e = createEntityInternal(json_entity["type"], LUA["Entities"]);
-            e->loadJson(json_entity);
-            m_entities[e->getId()] = std::unique_ptr<Entity>(e);
+        for (const auto& json_entity : m_unprocessed_load_entity_data["Entities"]) {
+            auto e = create_entity_internal(json_entity["type"], LUA["Entities"]);
+            e->load_json(json_entity);
+            m_entities[e->get_id()] = std::unique_ptr<Entity>(e);
             SystemManager::get().registerEntityInSystems(*e);
         }
         
@@ -97,34 +97,34 @@ void EntityManager::updateEntities() {
     }
     else {
 
-        for (auto entity : m_entitiesToAdd) {
-            m_entities[entity->getId()] = std::unique_ptr<Entity>(entity);
+        for (auto entity : m_entities_to_add) {
+            m_entities[entity->get_id()] = std::unique_ptr<Entity>(entity);
             SystemManager::get().registerEntityInSystems(*entity);
         }
-        m_entitiesToAdd.clear();
+        m_entities_to_add.clear();
 
-        for (auto id : m_entitieIdsToRemove) {
+        for (auto id : m_entity_ids_to_remove) {
             SystemManager::get().deregisterEntityInSystems(id);
             m_entities.erase(id);
         }
-        m_entitieIdsToRemove.clear();
+        m_entity_ids_to_remove.clear();
     }
 }
 
 
-EntityId EntityManager::loadEntity(const std::string & type, const sol::table & table)
+EntityId EntityManager::load_entity(const std::string & type, const sol::table & table)
 {
-    auto e = createEntityInternal(type, table);
+    auto e = create_entity_internal(type, table);
 
-    m_entitiesToAdd.push_back(e);
-    return e->getId();
+    m_entities_to_add.push_back(e);
+    return e->get_id();
 }
 
-void EntityManager::removeEntity(EntityId id) {
-    m_entitieIdsToRemove.push_back(id);
+void EntityManager::remove_entity(EntityId id) {
+    m_entity_ids_to_remove.push_back(id);
 }
 
-bool EntityManager::hasEntity(EntityId id) const {
+bool EntityManager::has_entity(EntityId id) const {
     auto it = m_entities.find(id);
     if (it != m_entities.end()) {
         return true;
@@ -132,7 +132,7 @@ bool EntityManager::hasEntity(EntityId id) const {
     return false;
 }
 
-Entity* EntityManager::getEntity(EntityId id) {
+Entity* EntityManager::get_entity(EntityId id) {
     auto it = m_entities.find(id);
     if (it != m_entities.end()) {
         return (it->second.get());
@@ -140,11 +140,11 @@ Entity* EntityManager::getEntity(EntityId id) {
     return nullptr;
 }
 
-size_t EntityManager::numberOfEntities() const {
+size_t EntityManager::entity_size() const {
     return m_entities.size();
 }
 
-std::vector<EntityId> EntityManager::getEntityKeys() const {
+std::vector<EntityId> EntityManager::get_entity_keys() const {
     auto vec = std::vector<EntityId>();
     vec.resize(m_entities.size());
     auto i = 0;
@@ -155,13 +155,13 @@ std::vector<EntityId> EntityManager::getEntityKeys() const {
 }
 
 
-json EntityManager::serializeEntities() const {
+json EntityManager::serialize_entities() const {
     auto j = json{};
 
     auto entities = std::vector<json>{};
 
     for (const auto& e : m_entities) {
-        entities.push_back(e.second->toJson());
+        entities.push_back(e.second->to_json());
     }
 
     j["Entities"] = entities;
@@ -169,30 +169,30 @@ json EntityManager::serializeEntities() const {
     return j;
 }
 
-void EntityManager::clearAndloadEntities(const json& j) {
-    if (m_requestedClearAndLoad) return;
+void EntityManager::clear_and_load_entities(const json& j) {
+    if (m_requested_clear_and_load) return;
 
-    m_requestedClearAndLoad = true;
+    m_requested_clear_and_load = true;
 
-    m_loadEntityData = j;
+    m_unprocessed_load_entity_data = j;
 
 }
 
-void EntityManager::exposeToLua() {
+void EntityManager::expose_to_lua() {
 
     LUA.set_function("hasEntity", [this](EntityId id) -> bool {
-        return hasEntity(id);
+        return has_entity(id);
     });
 
 
     LUA.set_function("getEntity", [this](EntityId id) -> Entity* {
-        return getEntity(id);
+        return get_entity(id);
     });
 
 
     LUA.set_function("getEntitySafe", [this](EntityId id) -> Entity* {
-        if (hasEntity(id)) {
-            return getEntity(id);
+        if (has_entity(id)) {
+            return get_entity(id);
         }
         LOG("Lus is trying to access an entity that doesn't exist");
         std::terminate();
@@ -200,9 +200,9 @@ void EntityManager::exposeToLua() {
 
 }
 
-Entity * EntityManager::createEntityInternal(const std::string & type, const sol::table & table){
+Entity * EntityManager::create_entity_internal(const std::string & type, const sol::table & table){
 
-    auto id = m_nextId++;
+    auto id = m_next_id++;
 
     auto ss = std::stringstream{};
     ss << type << "_" << id;

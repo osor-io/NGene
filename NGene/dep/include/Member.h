@@ -70,7 +70,7 @@ public:
         typename = std::enable_if_t<std::is_constructible<T, V>::value>>
         void set(Class& obj, V&& value) const; // accepts lvalues and rvalues!
 
-    const char* getName() const { return name; }
+    const char* get_name() const { return name; }
     bool hasPtr() const { return hasMemberPtr; }
     bool hasGetter() const { return refGetterPtr || valGetterPtr; }
     bool hasSetter() const { return refSetterPtr || valSetterPtr; }

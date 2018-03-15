@@ -105,7 +105,7 @@ void TransformComponent::expose_to_lua() {
 
         );
 
-    LUA.new_usertype<TransformComponent>(meta::getName<TransformComponent>(),
+    LUA.new_usertype<TransformComponent>(meta::get_name<TransformComponent>(),
 
 
         /*
