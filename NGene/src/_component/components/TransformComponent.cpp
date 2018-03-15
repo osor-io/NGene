@@ -26,11 +26,11 @@ TransformComponent::TransformComponent(EntityId id, const sol::table& table) : C
 
 TransformComponent::~TransformComponent() {}
 
-void TransformComponent::drawComponentInspector() {
+void TransformComponent::draw_component_inspector() {
 
     ImGui::SetNextWindowSize(ImVec2(400, 90), ImGuiCond_FirstUseEver);
-    ImGui::Begin(calculateShowname().c_str(), &m_guiOpen);
-    ImGui::Text("Position: "); ImGui::SameLine(100); ImGui::DragFloat2("##Position", &(m_position.x), 1.0f, config::minPosition.x, config::maxPosition.x);
+    ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
+    ImGui::Text("Position: "); ImGui::SameLine(100); ImGui::DragFloat2("##Position", &(m_position.x), 1.0f, config::min_position.x, config::max_position.x);
 
     /*
     //To Check the window size and adjust default sizes:
@@ -42,7 +42,7 @@ void TransformComponent::drawComponentInspector() {
 
 
 
-json TransformComponent::toJson() {
+json TransformComponent::to_json() {
 
     auto j = json{};
 
@@ -52,40 +52,40 @@ json TransformComponent::toJson() {
     return j;
 }
 
-void TransformComponent::loadJson(const json& j) {
+void TransformComponent::load_json(const json& j) {
 
     auto v = sf::Vector2f{};
 
     v.x = j["position"]["x"];
     v.y = j["position"]["y"];
 
-    setPosition(v);
+    set_position(v);
 }
 
-sf::Vector2f TransformComponent::getPosition() const {
+sf::Vector2f TransformComponent::get_position() const {
     return m_position;
 }
 
-sf::Vector2f & TransformComponent::getPositionRef() {
+sf::Vector2f & TransformComponent::get_position_ref() {
     return m_position;
 }
 
 
-void TransformComponent::setPosition(const sf::Vector2f & position) {
+void TransformComponent::set_position(const sf::Vector2f & position) {
     m_position = position;
 }
 
 
-LuaVector2f& TransformComponent::luaGetPosition() {
+LuaVector2f& TransformComponent::lua_get_position() {
     return (*reinterpret_cast<LuaVector2f*>(&m_position));
 }
 
 
-void TransformComponent::luaSetPosition(const LuaVector2f & position) {
-    m_position = LuaVector2f::toSf(position);
+void TransformComponent::lua_set_position(const LuaVector2f & position) {
+    m_position = LuaVector2f::to_sf(position);
 }
 
-void TransformComponent::exposeToLua() {
+void TransformComponent::expose_to_lua() {
 
     LUA.new_usertype<LuaVector2f>("Vector2f",
 
@@ -118,7 +118,7 @@ void TransformComponent::exposeToLua() {
         Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
         */
 
-        "position", sol::property(&TransformComponent::luaGetPosition, &TransformComponent::luaSetPosition)
+        "position", sol::property(&TransformComponent::lua_get_position, &TransformComponent::lua_set_position)
 
         );
 }

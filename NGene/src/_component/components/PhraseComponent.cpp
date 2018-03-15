@@ -23,7 +23,7 @@ PhraseComponent::~PhraseComponent() {
 }
 
 
-json PhraseComponent::toJson() {
+json PhraseComponent::to_json() {
     auto j = json{};
 
     j["phrase"] = m_phrase;
@@ -31,30 +31,30 @@ json PhraseComponent::toJson() {
     return j;
 }
 
-void PhraseComponent::loadJson(const json & j) {
+void PhraseComponent::load_json(const json & j) {
     m_phrase = j["phrase"].get<std::string>();
 }
 
-std::string PhraseComponent::getPhrase() const {
+std::string PhraseComponent::get_phrase() const {
     return m_phrase;
 }
 
 
-void PhraseComponent::setPhrase(const std::string& phrase) {
+void PhraseComponent::set_phrase(const std::string& phrase) {
     m_phrase = phrase;
 }
 
 
 int phraseEditCallback(ImGuiTextEditCallbackData *data) {
     auto o = reinterpret_cast<PhraseComponent*>(data->UserData);
-    o->setPhrase(std::string(data->Buf));
+    o->set_phrase(std::string(data->Buf));
     return 0;
 }
 
-void PhraseComponent::drawComponentInspector() {
+void PhraseComponent::draw_component_inspector() {
 
     ImGui::SetNextWindowSize(ImVec2(400, 100), ImGuiCond_FirstUseEver);
-    ImGui::Begin(calculateShowname().c_str(), &m_guiOpen);
+    ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
 
 
     char name_arr[config::max_phrase_size];
@@ -77,7 +77,7 @@ void PhraseComponent::drawComponentInspector() {
 
 #define REGISTER_METHOD(method) #method , &PhraseComponent::method
 
-void PhraseComponent::exposeToLua()
+void PhraseComponent::expose_to_lua()
 {
 
     LUA.new_usertype<PhraseComponent>(meta::getName<PhraseComponent>(),
@@ -93,7 +93,7 @@ void PhraseComponent::exposeToLua()
         Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
         */
 
-        "phrase", sol::property(&PhraseComponent::getPhrase, &PhraseComponent::setPhrase)
+        "phrase", sol::property(&PhraseComponent::get_phrase, &PhraseComponent::set_phrase)
 
         );
 

@@ -10,19 +10,19 @@ ComponentManager::~ComponentManager() {
 
 }
 
-void ComponentManager::startUp() {
+void ComponentManager::start_up() {
 
 }
 
-void ComponentManager::shutDown() {
-    m_instanceMap.clear();
+void ComponentManager::shut_down() {
+    m_instance_map.clear();
 }
 
-void ComponentManager::addComponentInstance(const std::type_index& type, Component* component) {
-    m_instanceMap[type].push_back(component);
+void ComponentManager::add_component_instance(const std::type_index& type, Component* component) {
+    m_instance_map[type].push_back(component);
 }
 
-void ComponentManager::removeComponentInstance(const std::type_index& type, Component* component) {
-    auto& vector = m_instanceMap[type];
-    vector.erase(std::remove(vector.begin(), vector.end(), component), vector.end());
+void ComponentManager::remove_component_instance(const std::type_index& type, Component* component) {
+    auto& v = m_instance_map[type];
+    v.erase(std::remove(v.begin(), v.end(), component), v.end());
 }

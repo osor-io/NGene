@@ -12,7 +12,7 @@ RenderSystem::RenderSystem() {}
 
 RenderSystem::~RenderSystem() {}
 
-void RenderSystem::startUp() {
+void RenderSystem::start_up() {
 
     /*
     We register the system so we can receive the entities with the components we are interested in.
@@ -20,7 +20,7 @@ void RenderSystem::startUp() {
     registerSystem();
 }
 
-void RenderSystem::shutDown() {
+void RenderSystem::shut_down() {
 
 }
 
@@ -46,8 +46,8 @@ void RenderSystem::update() {
                 auto graphicsComponent = entity->getComponent<SpriteComponent>();
                 auto transformComponent = entity->getComponent<TransformComponent>();
 
-                auto sprite = graphicsComponent->getSpritePtr();
-                sprite->setPosition(transformComponent->getPosition());
+                auto sprite = graphicsComponent->get_sprite_ptr();
+                sprite->setPosition(transformComponent->get_position());
                 target->draw(*sprite);
             }
         }

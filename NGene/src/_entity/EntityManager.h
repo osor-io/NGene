@@ -30,8 +30,8 @@ private:
 
 public:
 
-    void startUp() override;
-    void shutDown() override;
+    void start_up() override;
+    void shut_down() override;
 
     void updateEntities();
 

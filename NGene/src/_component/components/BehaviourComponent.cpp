@@ -14,49 +14,49 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
 
     sol::function f = table["onUpdate"];
 
-    m_onUpdate = f;
+    m_on_update = f;
 
     auto ss = std::stringstream{};
     ss << "Valid: " << f.valid() << " Registry Index: " <<  f.registry_index();
-    m_onUpdateString = ss.str();
+    m_on_update_string = ss.str();
 }
 
 
 DTOR(COMPONENT_TYPE)() {}
 
 
-json COMPONENT_TYPE::toJson() {
+json COMPONENT_TYPE::to_json() {
     return json{};
 }
 
-void COMPONENT_TYPE::loadJson(const json& j) {
+void COMPONENT_TYPE::load_json(const json& j) {
 }
 
-sol::function COMPONENT_TYPE::getOnUpdate() const {
-    return m_onUpdate;
-}
-
-
-void COMPONENT_TYPE::setOnUpdate(const sol::function& f) {
-    m_onUpdate = f;
-}
-
-std::string COMPONENT_TYPE::getOnUpdateString() const {
-    return m_onUpdateString;
+sol::function COMPONENT_TYPE::get_on_update() const {
+    return m_on_update;
 }
 
 
-void COMPONENT_TYPE::setOnUpdateString(const std::string& onUpdateString) {
-    m_onUpdateString = onUpdateString;
+void COMPONENT_TYPE::set_on_update(const sol::function& f) {
+    m_on_update = f;
+}
+
+std::string COMPONENT_TYPE::get_on_update_string() const {
+    return m_on_update_string;
 }
 
 
-void COMPONENT_TYPE::drawComponentInspector() {
+void COMPONENT_TYPE::set_on_update_string(const std::string& onUpdateString) {
+    m_on_update_string = onUpdateString;
+}
+
+
+void COMPONENT_TYPE::draw_component_inspector() {
 
     ImGui::SetNextWindowSize(ImVec2(400, 100), ImGuiCond_FirstUseEver);
-    ImGui::Begin(calculateShowname().c_str(), &m_guiOpen);
+    ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
 
-    ImGui::Text("%s", m_onUpdateString.c_str());
+    ImGui::Text("%s", m_on_update_string.c_str());
 
     /*
     //To Check the window size and adjust default sizes:
@@ -68,7 +68,7 @@ void COMPONENT_TYPE::drawComponentInspector() {
 
 #define REGISTER_METHOD(method) #method , &PhraseComponent::method
 
-void COMPONENT_TYPE::exposeToLua()
+void COMPONENT_TYPE::expose_to_lua()
 {
 
     LUA.new_usertype<COMPONENT_TYPE>(STRINGIFY(COMPONENT_TYPE),
@@ -84,7 +84,7 @@ void COMPONENT_TYPE::exposeToLua()
         Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
         */
 
-        "onUpdate", sol::property(&COMPONENT_TYPE::getOnUpdate, &COMPONENT_TYPE::setOnUpdate)
+        "onUpdate", sol::property(&COMPONENT_TYPE::get_on_update, &COMPONENT_TYPE::set_on_update)
 
         );
 

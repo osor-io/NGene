@@ -85,9 +85,9 @@ public:
     ComponentTemplate(EntityId id, std::type_index type) : Component(id, type) {}
     ~ComponentTemplate() {}
 
-    void drawDebugGUI() {
+    void draw_debug_gui() {
         ImGui::PushID(this);
-        if (m_guiOpen) { drawComponentInspector(); }
+        if (m_gui_open) { draw_component_inspector(); }
         ImGui::Bullet();
         auto name = std::string(meta:: template getName<T>());
         auto size = name.size();
@@ -97,17 +97,17 @@ public:
             *ss << name[i];
         }
         if (ImGui::SmallButton(ss->str().c_str())) {
-            m_guiOpen = true;
+            m_gui_open = true;
         };
         ImGui::PopID();
     }
 
-    virtual std::string getComponentTypeName() {
+    virtual std::string get_component_type_name() {
         return meta::getName<T>();
     }
 
 protected:
-    std::string calculateShowname() {
+    std::string calculate_showname() {
 
         auto name = std::string(meta:: template getName<T>());
         auto size = name.size();
@@ -118,12 +118,12 @@ protected:
         }
 
         auto ss = std::stringstream{};
-        ss << "[" << m_parentId << "] " << ssn.str();
+        ss << "[" << m_parent_id << "] " << ssn.str();
 
         return ss.str();
     }
 
-    virtual void drawComponentInspector() = 0;
+    virtual void draw_component_inspector() = 0;
 
 };
 

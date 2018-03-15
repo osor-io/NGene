@@ -14,28 +14,27 @@ public:
     SpriteComponent(EntityId id, const sol::table& table);
     ~SpriteComponent();
 
-    json toJson() override;
-    void loadJson(const json& j) override;
+    json to_json() override;
+    void load_json(const json& j) override;
 
-    std::string getFilename() const;
-    void setFilename(const std::string& filename);
+    std::string get_filename() const;
+    void set_filename(const std::string& filename);
 
-    sf::Sprite* getSpritePtr();
-    sf::Sprite getSprite() const;
-    void setSprite(const sf::Sprite& sprite);
-    void moveSprite(sf::Sprite&& sprite);
+    sf::Sprite* get_sprite_ptr();
+    sf::Sprite get_sprite() const;
+    void set_sprite(const sf::Sprite& sprite);
+    void set_sprite_rval(sf::Sprite&& sprite);
 
-    void drawComponentInspector() override;
+    void draw_component_inspector() override;
 
-    static void exposeToLua();
+    static void expose_to_lua();
+
+    void load_sprite();
 
     std::string m_filename;
     sf::Sprite m_sprite;
     sf::Texture m_texture;
-    unsigned int m_layer{1000};
-
-private:
-    void loadSprite();
+    unsigned int m_layer{ 1000 };
 
 };
 

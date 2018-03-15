@@ -9,18 +9,18 @@ public:
     BehaviourComponent(EntityId id, const sol::table& table);
     ~BehaviourComponent();
 
-    json toJson() override;
-    void loadJson(const json& j) override;
+    json to_json() override;
+    void load_json(const json& j) override;
 
-    sol::function getOnUpdate() const;
-    void setOnUpdate(const sol::function& member); // Use const& when appropriate
+    sol::function get_on_update() const;
+    void set_on_update(const sol::function& member); // Use const& when appropriate
 
-    std::string getOnUpdateString() const;
-    void setOnUpdateString(const std::string& onUpdateString);
+    std::string get_on_update_string() const;
+    void set_on_update_string(const std::string& onUpdateString);
 
     // ====== BEG OF REQUIREMENTS ======
-    void drawComponentInspector() override;
-    static void exposeToLua();  // Go To Entity.cpp and call this
+    void draw_component_inspector() override;
+    static void expose_to_lua();  // Go To Entity.cpp and call this
     // ====== END OF REQUIREMENTS ======
 
     /*
@@ -35,8 +35,8 @@ public:
     as add it in "drawComponentInspector()" to be able to see it
     */
     // ====== BEG OF MEMBERS ======
-    sol::function m_onUpdate;
-    std::string m_onUpdateString;
+    sol::function m_on_update;
+    std::string m_on_update_string;
     // ====== END OF MEMBERS ======
 
 };

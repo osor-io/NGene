@@ -8,15 +8,15 @@ public:
     ExampleComponent(EntityId id, const sol::table& table);
     ~ExampleComponent();
 
-    json toJson() override;
-    void loadJson(const json& j) override;
+    json to_json() override;
+    void load_json(const json& j) override;
 
-    int getMember() const;
-    void setMember(int member); // Use const& when appropriate
+    int get_member() const;
+    void set_member(int member); // Use const& when appropriate
 
     // ====== BEG OF REQUIREMENTS ======
-    void drawComponentInspector() override;
-    static void exposeToLua();  // Go To Entity.cpp and call this
+    void draw_component_inspector() override;
+    static void expose_to_lua();  // Go To Entity.cpp and call this
     // ====== END OF REQUIREMENTS ======
 
     /*
@@ -44,7 +44,7 @@ inline auto meta::registerName<ExampleComponent>() {
 template<>
 inline auto meta::registerMembers<ExampleComponent>() {
     return members(
-        member("member", &ExampleComponent::getMember, &ExampleComponent::setMember)
+        member("member", &ExampleComponent::get_member, &ExampleComponent::set_member)
     );
 }
 

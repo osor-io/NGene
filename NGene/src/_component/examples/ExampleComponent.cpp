@@ -27,7 +27,7 @@ DTOR(COMPONENT_TYPE)() {
 }
 
 
-json COMPONENT_TYPE::toJson() {
+json COMPONENT_TYPE::to_json() {
     auto j = json{};
 
     j["member"] = m_member;
@@ -35,24 +35,24 @@ json COMPONENT_TYPE::toJson() {
     return j;
 }
 
-void COMPONENT_TYPE::loadJson(const json& j) {
+void COMPONENT_TYPE::load_json(const json& j) {
     m_member = j["member"];
 }
 
-int COMPONENT_TYPE::getMember() const {
+int COMPONENT_TYPE::get_member() const {
     return m_member;
 }
 
 
-void COMPONENT_TYPE::setMember(int member) {
+void COMPONENT_TYPE::set_member(int member) {
     m_member = member;
 }
 
 
-void COMPONENT_TYPE::drawComponentInspector() {
+void COMPONENT_TYPE::draw_component_inspector() {
 
     ImGui::SetNextWindowSize(ImVec2(400, 100), ImGuiCond_FirstUseEver);
-    ImGui::Begin(calculateShowname().c_str(), &m_guiOpen);
+    ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
 
     ImGui::Text("Example Member (int): %d", m_member);
 
@@ -66,7 +66,7 @@ void COMPONENT_TYPE::drawComponentInspector() {
 
 #define REGISTER_METHOD(method) #method , &PhraseComponent::method
 
-void COMPONENT_TYPE::exposeToLua()
+void COMPONENT_TYPE::expose_to_lua()
 {
 
     LUA.new_usertype<COMPONENT_TYPE>(STRINGIFY(COMPONENT_TYPE),
@@ -82,7 +82,7 @@ void COMPONENT_TYPE::exposeToLua()
         Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
         */
 
-        "member", sol::property(&COMPONENT_TYPE::getMember, &COMPONENT_TYPE::setMember)
+        "member", sol::property(&COMPONENT_TYPE::get_member, &COMPONENT_TYPE::set_member)
 
         );
 

@@ -8,7 +8,7 @@ BehaviourSystem::BehaviourSystem() {}
 
 BehaviourSystem::~BehaviourSystem() {}
 
-void BehaviourSystem::startUp() {
+void BehaviourSystem::start_up() {
 
     /*
     We register the system so we can receive the entities with the components we are interested in.
@@ -16,7 +16,7 @@ void BehaviourSystem::startUp() {
     registerSystem();
 }
 
-void BehaviourSystem::shutDown() {
+void BehaviourSystem::shut_down() {
 
 }
 
@@ -25,7 +25,7 @@ void BehaviourSystem::shutDown() {
 void BehaviourSystem::update() {
 
     for (auto& e : m_entities) {
-        e.second->getComponent<BehaviourComponent>()->getOnUpdate()(*(e.second), DELTA_SECONDS);
+        e.second->getComponent<BehaviourComponent>()->get_on_update()(*(e.second), DELTA_SECONDS);
     }
 
 }

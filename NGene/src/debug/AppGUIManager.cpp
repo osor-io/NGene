@@ -11,7 +11,7 @@ AppGUIManager::AppGUIManager() {}
 AppGUIManager::~AppGUIManager() {}
 
 
-void AppGUIManager::startUp() {
+void AppGUIManager::start_up() {
 
     ImGuiStyle * style = &ImGui::GetStyle();
 
@@ -84,7 +84,7 @@ void AppGUIManager::startUp() {
 }
 
 
-void AppGUIManager::shutDown() {
+void AppGUIManager::shut_down() {
 
 
 }

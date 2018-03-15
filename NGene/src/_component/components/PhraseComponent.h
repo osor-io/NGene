@@ -12,15 +12,15 @@ public:
     PhraseComponent(EntityId id, const sol::table& table);
     ~PhraseComponent();
 
-    json toJson() override;
-    void loadJson(const json& j) override;
+    json to_json() override;
+    void load_json(const json& j) override;
 
-    std::string getPhrase() const;
-    void setPhrase(const std::string& phrase);
+    std::string get_phrase() const;
+    void set_phrase(const std::string& phrase);
 
-    void drawComponentInspector() override;
+    void draw_component_inspector() override;
 
-    static void exposeToLua();
+    static void expose_to_lua();
 
     std::string m_phrase;
 };

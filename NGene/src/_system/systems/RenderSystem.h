@@ -20,8 +20,8 @@ private:
 public:
 
     void update() override;
-    void startUp() override;
-    void shutDown() override;
+    void start_up() override;
+    void shut_down() override;
     void registerEntity(Entity& entity) override;
     void deregisterEntity(EntityId id) override;
 

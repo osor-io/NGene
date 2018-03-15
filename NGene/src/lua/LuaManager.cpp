@@ -10,13 +10,13 @@ LuaManager::~LuaManager()
 {
 }
 
-void LuaManager::startUp()
+void LuaManager::start_up()
 {
     m_state = std::make_unique<sol::state>();
     m_state.get()->open_libraries(sol::lib::base);
 }
 
-void LuaManager::shutDown() {
+void LuaManager::shut_down() {
     m_state.reset();
 }
 

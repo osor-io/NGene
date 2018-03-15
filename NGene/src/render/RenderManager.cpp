@@ -9,7 +9,7 @@ RenderManager::RenderManager() {}
 RenderManager::~RenderManager() {}
 
 
-void RenderManager::startUp() {
+void RenderManager::start_up() {
     /*
     We first initialize the window and the debug GUI.
     */
@@ -20,7 +20,7 @@ void RenderManager::startUp() {
 }
 
 
-void RenderManager::shutDown() {
+void RenderManager::shut_down() {
 
     /*
     In reverse order of creation first we shutdown the debug GUI

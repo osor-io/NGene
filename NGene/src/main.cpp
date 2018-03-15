@@ -13,35 +13,35 @@
 #include "./_system/systems/BehaviourSystem.h"
 #include "./_system/systems/RenderSystem.h"
 
-void startUp() {
+void start_up() {
 
-    TimeManager::get().startUp();
-    RenderManager::get().startUp();
-    AppGUIManager::get().startUp();
-    LuaManager::get().startUp();
+    TimeManager::get().start_up();
+    RenderManager::get().start_up();
+    AppGUIManager::get().start_up();
+    LuaManager::get().start_up();
 
-    BehaviourSystem::get().startUp();
-    RenderSystem::get().startUp();
+    BehaviourSystem::get().start_up();
+    RenderSystem::get().start_up();
 
-    SystemManager::get().startUp();
-    ComponentManager::get().startUp();
-    EntityManager::get().startUp();
+    SystemManager::get().start_up();
+    ComponentManager::get().start_up();
+    EntityManager::get().start_up();
 
 }
 
-void shutDown() {
+void shut_down() {
 
-    EntityManager::get().shutDown();
-    ComponentManager::get().shutDown();
-    SystemManager::get().shutDown();
+    EntityManager::get().shut_down();
+    ComponentManager::get().shut_down();
+    SystemManager::get().shut_down();
 
-    RenderSystem::get().shutDown();
-    BehaviourSystem::get().shutDown();
+    RenderSystem::get().shut_down();
+    BehaviourSystem::get().shut_down();
 
-    LuaManager::get().shutDown();
-    AppGUIManager::get().shutDown();
-    RenderManager::get().shutDown();
-    TimeManager::get().shutDown();
+    LuaManager::get().shut_down();
+    AppGUIManager::get().shut_down();
+    RenderManager::get().shut_down();
+    TimeManager::get().shut_down();
 
 }
 
@@ -119,7 +119,7 @@ inline void tick() {
 
 
 int main() {
-    startUp();
+    start_up();
     loadEntities();
 
 
@@ -131,7 +131,7 @@ int main() {
     writeToFile("lastRunState.json", es.dump(4).c_str());
 
 
-    shutDown();
+    shut_down();
 
     //ENDL;
     //pressToContinue();

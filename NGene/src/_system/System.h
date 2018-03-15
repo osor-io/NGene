@@ -7,9 +7,9 @@
 /**
 Base Class for every system in the engine. They should be retrieved
 at the initialization phase of the program before the game loop and
-call the startUp function in the proper order.
+call the start_up function in the proper order.
 
-At the end of the program they should be shutDown also in the proper
+At the end of the program they should be shut_down also in the proper
 order. Generally the opposed order to initialization.
 
 */
@@ -21,8 +21,8 @@ protected:
     virtual ~System() { }
 public:
     virtual void update() = 0;
-    virtual void startUp() = 0;
-    virtual void shutDown() = 0;
+    virtual void start_up() = 0;
+    virtual void shut_down() = 0;
     virtual void registerEntity(Entity& entity) = 0;
     virtual void deregisterEntity(EntityId id) = 0;
     void registerSystem() {

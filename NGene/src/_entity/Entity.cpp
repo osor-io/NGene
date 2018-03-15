@@ -77,10 +77,10 @@ void Entity::exposeToLua() {
     /*
     Here we expose the members of the components
     */
-    BehaviourComponent::exposeToLua();
-    TransformComponent::exposeToLua();
-    SpriteComponent::exposeToLua();
-    PhraseComponent::exposeToLua();
+    BehaviourComponent::expose_to_lua();
+    TransformComponent::expose_to_lua();
+    SpriteComponent::expose_to_lua();
+    PhraseComponent::expose_to_lua();
 
     /*
     And here a way to access them from the entity that contains them
@@ -130,7 +130,7 @@ void Entity::drawDebugGUI() {
         ImGui::Text("Name: "); ImGui::SameLine(100); ImGui::InputText("##Name", name_arr, config::max_name_length, ImGuiInputTextFlags_CallbackAlways, textEditCallback, reinterpret_cast<void*>(this));
 
         for (auto& c : m_components) {
-            c.second->drawDebugGUI();
+            c.second->draw_debug_gui();
         }
     }
 
@@ -144,7 +144,7 @@ json Entity::toJson() {
     auto components = json{};
 
     for (const auto& c : m_components) {
-        components[c.second->getComponentTypeName()] = c.second->toJson();
+        components[c.second->get_component_type_name()] = c.second->to_json();
     }
 
     content["Components"] = components;
@@ -157,6 +157,6 @@ void Entity::loadJson(const json & j){
     from_json(content, *this);
     auto components = content["Components"];
     for (const auto& c : m_components) {
-        c.second->loadJson(components[c.second->getComponentTypeName()]);
+        c.second->load_json(components[c.second->get_component_type_name()]);
     }
 }

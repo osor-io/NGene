@@ -19,13 +19,13 @@ SpriteComponent::SpriteComponent(EntityId id, const sol::table& table)
             member.set(*this, value);
         }
     });
-    loadSprite();
+    load_sprite();
 }
 
 SpriteComponent::~SpriteComponent() {
 }
 
-void SpriteComponent::loadSprite() {
+void SpriteComponent::load_sprite() {
     if (m_filename.size() > 0) {
         std::ifstream f(m_filename.c_str());
 
@@ -36,7 +36,7 @@ void SpriteComponent::loadSprite() {
 }
 
 
-json SpriteComponent::toJson() {
+json SpriteComponent::to_json() {
     auto j = json{};
 
     j["filename"] = m_filename;
@@ -45,42 +45,42 @@ json SpriteComponent::toJson() {
     return j;
 }
 
-void SpriteComponent::loadJson(const json & j) {
+void SpriteComponent::load_json(const json & j) {
     m_filename = j["filename"].get<std::string>();
     m_layer = j["layer"];
-    loadSprite();
+    load_sprite();
 }
 
 
-std::string SpriteComponent::getFilename() const {
+std::string SpriteComponent::get_filename() const {
     return m_filename;
 }
 
 
-void SpriteComponent::setFilename(const std::string& filename) {
+void SpriteComponent::set_filename(const std::string& filename) {
     m_filename = filename;
 }
 
-sf::Sprite * SpriteComponent::getSpritePtr() {
+sf::Sprite * SpriteComponent::get_sprite_ptr() {
     return &m_sprite;
 }
 
-sf::Sprite SpriteComponent::getSprite() const {
+sf::Sprite SpriteComponent::get_sprite() const {
     return m_sprite;
 }
 
-void SpriteComponent::setSprite(const sf::Sprite & sprite) {
+void SpriteComponent::set_sprite(const sf::Sprite & sprite) {
     m_sprite = sprite;
 }
 
-void SpriteComponent::moveSprite(sf::Sprite && sprite) {
+void SpriteComponent::set_sprite_rval(sf::Sprite && sprite) {
     m_sprite = std::move(sprite);
 }
 
-void SpriteComponent::drawComponentInspector() {
+void SpriteComponent::draw_component_inspector() {
 
     ImGui::SetNextWindowSize(ImVec2(320, 420), ImGuiCond_FirstUseEver);
-    ImGui::Begin(calculateShowname().c_str(), &m_guiOpen);
+    ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
 
     ImGui::Text("File Name: %s", m_filename.c_str());
 
@@ -110,7 +110,7 @@ void SpriteComponent::drawComponentInspector() {
 
 }
 
-void SpriteComponent::exposeToLua() {
+void SpriteComponent::expose_to_lua() {
 
     LUA.new_usertype<SpriteComponent>(meta::getName<SpriteComponent>(),
 
@@ -125,7 +125,7 @@ void SpriteComponent::exposeToLua() {
         Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
         */
 
-        "filename", sol::property(&SpriteComponent::getFilename, &SpriteComponent::setFilename),
+        "filename", sol::property(&SpriteComponent::get_filename, &SpriteComponent::set_filename),
         "layer", &SpriteComponent::m_layer
 
 

@@ -9,7 +9,7 @@ EntityManager::EntityManager() {}
 
 EntityManager::~EntityManager() {}
 
-void EntityManager::startUp() {
+void EntityManager::start_up() {
 
     /*
     Load here all the entity types
@@ -62,7 +62,7 @@ void EntityManager::startUp() {
     exposeToLua();
 }
 
-void EntityManager::shutDown() {
+void EntityManager::shut_down() {
     m_entities.clear();
 }
 
@@ -215,7 +215,7 @@ Entity * EntityManager::createEntityInternal(const std::string & type, const sol
         if (key.is<std::string>()) {
             auto component_name = key.as<std::string>();
             // @@TODO: Check if component name exists
-            ComponentManager::get().addComponentToEntity(*e, component_name, value.as<sol::table>());
+            ComponentManager::get().add_component_to_entity(*e, component_name, value.as<sol::table>());
         }
         else {
             // The key was not a string, we will ignore it.

@@ -5,13 +5,13 @@
 
 namespace config {
 
-    const sf::Vector2f minPosition(-2048.0f, -2048.0f);
-    const sf::Vector2f maxPosition(2048.0f, 2048.0f);
+    const sf::Vector2f min_position(-2048.0f, -2048.0f);
+    const sf::Vector2f max_position(2048.0f, 2048.0f);
 
 }
 
 struct LuaVector2f {
-    static sf::Vector2f toSf(LuaVector2f vector) { return sf::Vector2f(vector.x, vector.y); }
+    static sf::Vector2f to_sf(LuaVector2f vector) { return sf::Vector2f(vector.x, vector.y); }
     LuaVector2f() {}
     LuaVector2f(const sf::Vector2f vector) : x(vector.x), y(vector.y) {}
     float x;
@@ -25,19 +25,19 @@ public:
     TransformComponent(EntityId id, const sol::table& table);
     ~TransformComponent();
 
-    json toJson() override;
-    void loadJson(const json& j) override;
+    json to_json() override;
+    void load_json(const json& j) override;
 
-    sf::Vector2f getPosition() const;
-    sf::Vector2f& getPositionRef();
-    void setPosition(const sf::Vector2f& position);
+    sf::Vector2f get_position() const;
+    sf::Vector2f& get_position_ref();
+    void set_position(const sf::Vector2f& position);
 
-    LuaVector2f& luaGetPosition();
-    void luaSetPosition(const LuaVector2f& position);
+    LuaVector2f& lua_get_position();
+    void lua_set_position(const LuaVector2f& position);
 
     // ====== BEG OF REQUIREMENTS ======
-    void drawComponentInspector() override;
-    static void exposeToLua();
+    void draw_component_inspector() override;
+    static void expose_to_lua();
     friend auto meta::registerMembers<TransformComponent>();
     // ====== END OF REQUIREMENTS ======
 

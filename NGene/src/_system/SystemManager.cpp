@@ -12,12 +12,12 @@ SystemManager::~SystemManager() {
 }
 
 
-void SystemManager::startUp() {
+void SystemManager::start_up() {
 
 }
 
 
-void SystemManager::shutDown() {
+void SystemManager::shut_down() {
     m_registerFuncs.clear();
     m_deregisterFuncs.clear();
 }

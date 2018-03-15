@@ -19,16 +19,16 @@ public:
         return SmallMemoryAllocator::get().dealloc(ptr);
     }
 
-    virtual void drawDebugGUI() = 0;
+    virtual void draw_debug_gui() = 0;
 
-    virtual json toJson() = 0;
-    virtual void loadJson(const json& j) = 0;
+    virtual json to_json() = 0;
+    virtual void load_json(const json& j) = 0;
 
-    virtual std::string getComponentTypeName() = 0;
+    virtual std::string get_component_type_name() = 0;
 
 protected:
-    bool m_guiOpen{ false };
-    EntityId m_parentId;
+    bool m_gui_open{ false };
+    EntityId m_parent_id;
 private:
     std::type_index m_type;
 };

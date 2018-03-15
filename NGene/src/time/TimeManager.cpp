@@ -8,13 +8,13 @@ TimeManager::TimeManager() {}
 TimeManager::~TimeManager() {}
 
 
-void TimeManager::startUp() {
+void TimeManager::start_up() {
     m_frameClock = std::make_unique<sf::Clock>();
     m_frameClock->restart();
 }
 
 
-void TimeManager::shutDown() {
+void TimeManager::shut_down() {
     m_frameClock.reset();
 }
 

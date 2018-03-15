@@ -14,8 +14,8 @@ private:
     ~SystemManager();
 
 public:
-    void startUp() override;
-    void shutDown() override;
+    void start_up() override;
+    void shut_down() override;
 
     void addSystemRegisterFunc(std::function<void(Entity& entity)> funct);
     void addSystemDeregisterFunc(std::function<void(EntityId id)> funct);

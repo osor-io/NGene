@@ -28,20 +28,20 @@ private:
 
 public:
 
-    void startUp() override;
-    void shutDown() override;
+    void start_up() override;
+    void shut_down() override;
 
-    void addComponentInstance(const std::type_index& type, Component* component);
-    void removeComponentInstance(const std::type_index& type, Component* component);
+    void add_component_instance(const std::type_index& type, Component* component);
+    void remove_component_instance(const std::type_index& type, Component* component);
 
-    void addComponentToEntity(Entity& entity, const std::string& name, const sol::table& table) {
-        m_factoryMap.at(m_typeMap.at(name))(entity, table);
+    void add_component_to_entity(Entity& entity, const std::string& name, const sol::table& table) {
+        m_factory_map.at(m_type_map.at(name))(entity, table);
     }
 
 private:
-    InstanceMap m_instanceMap{};
+    InstanceMap m_instance_map{};
 
-    const TypeMap m_typeMap{
+    const TypeMap m_type_map{
 
         std::make_pair(
             meta::getName<BehaviourComponent>(),
@@ -60,7 +60,7 @@ private:
             std::type_index(typeid(PhraseComponent))),
     };
 
-    const FactoryMap m_factoryMap{
+    const FactoryMap m_factory_map{
 
         std::make_pair(std::type_index(typeid(
             BehaviourComponent
