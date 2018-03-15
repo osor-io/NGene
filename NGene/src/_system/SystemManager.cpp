@@ -18,28 +18,28 @@ void SystemManager::start_up() {
 
 
 void SystemManager::shut_down() {
-    m_registerFuncs.clear();
-    m_deregisterFuncs.clear();
+    m_register_funcs.clear();
+    m_deregister_funcs.clear();
 }
 
 
-void SystemManager::addSystemRegisterFunc(std::function<void(Entity& entity)> function) {
-    m_registerFuncs.push_back(function);
+void SystemManager::add_system_register_func(std::function<void(Entity& entity)> function) {
+    m_register_funcs.push_back(function);
 }
 
-void SystemManager::addSystemDeregisterFunc(std::function<void(EntityId entity)> function) {
-    m_deregisterFuncs.push_back(function);
+void SystemManager::add_system_deregister_func(std::function<void(EntityId entity)> function) {
+    m_deregister_funcs.push_back(function);
 }
 
 
-void SystemManager::registerEntityInSystems(Entity& entity) {
-    for (auto f : m_registerFuncs) {
+void SystemManager::register_entity_in_systems(Entity& entity) {
+    for (auto f : m_register_funcs) {
         f(entity);
     }
 }
 
-void SystemManager::deregisterEntityInSystems(EntityId id) {
-    for (auto f : m_deregisterFuncs) {
+void SystemManager::deregister_entity_in_systems(EntityId id) {
+    for (auto f : m_deregister_funcs) {
         f(id);
     }
 }

@@ -24,4 +24,4 @@
 
 #endif
 
-void pressToContinue() noexcept;
+void press_to_continue() noexcept;

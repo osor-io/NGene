@@ -15,7 +15,7 @@ void AppGUIManager::start_up() {
 
     ImGuiStyle * style = &ImGui::GetStyle();
 
-    auto rustyPalette = config::getRustyPalette();
+    auto palette = config::get_rusty_palette();
 
 
     style->WindowPadding = ImVec2(15, 15);
@@ -30,42 +30,42 @@ void AppGUIManager::start_up() {
     style->GrabMinSize = 5.0f;
     style->GrabRounding = 3.0f;
 
-    style->Colors[ImGuiCol_Text] = rustyPalette[0];
-    style->Colors[ImGuiCol_TextDisabled] = rustyPalette[1];
+    style->Colors[ImGuiCol_Text] = palette[0];
+    style->Colors[ImGuiCol_TextDisabled] = palette[1];
     style->Colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.05f, 0.07f, 0.80f);
     style->Colors[ImGuiCol_ChildWindowBg] = ImVec4(0.07f, 0.07f, 0.09f, 1.00f);
     style->Colors[ImGuiCol_PopupBg] = ImVec4(0.07f, 0.07f, 0.09f, 1.00f);
-    style->Colors[ImGuiCol_Border] = rustyPalette[1];
-    style->Colors[ImGuiCol_BorderShadow] = rustyPalette[0];
+    style->Colors[ImGuiCol_Border] = palette[1];
+    style->Colors[ImGuiCol_BorderShadow] = palette[0];
     style->Colors[ImGuiCol_FrameBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
     style->Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
     style->Colors[ImGuiCol_FrameBgActive] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
-    style->Colors[ImGuiCol_TitleBg] = rustyPalette[7];  //ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
-    style->Colors[ImGuiCol_TitleBgCollapsed] = rustyPalette[8]; //ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
-    style->Colors[ImGuiCol_TitleBgActive] = rustyPalette[3]; //ImVec4(0.07f, 0.07f, 0.09f, 1.00f);
+    style->Colors[ImGuiCol_TitleBg] = palette[7];  //ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
+    style->Colors[ImGuiCol_TitleBgCollapsed] = palette[8]; //ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
+    style->Colors[ImGuiCol_TitleBgActive] = palette[3]; //ImVec4(0.07f, 0.07f, 0.09f, 1.00f);
     style->Colors[ImGuiCol_MenuBarBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
     style->Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
-    style->Colors[ImGuiCol_ScrollbarGrab] = rustyPalette[0];
-    style->Colors[ImGuiCol_ScrollbarGrabHovered] = rustyPalette[1];
-    style->Colors[ImGuiCol_ScrollbarGrabActive] = rustyPalette[2];
-    style->Colors[ImGuiCol_CheckMark] = rustyPalette[0];
-    style->Colors[ImGuiCol_SliderGrab] = rustyPalette[0];
+    style->Colors[ImGuiCol_ScrollbarGrab] = palette[0];
+    style->Colors[ImGuiCol_ScrollbarGrabHovered] = palette[1];
+    style->Colors[ImGuiCol_ScrollbarGrabActive] = palette[2];
+    style->Colors[ImGuiCol_CheckMark] = palette[0];
+    style->Colors[ImGuiCol_SliderGrab] = palette[0];
     style->Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
     style->Colors[ImGuiCol_Button] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
     style->Colors[ImGuiCol_ButtonHovered] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
-    style->Colors[ImGuiCol_ButtonActive] = rustyPalette[2];
+    style->Colors[ImGuiCol_ButtonActive] = palette[2];
     style->Colors[ImGuiCol_Header] = ImVec4(0.10f, 0.09f, 0.12f, 1.00f);
     style->Colors[ImGuiCol_HeaderHovered] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
     style->Colors[ImGuiCol_HeaderActive] = ImVec4(0.06f, 0.05f, 0.07f, 1.00f);
     style->Colors[ImGuiCol_Column] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
     style->Colors[ImGuiCol_ColumnHovered] = ImVec4(0.24f, 0.23f, 0.29f, 1.00f);
     style->Colors[ImGuiCol_ColumnActive] = ImVec4(0.56f, 0.56f, 0.58f, 1.00f);
-    style->Colors[ImGuiCol_ResizeGrip] = rustyPalette[0];
-    style->Colors[ImGuiCol_ResizeGripHovered] = rustyPalette[1];
-    style->Colors[ImGuiCol_ResizeGripActive] = rustyPalette[2];
-    style->Colors[ImGuiCol_CloseButton] = rustyPalette[0];//ImVec4(0.40f, 0.39f, 0.38f, 0.16f);
-    style->Colors[ImGuiCol_CloseButtonHovered] = rustyPalette[5];//ImVec4(0.40f, 0.39f, 0.38f, 0.39f);
-    style->Colors[ImGuiCol_CloseButtonActive] = rustyPalette[7];//ImVec4(0.40f, 0.39f, 0.38f, 1.00f);
+    style->Colors[ImGuiCol_ResizeGrip] = palette[0];
+    style->Colors[ImGuiCol_ResizeGripHovered] = palette[1];
+    style->Colors[ImGuiCol_ResizeGripActive] = palette[2];
+    style->Colors[ImGuiCol_CloseButton] = palette[0];//ImVec4(0.40f, 0.39f, 0.38f, 0.16f);
+    style->Colors[ImGuiCol_CloseButtonHovered] = palette[5];//ImVec4(0.40f, 0.39f, 0.38f, 0.39f);
+    style->Colors[ImGuiCol_CloseButtonActive] = palette[7];//ImVec4(0.40f, 0.39f, 0.38f, 1.00f);
     style->Colors[ImGuiCol_PlotLines] = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
     style->Colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.25f, 1.00f, 0.00f, 1.00f);
     style->Colors[ImGuiCol_PlotHistogram] = ImVec4(0.40f, 0.39f, 0.38f, 0.63f);
@@ -89,19 +89,19 @@ void AppGUIManager::shut_down() {
 
 }
 
-void AppGUIManager::drawCornerOverlayDebugInfo() {
+void AppGUIManager::draw_corner_overlay_debug_info() {
     bool open = true;
     const float DISTANCE = 10.0f;
     static int corner = 0;
-    ImVec2 window_pos = ImVec2((corner & 1) ? ImGui::GetIO().DisplaySize.x - DISTANCE : DISTANCE, (corner & 2) ? ImGui::GetIO().DisplaySize.y - DISTANCE : DISTANCE);
-    ImVec2 window_pos_pivot = ImVec2((corner & 1) ? 1.0f : 0.0f, (corner & 2) ? 1.0f : 0.0f);
+    auto window_pos = ImVec2((corner & 1) ? ImGui::GetIO().DisplaySize.x - DISTANCE : DISTANCE, (corner & 2) ? ImGui::GetIO().DisplaySize.y - DISTANCE : DISTANCE);
+    auto window_pos_pivot = ImVec2((corner & 1) ? 1.0f : 0.0f, (corner & 2) ? 1.0f : 0.0f);
     ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.3f)); // Transparent background
     if (ImGui::Begin("Debug Overlay", &open, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings))
     {
         ImGui::Text("Mouse Position: (%6.1f,%6.1f)", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
-        ImGui::Text("Frames Per Second: (%.1f)", (1.f / TimeManager::get().getDeltaTime().asSeconds()));
-        ImGui::Text("Frame Time: (%d) ms", (TimeManager::get().getDeltaTime().asMilliseconds()));
+        ImGui::Text("Frames Per Second: (%.1f)", (1.f / TimeManager::get().get_delta_time().asSeconds()));
+        ImGui::Text("Frame Time: (%d) ms", (TimeManager::get().get_delta_time().asMilliseconds()));
         if (ImGui::BeginPopupContextWindow())
         {
             if (ImGui::MenuItem("Top-left", NULL, corner == 0)) corner = 0;
@@ -115,7 +115,7 @@ void AppGUIManager::drawCornerOverlayDebugInfo() {
     ImGui::PopStyleColor();
 }
 
-void AppGUIManager::drawEntityComponentEditor() {
+void AppGUIManager::draw_entity_component_editor() {
 
     ImGui::SetNextWindowSize(ImVec2(430, 450), ImGuiCond_FirstUseEver);
     if (!ImGui::Begin("Entities & Components"))
@@ -134,14 +134,14 @@ void AppGUIManager::drawEntityComponentEditor() {
 
 }
 
-void AppGUIManager::drawGUI() {
+void AppGUIManager::draw_gui() {
 
     ImGui::PushFont(m_font);
 
     ImGui::ShowDemoWindow();
 
-    drawCornerOverlayDebugInfo();
-    drawEntityComponentEditor();
+    draw_corner_overlay_debug_info();
+    draw_entity_component_editor();
 
     ImGui::PopFont();
 

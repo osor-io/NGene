@@ -14,8 +14,8 @@ public:
     void update() override;
     void start_up() override;
     void shut_down() override;
-    void registerEntity(Entity& entity) override;
-    void deregisterEntity(EntityId id) override;
+    void register_entity(Entity& entity) override;
+    void deregister_entity(EntityId id) override;
 
 private:
     EntitiesGroup m_entities;

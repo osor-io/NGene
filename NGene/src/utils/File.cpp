@@ -3,10 +3,9 @@
 #include <cstdio>
 
 
-void writeToFile(const char * filename, const char * content) {
+void write_to_file(const char * filename, const char * content) {
 
-    FILE * file;
-    file = fopen(filename, "w");
+    auto file = fopen(filename, "w");
     if (file == nullptr) {
         LOG("We couldn't open " << filename << " to write to");
     }

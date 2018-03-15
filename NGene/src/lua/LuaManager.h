@@ -3,7 +3,7 @@
 #include <sol.hpp>
 #include <memory>
 
-#define LUA LuaManager::get().getStateRef()
+#define LUA LuaManager::get().get_state_ref()
 
 /**
 Manages the global lua state for the application. It can be
@@ -23,7 +23,7 @@ public:
     void start_up() override;
     void shut_down() override;
 
-    sol::state& getStateRef();
+    sol::state& get_state_ref();
 private:
     std::unique_ptr<sol::state> m_state{};
 };

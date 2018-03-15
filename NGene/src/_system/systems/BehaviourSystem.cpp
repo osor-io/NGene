@@ -31,13 +31,13 @@ void BehaviourSystem::update() {
 }
 
 
-void BehaviourSystem::registerEntity(Entity& entity) {
+void BehaviourSystem::register_entity(Entity& entity) {
     if (entity.has_component<BehaviourComponent>()) {
         m_entities[entity.get_id()] = &entity;
     }
 }
 
-void BehaviourSystem::deregisterEntity(EntityId id) {
+void BehaviourSystem::deregister_entity(EntityId id) {
     m_entities.erase(id);
 }
 

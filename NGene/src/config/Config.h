@@ -6,7 +6,7 @@
 namespace config {
 
 
-    std::array<ImColor, 9> getRustyPalette();
+    std::array<ImColor, 9> get_rusty_palette();
     
 
 }

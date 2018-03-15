@@ -107,7 +107,7 @@ void Entity::expose_to_lua() {
 }
 
 
-int textEditCallback(ImGuiTextEditCallbackData *data) {
+int text_edit_callback(ImGuiTextEditCallbackData *data) {
     auto entity = reinterpret_cast<Entity*>(data->UserData);
     entity->set_name(std::string(data->Buf));
     entity->generate_show_name();
@@ -118,7 +118,7 @@ int textEditCallback(ImGuiTextEditCallbackData *data) {
 
 void Entity::draw_debug_gui() {
 
-    auto rustyPalette = config::getRustyPalette();
+    auto rustyPalette = config::get_rusty_palette();
 
     char name_arr[config::max_name_length];
 
@@ -132,7 +132,7 @@ void Entity::draw_debug_gui() {
         m_changed_header = false;
 
         ImGui::Text("Id: %d", m_id); ImGui::SameLine(100); ImGui::Text("Type: %s", m_type.c_str());
-        ImGui::Text("Name: "); ImGui::SameLine(100); ImGui::InputText("##Name", name_arr, config::max_name_length, ImGuiInputTextFlags_CallbackAlways, textEditCallback, reinterpret_cast<void*>(this));
+        ImGui::Text("Name: "); ImGui::SameLine(100); ImGui::InputText("##Name", name_arr, config::max_name_length, ImGuiInputTextFlags_CallbackAlways, text_edit_callback, reinterpret_cast<void*>(this));
 
         for (auto& c : m_components) {
             c.second->draw_debug_gui();

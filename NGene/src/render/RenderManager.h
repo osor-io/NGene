@@ -18,15 +18,15 @@ public:
     void start_up() override;
     void shut_down() override;
 
-    bool isWindowOpen() const;
-    sf::RenderTarget* getMainRenderTarget();
+    bool is_window_open() const;
+    sf::RenderTarget* get_main_render_target();
 
-    void beginFrame();
-    void endFrame();
+    void begin_frame();
+    void end_frame();
 
 private:
 
-    std::unique_ptr<sf::RenderWindow> m_renderWindow;
-    sf::Color m_clearColor{ sf::Color::Black };
+    std::unique_ptr<sf::RenderWindow> m_render_window;
+    sf::Color m_clear_color{ sf::Color::Black };
 
 };

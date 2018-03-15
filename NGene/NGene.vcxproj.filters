@@ -36,9 +36,6 @@
     <ClCompile Include="src\_component\Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\_system\System.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\memory\SmallMemoryAllocator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

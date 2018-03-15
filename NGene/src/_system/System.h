@@ -23,14 +23,14 @@ public:
     virtual void update() = 0;
     virtual void start_up() = 0;
     virtual void shut_down() = 0;
-    virtual void registerEntity(Entity& entity) = 0;
-    virtual void deregisterEntity(EntityId id) = 0;
+    virtual void register_entity(Entity& entity) = 0;
+    virtual void deregister_entity(EntityId id) = 0;
     void registerSystem() {
-        SystemManager::get().addSystemRegisterFunc([this](Entity& entity) {
-            registerEntity(entity);
+        SystemManager::get().add_system_register_func([this](Entity& entity) {
+            register_entity(entity);
         });
-        SystemManager::get().addSystemDeregisterFunc([this](EntityId id) {
-            deregisterEntity(id);
+        SystemManager::get().add_system_deregister_func([this](EntityId id) {
+            deregister_entity(id);
         });
     }
 };

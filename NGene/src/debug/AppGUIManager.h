@@ -19,10 +19,10 @@ public:
     void start_up() override;
     void shut_down() override;
 
-    void drawCornerOverlayDebugInfo();
-    void drawEntityComponentEditor();
+    void draw_corner_overlay_debug_info();
+    void draw_entity_component_editor();
 
-    void drawGUI();
+    void draw_gui();
 
 private:
     ImFont * m_font;

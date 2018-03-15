@@ -9,22 +9,22 @@ TimeManager::~TimeManager() {}
 
 
 void TimeManager::start_up() {
-    m_frameClock = std::make_unique<sf::Clock>();
-    m_frameClock->restart();
+    m_frame_clock = std::make_unique<sf::Clock>();
+    m_frame_clock->restart();
 }
 
 
 void TimeManager::shut_down() {
-    m_frameClock.reset();
+    m_frame_clock.reset();
 }
 
 
-sf::Time TimeManager::endOfFrame() {
-    m_frameDeltaTime = m_frameClock->restart();
-    return m_frameDeltaTime;
+sf::Time TimeManager::end_of_frame() {
+    m_frame_delta_time = m_frame_clock->restart();
+    return m_frame_delta_time;
 }
 
-sf::Time TimeManager::getDeltaTime() {
-    return m_frameDeltaTime;
+sf::Time TimeManager::get_delta_time() const {
+    return m_frame_delta_time;
 }
 

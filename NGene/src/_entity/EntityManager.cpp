@@ -76,7 +76,7 @@ void EntityManager::update_entities() {
         */
         for (auto& e : m_entities) {
             assert(e.second->get_id() == e.first);
-            SystemManager::get().deregisterEntityInSystems(e.second->get_id());
+            SystemManager::get().deregister_entity_in_systems(e.second->get_id());
         }
         m_entities.clear();
         m_next_id = 0;
@@ -89,7 +89,7 @@ void EntityManager::update_entities() {
             auto e = create_entity_internal(json_entity["type"], LUA["Entities"]);
             e->load_json(json_entity);
             m_entities[e->get_id()] = std::unique_ptr<Entity>(e);
-            SystemManager::get().registerEntityInSystems(*e);
+            SystemManager::get().register_entity_in_systems(*e);
         }
         
 
@@ -99,12 +99,12 @@ void EntityManager::update_entities() {
 
         for (auto entity : m_entities_to_add) {
             m_entities[entity->get_id()] = std::unique_ptr<Entity>(entity);
-            SystemManager::get().registerEntityInSystems(*entity);
+            SystemManager::get().register_entity_in_systems(*entity);
         }
         m_entities_to_add.clear();
 
         for (auto id : m_entity_ids_to_remove) {
-            SystemManager::get().deregisterEntityInSystems(id);
+            SystemManager::get().deregister_entity_in_systems(id);
             m_entities.erase(id);
         }
         m_entity_ids_to_remove.clear();

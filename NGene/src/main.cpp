@@ -45,7 +45,7 @@ void shut_down() {
 
 }
 
-void loadEntities() {
+void load_entities() {
 
     auto e = EntityManager::get().load_entity( "Cosa");
     e = EntityManager::get().load_entity("OtraCosa");
@@ -66,7 +66,7 @@ void loadEntities() {
 }
 
 
-void accessEntitiesFromLua() {
+void access_entities_from_lua() {
     LUA.script(R"(
             print("Do we have an entity with the id 0? ", hasEntity(0))
             print("Getting Entity 0")
@@ -102,7 +102,7 @@ void accessEntitiesFromLua() {
 inline void tick() {
 
     { // ====== BEG OF RENDER ======
-        RenderManager::get().beginFrame();
+        RenderManager::get().begin_frame();
         /*
         Everything that renders something goes in the
         next scope
@@ -111,7 +111,7 @@ inline void tick() {
             BehaviourSystem::get().update();
             RenderSystem::get().update();
         }
-        RenderManager::get().endFrame();
+        RenderManager::get().end_frame();
     } // ====== END OF RENDER ======
 
     EntityManager::get().update_entities();
@@ -120,20 +120,20 @@ inline void tick() {
 
 int main() {
     start_up();
-    loadEntities();
+    load_entities();
 
 
-    while (RenderManager::get().isWindowOpen()) {
+    while (RenderManager::get().is_window_open()) {
         tick();
     }
 
     auto es = EntityManager::get().serialize_entities();
-    writeToFile("lastRunState.json", es.dump(4).c_str());
+    write_to_file("lastRunState.json", es.dump(4).c_str());
 
 
     shut_down();
 
     //ENDL;
-    //pressToContinue();
+    //press_to_continue();
     return 0;
 }

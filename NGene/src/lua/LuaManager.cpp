@@ -20,6 +20,6 @@ void LuaManager::shut_down() {
     m_state.reset();
 }
 
-sol::state & LuaManager::getStateRef() {
+sol::state & LuaManager::get_state_ref() {
     return *m_state;
 }

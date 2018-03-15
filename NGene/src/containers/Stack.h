@@ -9,19 +9,19 @@ class Stack {
 public:
     Stack() {
         m_data = static_cast<T*>(malloc(startingSize * sizeof(T)));
-        m_maxSize = startingSize;
+        m_max_size = startingSize;
         m_used = 0;
     }
     ~Stack() { free(m_data); };
 
-    bool hasElement(T elem) const {
+    bool has_element(T elem) const {
         for (size_t i = 0; i < m_used; ++i) {
             if (elem == m_data[i]) return true;
         }
         return false;
     }
 
-    void printTop(size_t elems) const {
+    void print_top(size_t elems) const {
         for (size_t i = 0; i < elems; ++i) {
             std::cout << &m_data[m_used - i - 1] << ": " << m_data[m_used - i - 1]
                 << std::endl;
@@ -29,9 +29,9 @@ public:
     }
 
     void push(T elem) {
-        if (m_used == m_maxSize) {
-            m_maxSize <<= 1;
-            m_data = static_cast<T*>(realloc(m_data, m_maxSize * sizeof(T)));
+        if (m_used == m_max_size) {
+            m_max_size <<= 1;
+            m_data = static_cast<T*>(realloc(m_data, m_max_size * sizeof(T)));
         }
         m_data[m_used++] = elem;
     }
@@ -44,10 +44,10 @@ public:
 
     size_t size() const { return m_used; }
 
-    size_t currentMaxSize() const { return m_maxSize; }
+    size_t current_max_size() const { return m_max_size; }
 
 private:
-    size_t m_maxSize;
+    size_t m_max_size;
     size_t m_used;
     T* m_data;
 };

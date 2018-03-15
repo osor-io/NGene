@@ -1,6 +1,6 @@
 #include "OtherMath.h"
 
-unsigned int nextPowerOf2(unsigned int value) {
+unsigned int next_power_of_2(unsigned int value) {
     --value;
     value |= value >> 1;
     value |= value >> 2;

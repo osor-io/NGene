@@ -1,6 +1,6 @@
 #include "Config.h"
 
-std::array<ImColor, 9> config::getRustyPalette() {
+std::array<ImColor, 9> config::get_rusty_palette() {
 
     return std::array<ImColor, 9>{ // Bright to Dark
             ImColor(255, 233, 221),

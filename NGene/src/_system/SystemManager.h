@@ -17,15 +17,15 @@ public:
     void start_up() override;
     void shut_down() override;
 
-    void addSystemRegisterFunc(std::function<void(Entity& entity)> funct);
-    void addSystemDeregisterFunc(std::function<void(EntityId id)> funct);
+    void add_system_register_func(std::function<void(Entity& entity)> funct);
+    void add_system_deregister_func(std::function<void(EntityId id)> funct);
 
 
-    void registerEntityInSystems(Entity& entity);
-    void deregisterEntityInSystems(EntityId id);
+    void register_entity_in_systems(Entity& entity);
+    void deregister_entity_in_systems(EntityId id);
 
 private:
-    RegisterFuncVector m_registerFuncs{};
-    DeregisterFuncVector m_deregisterFuncs{};
+    RegisterFuncVector m_register_funcs{};
+    DeregisterFuncVector m_deregister_funcs{};
 };
 

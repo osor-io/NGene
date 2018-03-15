@@ -13,10 +13,10 @@ void RenderManager::start_up() {
     /*
     We first initialize the window and the debug GUI.
     */
-    m_renderWindow = std::make_unique<sf::RenderWindow>(sf::VideoMode(1200, 800), "NGene");
-    m_renderWindow->setFramerateLimit(60);
+    m_render_window = std::make_unique<sf::RenderWindow>(sf::VideoMode(1200, 800), "NGene");
+    m_render_window->setFramerateLimit(60);
      
-    ImGui::SFML::Init(*m_renderWindow);
+    ImGui::SFML::Init(*m_render_window);
 }
 
 
@@ -27,53 +27,52 @@ void RenderManager::shut_down() {
     and then we release the render window.
     */
     ImGui::SFML::Shutdown();
-    m_renderWindow.reset();
+    m_render_window.reset();
 
 }
 
-bool RenderManager::isWindowOpen() const {
-    return m_renderWindow->isOpen();
+bool RenderManager::is_window_open() const {
+    return m_render_window->isOpen();
 }
 
-sf::RenderTarget* RenderManager::getMainRenderTarget() {
-    return m_renderWindow.get();
+sf::RenderTarget* RenderManager::get_main_render_target() {
+    return m_render_window.get();
 }
 
-void RenderManager::beginFrame() {
-    sf::Event event;
-    while (m_renderWindow->pollEvent(event)) {
+void RenderManager::begin_frame() {
+    auto event = sf::Event{};
+    while (m_render_window->pollEvent(event)) {
         ImGui::SFML::ProcessEvent(event);
 
         if (event.type == sf::Event::Closed) {
-            m_renderWindow->close();
+            m_render_window->close();
             return;
         }
     }
-    m_renderWindow->clear(m_clearColor);
+    m_render_window->clear(m_clear_color);
 }
 
-void RenderManager::endFrame() {
+void RenderManager::end_frame() {
 
     /*
     Now we set up everything we want to render for the debug GUI
 
     We must create all widgets between Update and Render
     */
-    ImGui::SFML::Update(*m_renderWindow, DELTA_TIME);
+    ImGui::SFML::Update(*m_render_window, DELTA_TIME);
 
-    //@@TODO: Call here all the ImGui functions
-    AppGUIManager::get().drawGUI();
+    AppGUIManager::get().draw_gui();
 
 
     /*
     Now we render overlayed things such as the debug GUI
     */
-    ImGui::SFML::Render(*m_renderWindow);
+    ImGui::SFML::Render(*m_render_window);
 
 
     /*
     And finally we display the image
     */
-    m_renderWindow->display();
-    TimeManager::get().endOfFrame();
+    m_render_window->display();
+    TimeManager::get().end_of_frame();
 }

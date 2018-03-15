@@ -1,3 +1,3 @@
 #pragma once
 
-void writeToFile(const char* filename, const char* content);
+void write_to_file(const char* filename, const char* content);
