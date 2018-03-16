@@ -30,17 +30,64 @@ void EntityManager::start_up() {
                     },
                     BehaviourComponent = {
                         onUpdate = function (this, deltaTime)
-                            transform = this:getTransformComponent()  
+                            transform = this:getTransformComponent()
+                            local x = getAxisPosition(Axis.X)
+                            local y = getAxisPosition(Axis.Y)
                             if(transform) then
-                                transform.position.y = transform.position.y + (10 * deltaTime) 
+                                transform.position.x = transform.position.x + (x * 3 * deltaTime) 
+                                transform.position.y = transform.position.y + (y * 3 * deltaTime) 
                             else    
                                 print("We got no transform")
                             end
+                            --[[
+                            print("X:", getAxisPosition(Axis.X))
+                            print("Y:", getAxisPosition(Axis.Y))
+                            print("Z:", getAxisPosition(Axis.Z))
+                            print("R:", getAxisPosition(Axis.R))
+                            print("U:", getAxisPosition(Axis.U))
+                            print("V:", getAxisPosition(Axis.V))
+                            print("PovX:", getAxisPosition(Axis.PovX))
+                            print("PovY:", getAxisPosition(Axis.PovY))
+                            --]]
                         end
                     },
                     InputComponent = {
-                        onButtonUp = function (button)
-                            print(button)
+                        onKeyUp = function (this, button)
+                            print("Down: ", button)
+                            if(button == Key.A) then
+                                print("Key was an A")
+                            else
+                                print("Key was NOT an A")
+                            end
+                        end,
+                        onKeyDown = function (this, button)
+                            print("Up: ", button)
+                        end,
+                        onButtonUp = function (this, button)
+                            print("Button Up: ", button)
+                        end,
+                        onButtonDown = function (this, button)
+                            transform = this:getTransformComponent()  
+                            if(transform) then
+                                print("Accessing our transform: ", transform.position.y) 
+                            end
+                            print("Button Down: ", button)
+                        end,
+                        forLeftJoystick = function (this, x, y)
+                            local deltaTime = getDeltaTime()
+                            transform = this:getTransformComponent()
+                            if(transform) then
+                                transform.position.x = transform.position.x + (x * 3 * deltaTime) 
+                                transform.position.y = transform.position.y + (y * 3 * deltaTime) 
+                            end
+                        end,
+                        forRightJoystick = function (this, x, y)
+                            local deltaTime = getDeltaTime()
+                            transform = this:getTransformComponent()
+                            if(transform) then
+                                transform.position.x = transform.position.x + (x * 3 * deltaTime) 
+                                transform.position.y = transform.position.y + (y * 3 * deltaTime) 
+                            end
                         end
                     }
                 },
@@ -76,7 +123,7 @@ void EntityManager::update_entities() {
 
     if (m_requested_clear) {
         m_requested_clear = false;
-        
+
         /*
         First we clear all the entities currently in the system.
         */
@@ -219,7 +266,7 @@ void EntityManager::expose_to_lua() {
 
 }
 
-Entity * EntityManager::create_entity_internal(const std::string & type, const sol::table & table){
+Entity * EntityManager::create_entity_internal(const std::string & type, const sol::table & table) {
 
     auto id = m_next_id++;
 

@@ -23,9 +23,9 @@ void WindowManager::shut_down() {
 
 void WindowManager::fill_events() {
     auto event = sf::Event{};
+    m_frame_events.clear();
     while (m_window->pollEvent(event)) {
         ImGui::SFML::ProcessEvent(event);
-        m_frame_events.clear();
         m_frame_events.push_back(event);
         if (event.type == sf::Event::Closed) {
             m_window->close();

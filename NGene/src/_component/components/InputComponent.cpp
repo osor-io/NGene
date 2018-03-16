@@ -22,7 +22,6 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
         }
     });
 
-
 }
 
 
@@ -44,7 +43,18 @@ void COMPONENT_TYPE::draw_component_inspector() {
     ImGui::SetNextWindowSize(ImVec2(400, 100), ImGuiCond_FirstUseEver);
     ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
 
-    ImGui::Text("Our input component");
+    auto count = int{};
+    meta::doForAllMembers<InputComponent>([this, &count](auto& member) {
+        using MemberT = meta::get_member_type<decltype(member)>;
+        auto name = member.get_name();
+        if (member.get(*this)) {
+            ImGui::TextWrapped("%s: REGISTERED\n\t%s", name, member.get(*this).target_type().name());
+        }
+        else {
+            ImGui::TextWrapped("%s: NOT REGISTERED", name);
+        }
+    });
+
 
     /*
     //To Check the window size and adjust default sizes:
@@ -55,6 +65,7 @@ void COMPONENT_TYPE::draw_component_inspector() {
 }
 
 #define REGISTER_METHOD(method) #method , &PhraseComponent::method
+
 
 void COMPONENT_TYPE::expose_to_lua()
 {

@@ -1,6 +1,7 @@
 #include "./utils/Debug.h"
 #include "./File.h"
 
+#include "./input/InputManager.h"
 #include "./time/TimeManager.h"
 #include "./window/WindowManager.h"
 #include "./render/RenderManager.h"
@@ -16,12 +17,13 @@
 #include "./_system/systems/RenderSystem.h"
 
 void start_up() {
-
+    
+    LuaManager::get().start_up();
     TimeManager::get().start_up();
     WindowManager::get().start_up();
     RenderManager::get().start_up();
     AppGUIManager::get().start_up();
-    LuaManager::get().start_up();
+    InputManager::get().start_up();
 
     InputSystem::get().start_up();
     BehaviourSystem::get().start_up();
@@ -43,11 +45,12 @@ void shut_down() {
     BehaviourSystem::get().shut_down();
     InputSystem::get().shut_down();
 
-    LuaManager::get().shut_down();
+    InputManager::get().shut_down();
     AppGUIManager::get().shut_down();
     RenderManager::get().shut_down();
     WindowManager::get().shut_down();
     TimeManager::get().shut_down();
+    LuaManager::get().shut_down();
 
 }
 
@@ -137,11 +140,12 @@ int main() {
     }
 
     auto es = EntityManager::get().serialize_entities();
+    
     write_to_file("lastRunState.json", es.dump(4).c_str());
-
 
     shut_down();
 
+    //@@NOTE: Use this to see the console when shutting down
     //ENDL;
     //press_to_continue();
     return 0;

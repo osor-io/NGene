@@ -2,6 +2,7 @@
 #include <../_component/components/InputComponent.h>
 #include <../time/TimeManager.h>
 #include "../window/WindowManager.h"
+#include "../input/InputManager.h"
 
 InputSystem::InputSystem() {}
 
@@ -24,29 +25,94 @@ void InputSystem::shut_down() {
 
 void InputSystem::update() {
 
-
     const auto& events = WindowManager::get().get_frame_events();
 
     for (const auto& event : events) {
-        switch (event.type) {
-        case sf::Event::KeyPressed: {
+        for (auto& entity : m_entities) {
+            auto input = entity.second->get_component<InputComponent>();
 
-            if (!m_keys_pressed[event.key.code]) {
-                for (auto& entity : m_entities) {
-                    auto input = entity.second->get_component<InputComponent>();
-                    if (input->m_on_key_down) input->m_on_key_down(event.key.code);
-                    //@@DOING: Calling all the InputComponents functions (remember to expose the Key enum to LUA)
-                }
+            switch (event.type) {
+
+            case sf::Event::KeyPressed: {
+                if (!m_keys_pressed[event.key.code]
+                    && input->m_on_key_down)
+                    input->m_on_key_down(entity.second, event.key.code);
+                break;
             }
+            case sf::Event::KeyReleased: {
+                if (m_keys_pressed[event.key.code]
+                    && input->m_on_key_up)
+                    input->m_on_key_up(entity.second, event.key.code);
+                break;
+            }
+
+
+            case sf::Event::JoystickButtonPressed: {
+                if (!m_buttons_pressed[event.joystickButton.button]
+                    && input->m_on_button_down)
+                    input->m_on_button_down(entity.second, event.joystickButton.button);
+                break;
+            }
+            case sf::Event::JoystickButtonReleased: {
+                if (m_buttons_pressed[event.joystickButton.button]
+                    && input->m_on_button_up)
+                    input->m_on_button_up(entity.second, event.joystickButton.button);
+                break;
+            }
+
+                                                    /*
+                                                    We can use case sf::Event::JoystickMoved if we want to
+                                                    get the event of just moving each joystick, which is kind
+                                                    of weird since for that we just tend to poll for its state
+                                                    constantly and not only when it changes
+                                                    */
+
+            }
+        }
+
+        /*
+        It's preferable to do this so we can retrieve only once the entity data
+        */
+        switch (event.type) {
+        case sf::Event::KeyPressed:
             m_keys_pressed[event.key.code] = true;
             break;
-        }
-        case sf::Event::KeyReleased: {
+        case sf::Event::KeyReleased:
+            m_keys_pressed[event.key.code] = false;
+            break;
+        case sf::Event::JoystickButtonPressed:
+            m_buttons_pressed[event.joystickButton.button] = true;
+            break;
+        case sf::Event::JoystickButtonReleased:
+            m_buttons_pressed[event.joystickButton.button] = false;
             break;
         }
-        
-        }
     }
+
+    /*
+    @@TODO:
+    Read the state of the axis and call the function registered
+    for both of them.
+    */
+    for (auto& entity : m_entities) {
+        auto input = entity.second->get_component<InputComponent>();
+
+        if (input->m_for_left_joystick)
+            input->m_for_left_joystick(
+                (entity.second),
+                InputManager::get().get_axis_position(sf::Joystick::Axis::X),
+                InputManager::get().get_axis_position(sf::Joystick::Axis::Y)
+            );
+
+        if (input->m_for_right_joystick)
+            input->m_for_right_joystick(
+            (entity.second),
+                InputManager::get().get_axis_position(sf::Joystick::Axis::U),
+                InputManager::get().get_axis_position(sf::Joystick::Axis::R)
+            );
+
+    }
+
 
 }
 

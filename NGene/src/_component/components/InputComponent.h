@@ -30,12 +30,12 @@ public:
     as add it in "drawComponentInspector()" to be able to see it
     */
     // ====== BEG OF MEMBERS ======
-    std::function<void(sf::Keyboard::Key key)> m_on_key_up;
-    std::function<void(sf::Keyboard::Key key)> m_on_key_down;
-    std::function<void(unsigned int button)> m_on_button_up;
-    std::function<void(unsigned int button)> m_on_button_down;
-    std::function<void(float x, float y)> m_for_left_joystick;
-    std::function<void(float x, float y)> m_for_right_joystick;
+    std::function<void(Entity* entity, sf::Keyboard::Key key)> m_on_key_up;
+    std::function<void(Entity* entity, sf::Keyboard::Key key)> m_on_key_down;
+    std::function<void(Entity* entity, unsigned int button)> m_on_button_up;
+    std::function<void(Entity* entity, unsigned int button)> m_on_button_down;
+    std::function<void(Entity* entity, float x, float y)> m_for_left_joystick;
+    std::function<void(Entity* entity, float x, float y)> m_for_right_joystick;
     // ====== END OF MEMBERS ======
 
 };

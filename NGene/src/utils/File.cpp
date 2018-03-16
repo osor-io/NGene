@@ -31,4 +31,5 @@ std::string read_from_file(const char* filename) {
         fclose(file);
         return content;
     }
+    return "{}";
 }

@@ -1,6 +1,5 @@
 #include "TimeManager.h"
-
-
+#include "../lua/LuaManager.h"
 
 TimeManager::TimeManager() {}
 
@@ -11,6 +10,10 @@ TimeManager::~TimeManager() {}
 void TimeManager::start_up() {
     m_frame_clock = std::make_unique<sf::Clock>();
     m_frame_clock->restart();
+
+    LUA.set_function("getDeltaTime", [this]() {
+        return this->get_delta_time().asSeconds();
+    });
 }
 
 
