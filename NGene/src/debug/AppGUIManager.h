@@ -24,6 +24,16 @@ public:
 
     void draw_gui();
 
+    void set_debug_open(bool);
+    bool is_debug_open() const;
+
 private:
     ImFont * m_font;
+    bool m_debug_open{ true };
+
+
+    bool m_show_entities_components{ true };
+    bool m_show_imgui_demo{ false };
+    bool m_show_debug_overlay{ true };
+
 };

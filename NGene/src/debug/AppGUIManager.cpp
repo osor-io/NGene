@@ -92,7 +92,7 @@ void AppGUIManager::shut_down() {
 void AppGUIManager::draw_corner_overlay_debug_info() {
     bool open = true;
     const float DISTANCE = 10.0f;
-    static int corner = 0;
+    static int corner = 2;
     auto window_pos = ImVec2((corner & 1) ? ImGui::GetIO().DisplaySize.x - DISTANCE : DISTANCE, (corner & 2) ? ImGui::GetIO().DisplaySize.y - DISTANCE : DISTANCE);
     auto window_pos_pivot = ImVec2((corner & 1) ? 1.0f : 0.0f, (corner & 2) ? 1.0f : 0.0f);
     ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
@@ -134,15 +134,70 @@ void AppGUIManager::draw_entity_component_editor() {
 
 }
 
+void AppGUIManager::set_debug_open(bool open) {
+    m_debug_open = open;
+}
+
+
+bool AppGUIManager::is_debug_open() const {
+    return m_debug_open;
+}
+
 void AppGUIManager::draw_gui() {
 
-    ImGui::PushFont(m_font);
+    if (m_debug_open) {
 
-    ImGui::ShowDemoWindow();
+        ImGui::PushFont(m_font);
 
-    draw_corner_overlay_debug_info();
-    draw_entity_component_editor();
+     
+        ImGui::BeginMainMenuBar();
 
-    ImGui::PopFont();
+        if (ImGui::BeginMenu("File")) {
+        
+            if(ImGui::Button("New State")) {
+                LOG("NEW!!!");
+            }
+
+            if (ImGui::Button("Load State")) {
+                LOG("LOADING!!!");
+            }
+
+            if (ImGui::Button("Save State")) {
+                ImGui::OpenPopup("SavingStatePopup");
+            }
+            if(ImGui::BeginPopupModal("SavingStatePopup", nullptr, ImGuiWindowFlags_AlwaysAutoResize)){
+                static char saving_filename[32];
+                ImGui::Text("Filename: "); ImGui::SameLine(100); ImGui::InputText("##Filename", saving_filename, 32);
+                if (ImGui::Button("OK", ImVec2(120, 0))) { 
+                    EntityManager::get().serialize_entities_to_file(saving_filename);
+                    ImGui::CloseCurrentPopup();
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+                ImGui::EndPopup();
+            }
+
+
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("View")) {
+            ImGui::Checkbox("Entities & Components", &m_show_entities_components);
+            ImGui::Checkbox("ImGui Demo", &m_show_imgui_demo);
+            ImGui::Checkbox("Debug Overlay", &m_show_debug_overlay);
+
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMainMenuBar();
+        
+
+        if (m_show_entities_components) draw_entity_component_editor();
+        if (m_show_imgui_demo) ImGui::ShowDemoWindow();
+        if (m_show_debug_overlay) draw_corner_overlay_debug_info();
+
+        ImGui::PopFont();
+
+    }
 
 }

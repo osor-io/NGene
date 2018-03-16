@@ -3,6 +3,7 @@
 #include "../_system/SystemManager.h"
 #include "../lua/LuaManager.h"
 #include <sstream>
+#include "../utils/File.h"
 
 EntityManager::EntityManager() {}
 
@@ -168,6 +169,12 @@ json EntityManager::serialize_entities() const {
 
     return j;
 }
+
+void EntityManager::serialize_entities_to_file(const char* filename) const {
+    auto j = serialize_entities();
+    write_to_file(filename, j.dump().c_str());
+}
+
 
 void EntityManager::clear_and_load_entities(const json& j) {
     if (m_requested_clear_and_load) return;

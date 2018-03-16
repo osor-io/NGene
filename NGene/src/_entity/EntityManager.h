@@ -48,6 +48,8 @@ public:
 
     json serialize_entities() const;
 
+    void serialize_entities_to_file(const char* filename) const;
+
     void clear_and_load_entities(const json& j);
 
 private:
