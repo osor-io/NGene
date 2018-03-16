@@ -68,6 +68,7 @@ bool Entity::is_enabled() const {
     return m_enabled;
 }
 
+#include "../_component/components/InputComponent.h"
 #include "../_component/components/BehaviourComponent.h"
 #include "../_component/components/TransformComponent.h"
 #include "../_component/components/SpriteComponent.h"
@@ -82,6 +83,7 @@ void Entity::expose_to_lua() {
     /*
     Here we expose the members of the components
     */
+    InputComponent::expose_to_lua();
     BehaviourComponent::expose_to_lua();
     TransformComponent::expose_to_lua();
     SpriteComponent::expose_to_lua();
@@ -92,6 +94,7 @@ void Entity::expose_to_lua() {
     */
     LUA.new_usertype<Entity>("Entity",
 
+        REGISTER_GET_COMPONENT(InputComponent),
         REGISTER_GET_COMPONENT(BehaviourComponent),
         REGISTER_GET_COMPONENT(TransformComponent),
         REGISTER_GET_COMPONENT(SpriteComponent),

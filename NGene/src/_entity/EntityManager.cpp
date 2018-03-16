@@ -37,6 +37,11 @@ void EntityManager::start_up() {
                                 print("We got no transform")
                             end
                         end
+                    },
+                    InputComponent = {
+                        onButtonUp = function (button)
+                            print(button)
+                        end
                     }
                 },
                 OtraCosa = {
@@ -69,8 +74,8 @@ void EntityManager::shut_down() {
 
 void EntityManager::update_entities() {
 
-    if (m_requested_clear_and_load) {
-        m_requested_clear_and_load = false;
+    if (m_requested_clear) {
+        m_requested_clear = false;
         
         /*
         First we clear all the entities currently in the system.
@@ -82,17 +87,19 @@ void EntityManager::update_entities() {
         m_entities.clear();
         m_next_id = 0;
 
-        /*
-        We create the entities depending on their type and
-        then load their data from the json file.
-        */
-        for (const auto& json_entity : m_unprocessed_load_entity_data["Entities"]) {
-            auto e = create_entity_internal(json_entity["type"], LUA["Entities"]);
-            e->load_json(json_entity);
-            m_entities[e->get_id()] = std::unique_ptr<Entity>(e);
-            SystemManager::get().register_entity_in_systems(*e);
+        if (m_requested_load) {
+            m_requested_load = false;
+            /*
+            We create the entities depending on their type and
+            then load their data from the json file.
+            */
+            for (const auto& json_entity : m_unprocessed_load_entity_data["Entities"]) {
+                auto e = create_entity_internal(json_entity["type"], LUA["Entities"]);
+                e->load_json(json_entity);
+                m_entities[e->get_id()] = std::unique_ptr<Entity>(e);
+                SystemManager::get().register_entity_in_systems(*e);
+            }
         }
-        
 
         return;
     }
@@ -176,13 +183,18 @@ void EntityManager::serialize_entities_to_file(const char* filename) const {
 }
 
 
-void EntityManager::clear_and_load_entities(const json& j) {
-    if (m_requested_clear_and_load) return;
+void EntityManager::clear_entities() {
+    if (m_requested_clear) return;
+    m_requested_clear = true;
 
-    m_requested_clear_and_load = true;
+}
+
+void EntityManager::clear_and_load_entities(const json& j) {
+    if (m_requested_clear || m_requested_load) return;
+    m_requested_clear = true;
+    m_requested_load = true;
 
     m_unprocessed_load_entity_data = j;
-
 }
 
 void EntityManager::expose_to_lua() {

@@ -111,6 +111,15 @@
     <ClCompile Include="src\_system\systems\BehaviourSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\_component\components\InputComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_system\systems\InputSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\WindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dep\include\sol.hpp">
@@ -249,6 +258,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\_system\systems\BehaviourSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\_component\components\InputComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\_system\systems\InputSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\window\WindowManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

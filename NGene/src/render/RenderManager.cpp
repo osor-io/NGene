@@ -1,7 +1,7 @@
 #include "RenderManager.h"
 #include "../debug/AppGUIManager.h"
 #include "../time/TimeManager.h"
-
+#include "../window/WindowManager.h"
 
 RenderManager::RenderManager() {}
 
@@ -13,10 +13,16 @@ void RenderManager::start_up() {
     /*
     We first initialize the window and the debug GUI.
     */
-    m_render_window = std::make_unique<sf::RenderWindow>(sf::VideoMode(1200, 800), "NGene");
-    m_render_window->setFramerateLimit(60);
-     
-    ImGui::SFML::Init(*m_render_window);
+    m_main_target = WindowManager::get().get_window_render_target();
+
+    if (!m_main_target) {
+        std::cerr <<
+            "The render manager needs a correct pointer to the render target, incorrect start_up order" <<
+            std::endl;
+        std::terminate();
+    }
+
+    ImGui::SFML::Init(*m_main_target);
 }
 
 
@@ -27,29 +33,16 @@ void RenderManager::shut_down() {
     and then we release the render window.
     */
     ImGui::SFML::Shutdown();
-    m_render_window.reset();
 
 }
 
-bool RenderManager::is_window_open() const {
-    return m_render_window->isOpen();
-}
 
 sf::RenderTarget* RenderManager::get_main_render_target() {
-    return m_render_window.get();
+    return m_main_target;
 }
 
 void RenderManager::begin_frame() {
-    auto event = sf::Event{};
-    while (m_render_window->pollEvent(event)) {
-        ImGui::SFML::ProcessEvent(event);
-
-        if (event.type == sf::Event::Closed) {
-            m_render_window->close();
-            return;
-        }
-    }
-    m_render_window->clear(m_clear_color);
+    m_main_target->clear(m_clear_color);
 }
 
 void RenderManager::end_frame() {
@@ -59,7 +52,7 @@ void RenderManager::end_frame() {
 
     We must create all widgets between Update and Render
     */
-    ImGui::SFML::Update(*m_render_window, DELTA_TIME);
+    ImGui::SFML::Update(*m_main_target, DELTA_TIME);
 
     AppGUIManager::get().draw_gui();
 
@@ -67,12 +60,12 @@ void RenderManager::end_frame() {
     /*
     Now we render overlayed things such as the debug GUI
     */
-    ImGui::SFML::Render(*m_render_window);
+    ImGui::SFML::Render(*m_main_target);
 
 
     /*
     And finally we display the image
     */
-    m_render_window->display();
+    m_main_target->display();
     TimeManager::get().end_of_frame();
 }

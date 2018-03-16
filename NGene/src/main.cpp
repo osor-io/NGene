@@ -2,6 +2,7 @@
 #include "./File.h"
 
 #include "./time/TimeManager.h"
+#include "./window/WindowManager.h"
 #include "./render/RenderManager.h"
 #include "./debug/AppGUIManager.h"
 #include "./lua/LuaManager.h"
@@ -10,16 +11,19 @@
 #include "./_component/ComponentManager.h"
 #include "./_system/SystemManager.h"
 
+#include "./_system/systems/InputSystem.h"
 #include "./_system/systems/BehaviourSystem.h"
 #include "./_system/systems/RenderSystem.h"
 
 void start_up() {
 
     TimeManager::get().start_up();
+    WindowManager::get().start_up();
     RenderManager::get().start_up();
     AppGUIManager::get().start_up();
     LuaManager::get().start_up();
 
+    InputSystem::get().start_up();
     BehaviourSystem::get().start_up();
     RenderSystem::get().start_up();
 
@@ -37,10 +41,12 @@ void shut_down() {
 
     RenderSystem::get().shut_down();
     BehaviourSystem::get().shut_down();
+    InputSystem::get().shut_down();
 
     LuaManager::get().shut_down();
     AppGUIManager::get().shut_down();
     RenderManager::get().shut_down();
+    WindowManager::get().shut_down();
     TimeManager::get().shut_down();
 
 }
@@ -101,14 +107,17 @@ void access_entities_from_lua() {
 
 inline void tick() {
 
+    InputSystem::get().update();
+    BehaviourSystem::get().update();
+
     { // ====== BEG OF RENDER ======
+        WindowManager::get().fill_events();
         RenderManager::get().begin_frame();
         /*
         Everything that renders something goes in the
         next scope
         */
         {
-            BehaviourSystem::get().update();
             RenderSystem::get().update();
         }
         RenderManager::get().end_frame();
@@ -123,7 +132,7 @@ int main() {
     load_entities();
 
 
-    while (RenderManager::get().is_window_open()) {
+    while (WindowManager::get().is_window_open()) {
         tick();
     }
 

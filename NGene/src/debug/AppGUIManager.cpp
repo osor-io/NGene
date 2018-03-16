@@ -4,6 +4,7 @@
 #include <Debug.h>
 #include <../config/Config.h>
 #include "./cafe.inl"
+#include "../utils/File.h"
 
 AppGUIManager::AppGUIManager() {}
 
@@ -155,19 +156,43 @@ void AppGUIManager::draw_gui() {
         if (ImGui::BeginMenu("File")) {
         
             if(ImGui::Button("New State")) {
-                LOG("NEW!!!");
+                ImGui::OpenPopup("Creating New State");
+            }
+            if (ImGui::BeginPopupModal("Creating New State", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+                static char loading_filename[32];
+                ImGui::TextWrapped("Are you sure you want to cleate a new state?\n This will delete all unsaved changes in the current one.");
+                if (ImGui::Button("Just do it!", ImVec2(120, 0))) {
+                    EntityManager::get().clear_entities();
+                    ImGui::CloseCurrentPopup();
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Alright, maybe no", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+                ImGui::EndPopup();
             }
 
             if (ImGui::Button("Load State")) {
-                LOG("LOADING!!!");
+                ImGui::OpenPopup("Loading State");
+            }
+            if (ImGui::BeginPopupModal("Loading State", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+                static char loading_filename[32];
+                ImGui::Text("Filename to load: "); ImGui::SameLine(150); ImGui::InputText("##Filename", loading_filename, 32);
+                if (ImGui::Button("OK", ImVec2(120, 0))) {
+                    auto s = read_from_file(loading_filename);
+                    auto j = json::parse(s);
+                    EntityManager::get().clear_and_load_entities(j);
+                    ImGui::CloseCurrentPopup();
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+                ImGui::EndPopup();
             }
 
             if (ImGui::Button("Save State")) {
-                ImGui::OpenPopup("SavingStatePopup");
+                ImGui::OpenPopup("Saving State");
             }
-            if(ImGui::BeginPopupModal("SavingStatePopup", nullptr, ImGuiWindowFlags_AlwaysAutoResize)){
+            if(ImGui::BeginPopupModal("Saving State", nullptr, ImGuiWindowFlags_AlwaysAutoResize)){
                 static char saving_filename[32];
-                ImGui::Text("Filename: "); ImGui::SameLine(100); ImGui::InputText("##Filename", saving_filename, 32);
+                ImGui::Text("Filename to save: "); ImGui::SameLine(150); ImGui::InputText("##Filename", saving_filename, 32);
                 if (ImGui::Button("OK", ImVec2(120, 0))) { 
                     EntityManager::get().serialize_entities_to_file(saving_filename);
                     ImGui::CloseCurrentPopup();

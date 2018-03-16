@@ -18,7 +18,6 @@ public:
     void start_up() override;
     void shut_down() override;
 
-    bool is_window_open() const;
     sf::RenderTarget* get_main_render_target();
 
     void begin_frame();
@@ -26,7 +25,8 @@ public:
 
 private:
 
-    std::unique_ptr<sf::RenderWindow> m_render_window;
     sf::Color m_clear_color{ sf::Color::Black };
+    sf::RenderWindow* m_main_target;
+
 
 };

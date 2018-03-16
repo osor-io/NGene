@@ -50,6 +50,8 @@ public:
 
     void serialize_entities_to_file(const char* filename) const;
 
+    void clear_entities();
+
     void clear_and_load_entities(const json& j);
 
 private:
@@ -62,7 +64,9 @@ private:
 
     EntityId m_next_id{ 0 };
 
-    bool m_requested_clear_and_load{ false };
+    bool m_requested_clear{ false };
+    bool m_requested_load{ false };
+
     json m_unprocessed_load_entity_data{};
 
     Entity* create_entity_internal(const std::string & type, const sol::table & table = LUA["Entities"]);
