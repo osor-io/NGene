@@ -8,9 +8,7 @@
 
 AppGUIManager::AppGUIManager() {}
 
-
 AppGUIManager::~AppGUIManager() {}
-
 
 void AppGUIManager::start_up() {
 
@@ -84,7 +82,6 @@ void AppGUIManager::start_up() {
 
 }
 
-
 void AppGUIManager::shut_down() {
 
 
@@ -138,7 +135,6 @@ void AppGUIManager::draw_entity_component_editor() {
 void AppGUIManager::set_debug_open(bool open) {
     m_debug_open = open;
 }
-
 
 bool AppGUIManager::is_debug_open() const {
     return m_debug_open;

@@ -2,6 +2,7 @@
 #include <Debug.h>
 #include "../lua/LuaManager.h"
 #include <fstream>
+#include "../../resources/TextureManager.h"
 
 SpriteComponent::SpriteComponent(EntityId id) : ComponentTemplate(id, std::type_index(typeid(SpriteComponent))) {
 }
@@ -23,9 +24,19 @@ SpriteComponent::SpriteComponent(EntityId id, const sol::table& table)
 }
 
 SpriteComponent::~SpriteComponent() {
+    TextureManager::get().release_required_resource(m_filename);
 }
 
 void SpriteComponent::load_sprite() {
+
+    if (TextureManager::get().exists_resource(m_filename))
+        m_texture = TextureManager::get().get_required_resource(m_filename);
+
+    if (m_texture)
+        m_sprite.setTexture(*m_texture);
+
+    /*
+    //Old way of loading the texture directly
     if (m_filename.size() > 0) {
         std::ifstream f(m_filename.c_str());
 
@@ -33,6 +44,7 @@ void SpriteComponent::load_sprite() {
             m_sprite = sf::Sprite(m_texture);
         }
     }
+    */
 }
 
 

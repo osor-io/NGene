@@ -3,6 +3,23 @@
 #include <cstdio>
 #include <fstream>
 
+/**
+
+These functions are implemented with an old C style since
+they are at least slightly faster (and some times quite a bit)
+and they are used for some stuff we want to go as fast as it can
+like loading/saving entity and component state.
+
+*/
+
+
+bool file_exists(const char* filename) {
+    if (auto file = fopen(filename, "r")) {
+        fclose(file);
+        return true;
+    }
+    return false;
+}
 
 void write_to_file(const char * filename, const char * content) {
 

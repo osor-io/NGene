@@ -33,7 +33,7 @@ public:
 
     std::string m_filename;
     sf::Sprite m_sprite;
-    sf::Texture m_texture;
+    sf::Texture* m_texture;
     unsigned int m_layer{ 1000 };
 
 };
