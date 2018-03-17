@@ -18,7 +18,6 @@ public:
     void load_json(const json& j) override;
 
     std::string get_filename() const;
-    void set_filename(const std::string& filename);
 
     sf::Sprite* get_sprite_ptr();
     sf::Sprite get_sprite() const;

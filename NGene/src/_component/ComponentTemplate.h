@@ -80,10 +80,9 @@ implementing the way we can instantiate the component based on a Lua script
 template<typename T>
 class ComponentTemplate : public Component {
 
-
 public:
     ComponentTemplate(EntityId id, std::type_index type) : Component(id, type) {}
-    ~ComponentTemplate() {}
+    virtual ~ComponentTemplate() {}
 
     void draw_debug_gui() {
         ImGui::PushID(this);
@@ -124,7 +123,6 @@ protected:
     }
 
     virtual void draw_component_inspector() = 0;
-
 };
 
 

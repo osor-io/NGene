@@ -173,9 +173,7 @@ void AppGUIManager::draw_gui() {
                 static char loading_filename[32];
                 ImGui::Text("Filename to load: "); ImGui::SameLine(150); ImGui::InputText("##Filename", loading_filename, 32);
                 if (ImGui::Button("OK", ImVec2(120, 0))) {
-                    auto s = read_from_file(loading_filename);
-                    auto j = json::parse(s);
-                    EntityManager::get().clear_and_load_entities(j);
+                    EntityManager::get().clear_and_load_entities_from_file(loading_filename);
                     ImGui::CloseCurrentPopup();
                 }
                 ImGui::SameLine();

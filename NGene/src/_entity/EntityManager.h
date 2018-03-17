@@ -50,6 +50,8 @@ public:
 
     void serialize_entities_to_file(const char* filename) const;
 
+    void clear_and_load_entities_from_file(const char* filename);
+
     void clear_entities();
 
     void clear_and_load_entities(const json& j);

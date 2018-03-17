@@ -4,6 +4,11 @@
 #include "../lua/LuaManager.h"
 #include <sstream>
 #include "../utils/File.h"
+#include "../debug/LoggingManager.h"
+#include "../resources/TextFileManager.h"
+#include <cassert>
+#include "File.h"
+#include "json.hpp"
 
 EntityManager::EntityManager() {}
 
@@ -13,103 +18,15 @@ EntityManager::~EntityManager() {}
 void EntityManager::start_up() {
 
     /*
+    @@DOING
     Load here all the entity types
     */
-    LUA.script(R"(
-            Entities = {
-                Cosa = {
-                    TransformComponent = {
-                        x = 0,
-                        y = 10
-                    },
-                    PhraseComponent = {
-                        phrase = "I'm saying hi from this lua Object!! :D"
-                    },
-                    SpriteComponent = {
-                        filename = "C:/tmp/test.png"
-                    },
-                    BehaviourComponent = {
-                        onUpdate = function (this, deltaTime)
-                            transform = this:getTransformComponent()
-                            local x = getAxisPosition(Axis.X)
-                            local y = getAxisPosition(Axis.Y)
-                            if(transform) then
-                                transform.position.x = transform.position.x + (x * 3 * deltaTime) 
-                                transform.position.y = transform.position.y + (y * 3 * deltaTime) 
-                            else    
-                                print("We got no transform")
-                            end
-                            --[[
-                            print("X:", getAxisPosition(Axis.X))
-                            print("Y:", getAxisPosition(Axis.Y))
-                            print("Z:", getAxisPosition(Axis.Z))
-                            print("R:", getAxisPosition(Axis.R))
-                            print("U:", getAxisPosition(Axis.U))
-                            print("V:", getAxisPosition(Axis.V))
-                            print("PovX:", getAxisPosition(Axis.PovX))
-                            print("PovY:", getAxisPosition(Axis.PovY))
-                            --]]
-                        end
-                    },
-                    InputComponent = {
-                        onKeyUp = function (this, button)
-                            print("Down: ", button)
-                            if(button == Key.A) then
-                                print("Key was an A")
-                            else
-                                print("Key was NOT an A")
-                            end
-                        end,
-                        onKeyDown = function (this, button)
-                            print("Up: ", button)
-                        end,
-                        onButtonUp = function (this, button)
-                            print("Button Up: ", button)
-                        end,
-                        onButtonDown = function (this, button)
-                            transform = this:getTransformComponent()  
-                            if(transform) then
-                                print("Accessing our transform: ", transform.position.y) 
-                            end
-                            print("Button Down: ", button)
-                        end,
-                        forLeftJoystick = function (this, x, y)
-                            local deltaTime = getDeltaTime()
-                            transform = this:getTransformComponent()
-                            if(transform) then
-                                transform.position.x = transform.position.x + (x * 3 * deltaTime) 
-                                transform.position.y = transform.position.y + (y * 3 * deltaTime) 
-                            end
-                        end,
-                        forRightJoystick = function (this, x, y)
-                            local deltaTime = getDeltaTime()
-                            transform = this:getTransformComponent()
-                            if(transform) then
-                                transform.position.x = transform.position.x + (x * 3 * deltaTime) 
-                                transform.position.y = transform.position.y + (y * 3 * deltaTime) 
-                            end
-                        end
-                    }
-                },
-                OtraCosa = {
-                    PhraseComponent = {
-                        phrase = "I'm saying hi from this lua Object!! :D"
-                    },
-                    SpriteComponent = {
-                        filename = "file.png"
-                    }
-                },
-                YOtraMas = {
-                    PhraseComponent = {
-                        phrase = "I'm saying hi from this lua Object!! :D"
-                    },
-                    SpriteComponent = {
-                        filename = "file.png"
-                    }
-                }
-            }
-        )");
 
+    assert(TextFileManager::get().exists_resource("res/scripts/EntityTypes.lua"));
+
+    auto script = TextFileManager::get().get_scoped_resource("res/scripts/EntityTypes.lua");
+
+    LUA.script(*script.resource);
 
     Entity::expose_to_lua();
     expose_to_lua();
@@ -229,6 +146,12 @@ void EntityManager::serialize_entities_to_file(const char* filename) const {
     write_to_file(filename, j.dump().c_str());
 }
 
+void EntityManager::clear_and_load_entities_from_file(const char * filename) {
+    auto s = read_from_file(filename);
+    auto j = json::parse(s);
+    EntityManager::get().clear_and_load_entities(j);
+}
+
 
 void EntityManager::clear_entities() {
     if (m_requested_clear) return;
@@ -237,11 +160,17 @@ void EntityManager::clear_entities() {
 }
 
 void EntityManager::clear_and_load_entities(const json& j) {
-    if (m_requested_clear || m_requested_load) return;
-    m_requested_clear = true;
-    m_requested_load = true;
 
-    m_unprocessed_load_entity_data = j;
+    if (m_requested_clear || m_requested_load) {
+        return;
+    }
+    else {
+
+        m_requested_clear = true;
+        m_requested_load = true;
+
+        m_unprocessed_load_entity_data = j;
+    }
 }
 
 void EntityManager::expose_to_lua() {
@@ -260,7 +189,7 @@ void EntityManager::expose_to_lua() {
         if (has_entity(id)) {
             return get_entity(id);
         }
-        LOG("Lus is trying to access an entity that doesn't exist");
+        LOGF("Lua is trying to access an entity that doesn't exist");
         std::terminate();
     });
 

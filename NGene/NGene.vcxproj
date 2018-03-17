@@ -113,6 +113,12 @@
     <Link>
       <AdditionalLibraryDirectories>C:\dep\LuaJIT\lib;C:\dep\sfml\lib</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>echo.
+echo Copying all files from the /res directory to the executable location
+xcopy  $(ProjectDir)res\*  $(OutDir)res /s /y /i
+echo.</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -128,6 +134,12 @@
       <AdditionalLibraryDirectories>C:\dep\LuaJIT\lib;C:\dep\sfml\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>lua51.lib;sfml-system-s-d.lib;sfml-window-s-d.lib;sfml-network-s-d.lib;sfml-graphics-s-d.lib;sfml-audio-s-d.lib;opengl32.lib;freetype.lib;jpeg.lib;ogg.lib;winmm.lib;gdi32.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>echo.
+echo Copying all files from the /res directory to the executable location
+xcopy  $(ProjectDir)res\*  $(OutDir)res /s /y /i
+echo.</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -144,6 +156,12 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\dep\LuaJIT\lib;C:\dep\sfml\lib</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>echo.
+echo Copying all files from the /res directory to the executable location
+xcopy  $(ProjectDir)res\*  $(OutDir)res /s /y /i
+echo.</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -163,6 +181,12 @@
       <AdditionalLibraryDirectories>C:\dep\LuaJIT\lib;C:\dep\sfml\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>lua51.lib;sfml-system-s.lib;sfml-window-s.lib;sfml-network-s.lib;sfml-graphics-s.lib;sfml-audio-s.lib;opengl32.lib;freetype.lib;jpeg.lib;ogg.lib;winmm.lib;gdi32.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>echo.
+echo Copying all files from the /res directory to the executable location
+xcopy  $(ProjectDir)res\*  $(OutDir)res /s /y /i
+echo.</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\input\InputManager.cpp" />
@@ -203,6 +227,8 @@
     <ClCompile Include="src\window\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\debug\LoggingManager.h" />
+    <ClInclude Include="src\resources\TextFileManager.h" />
     <ClInclude Include="src\resources\TextureManager.h" />
     <ClInclude Include="src\resources\ResourceManager.h" />
     <ClInclude Include="src\input\InputManager.h" />
@@ -261,6 +287,7 @@
     <None Include="dep\include\JsonCast.inl" />
     <None Include="dep\include\Member.inl" />
     <None Include="dep\include\Meta.inl" />
+    <None Include="res\scripts\EntityTypes.lua" />
     <None Include="src\test\testmain.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

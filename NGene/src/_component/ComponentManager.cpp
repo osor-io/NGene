@@ -1,5 +1,6 @@
 #include "ComponentManager.h"
 #include <Debug.h>
+#include "../debug/LoggingManager.h"
 
 ComponentManager::ComponentManager() {
 
@@ -15,6 +16,13 @@ void ComponentManager::start_up() {
 }
 
 void ComponentManager::shut_down() {
+
+#ifdef _DEBUG
+    for (auto& v : m_instance_map) {
+        assert(v.second.size() == 0);
+    }
+#endif
+
     m_instance_map.clear();
 }
 

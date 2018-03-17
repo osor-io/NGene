@@ -48,9 +48,9 @@ public:
 
     void dealloc(void* elem);
 
-    void print_status(std::ostream& stream = std::cout);
+    void print_status(std::ostream& stream);
 
-    void print_status(void* elem, std::ostream& stream = std::cout) const;
+    void print_status(void* elem, std::ostream& stream) const;
 
 private:
 	size_t get_pool_index(size_t size) const;

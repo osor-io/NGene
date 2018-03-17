@@ -5,6 +5,7 @@
 #include "../../resources/TextureManager.h"
 
 SpriteComponent::SpriteComponent(EntityId id) : ComponentTemplate(id, std::type_index(typeid(SpriteComponent))) {
+    LOGF("NOT THISSSS");
 }
 
 
@@ -20,14 +21,23 @@ SpriteComponent::SpriteComponent(EntityId id, const sol::table& table)
             member.set(*this, value);
         }
     });
+    m_texture = nullptr;
     load_sprite();
 }
 
 SpriteComponent::~SpriteComponent() {
-    TextureManager::get().release_required_resource(m_filename);
+    if (m_texture) {
+        auto released = TextureManager::get().release_required_resource(m_filename);
+        assert(released);
+    }
 }
 
 void SpriteComponent::load_sprite() {
+
+    if (m_texture) {
+        auto released = TextureManager::get().release_required_resource(m_filename);
+        assert(released);
+    }
 
     if (TextureManager::get().exists_resource(m_filename))
         m_texture = TextureManager::get().get_required_resource(m_filename);
@@ -66,11 +76,6 @@ void SpriteComponent::load_json(const json & j) {
 
 std::string SpriteComponent::get_filename() const {
     return m_filename;
-}
-
-
-void SpriteComponent::set_filename(const std::string& filename) {
-    m_filename = filename;
 }
 
 sf::Sprite * SpriteComponent::get_sprite_ptr() {
@@ -137,9 +142,8 @@ void SpriteComponent::expose_to_lua() {
         Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
         */
 
-        "filename", sol::property(&SpriteComponent::get_filename, &SpriteComponent::set_filename),
+        "filename", sol::readonly_property(&SpriteComponent::get_filename),
         "layer", &SpriteComponent::m_layer
-
 
         );
 

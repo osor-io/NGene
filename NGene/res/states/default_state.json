@@ -1,0 +1,179 @@
+{
+  "Entities": [
+    {
+      "Components": {
+        "BehaviourComponent": null,
+        "InputComponent": null,
+        "PhraseComponent": {
+          "phrase": "I'm saying hi from this lua Object!! :D"
+        },
+        "SpriteComponent": {
+          "filename": "C:/tmp/test.png",
+          "layer": 1000
+        },
+        "TransformComponent": {
+
+          "position": {
+            "x": 407.14599609375,
+            "y": 72.25102996826172
+          }
+        }
+      },
+      "id": 0,
+      "name": "Cosa_0",
+      "type": "Cosa"
+    },
+    {
+      "Components": {
+        "PhraseComponent": {
+          "phrase": "I'm saying hi from this lua Object!! :D"
+        },
+        "SpriteComponent": {
+          "filename": "file.png",
+          "layer": 1000
+        }
+      },
+      "id": 1,
+      "name": "OtraCosa_1",
+      "type": "OtraCosa"
+    },
+    {
+      "Components": {
+        "PhraseComponent": {
+          "phrase": "I'm saying hi from this lua Object!! :D"
+        },
+        "SpriteComponent": {
+          "filename": "file.png",
+          "layer": 1000
+        }
+      },
+      "id": 2,
+      "name": "YOtraMas_2",
+      "type": "YOtraMas"
+    },
+    {
+      "Components": {
+        "BehaviourComponent": null,
+        "InputComponent": null,
+        "PhraseComponent": {
+          "phrase": "I'm saying hi from this lua Object!! :D"
+        },
+        "SpriteComponent": {
+          "filename": "C:/tmp/test.png",
+          "layer": 1000
+        },
+        "TransformComponent": {
+          "position": {
+            "x": 407.14599609375,
+            "y": 72.25102996826172
+          }
+        }
+      },
+      "id": 3,
+      "name": "Cosa_3",
+      "type": "Cosa"
+    },
+    {
+      "Components": {
+        "BehaviourComponent": null,
+        "InputComponent": null,
+        "PhraseComponent": {
+          "phrase": "I'm saying hi from this lua Object!! :D"
+        },
+        "SpriteComponent": {
+          "filename": "C:/tmp/test.png",
+          "layer": 1000
+        },
+        "TransformComponent": {
+          "position": {
+            "x": 407.14599609375,
+            "y": 72.25102996826172
+          }
+        }
+      },
+      "id": 4,
+      "name": "Cosa_4",
+      "type": "Cosa"
+    },
+    {
+      "Components": {
+        "PhraseComponent": {
+          "phrase": "I'm saying hi from this lua Object!! :D"
+        },
+        "SpriteComponent": {
+          "filename": "file.png",
+          "layer": 1000
+        }
+      },
+      "id": 6,
+      "name": "YOtraMas_6",
+      "type": "YOtraMas"
+    },
+    {
+      "Components": {
+        "BehaviourComponent": null,
+        "InputComponent": null,
+        "PhraseComponent": {
+          "phrase": "I'm saying hi from this lua Object!! :D"
+        },
+        "SpriteComponent": {
+          "filename": "C:/tmp/test.png",
+          "layer": 1000
+        },
+        "TransformComponent": {
+          "position": {
+            "x": 407.14599609375,
+            "y": 72.25102996826172
+          }
+        }
+      },
+      "id": 7,
+      "name": "Cosa_7",
+      "type": "Cosa"
+    },
+    {
+      "Components": {
+        "BehaviourComponent": null,
+        "InputComponent": null,
+        "PhraseComponent": {
+          "phrase": "I'm saying hi from this lua Object!! :D"
+        },
+        "SpriteComponent": {
+          "filename": "C:/tmp/test.png",
+          "layer": 1000
+        },
+        "TransformComponent": {
+          "position": {
+            "x": 407.14599609375,
+            "y": 72.25102996826172
+          }
+        }
+      },
+      "id": 8,
+      "name": "Cosa_8",
+      "type": "Cosa"
+    },
+    {
+      "Components": {
+        "BehaviourComponent": null,
+        "InputComponent": null,
+        "PhraseComponent": {
+          "phrase": "I'm saying hi from this lua Object!! :D"
+        },
+        "SpriteComponent": {
+          "filename": "C:/tmp/test.png",
+          "layer": 1000
+        },
+        "TransformComponent": {
+          "position": {
+            "x": 407.14599609375,
+            "y": 72.25102996826172
+          }
+        }
+      },
+      "id": 9,
+      "name": "Cosa_9",
+      "type": "Cosa"
+    }
+  ]
+}

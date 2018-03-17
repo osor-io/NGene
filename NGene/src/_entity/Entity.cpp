@@ -7,6 +7,8 @@
 #include <SFML/Graphics.hpp>
 #include "../lua/LuaManager.h"
 
+#include "../debug/LoggingManager.h"
+
 
 Entity::Entity(EntityId id, std::string&& name, const std::string& type) : m_id(id), m_type(type) {
     set_name(name);
@@ -15,6 +17,7 @@ Entity::Entity(EntityId id, std::string&& name, const std::string& type) : m_id(
 
 
 Entity::~Entity() {
+    m_components.clear();
 }
 
 EntityId Entity::get_id() const

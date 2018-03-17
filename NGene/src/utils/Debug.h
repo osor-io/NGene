@@ -7,6 +7,7 @@
 #endif
 */
 
+
 #ifndef _NOLOG
 
 #define ENDL std::cout << std::endl;

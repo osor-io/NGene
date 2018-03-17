@@ -1,6 +1,9 @@
 #include "./utils/Debug.h"
 #include "./File.h"
 
+#include "./debug/LoggingManager.h"
+#include "./resources/TextFileManager.h"
+#include "./resources/TextureManager.h"
 #include "./input/InputManager.h"
 #include "./time/TimeManager.h"
 #include "./window/WindowManager.h"
@@ -17,7 +20,10 @@
 #include "./_system/systems/RenderSystem.h"
 
 void start_up() {
-    
+
+    LoggingManager::get().start_up();
+    TextFileManager::get().start_up();
+    TextureManager::get().start_up();
     LuaManager::get().start_up();
     TimeManager::get().start_up();
     WindowManager::get().start_up();
@@ -25,25 +31,25 @@ void start_up() {
     AppGUIManager::get().start_up();
     InputManager::get().start_up();
 
-    InputSystem::get().start_up();
-    BehaviourSystem::get().start_up();
-    RenderSystem::get().start_up();
-
     SystemManager::get().start_up();
     ComponentManager::get().start_up();
     EntityManager::get().start_up();
+
+    InputSystem::get().start_up();
+    BehaviourSystem::get().start_up();
+    RenderSystem::get().start_up();
 
 }
 
 void shut_down() {
 
-    EntityManager::get().shut_down();
-    ComponentManager::get().shut_down();
-    SystemManager::get().shut_down();
-
     RenderSystem::get().shut_down();
     BehaviourSystem::get().shut_down();
     InputSystem::get().shut_down();
+
+    EntityManager::get().shut_down();
+    ComponentManager::get().shut_down();
+    SystemManager::get().shut_down();
 
     InputManager::get().shut_down();
     AppGUIManager::get().shut_down();
@@ -51,29 +57,18 @@ void shut_down() {
     WindowManager::get().shut_down();
     TimeManager::get().shut_down();
     LuaManager::get().shut_down();
-
+    TextureManager::get().shut_down();
+    TextFileManager::get().shut_down();
+    LoggingManager::get().shut_down();
 }
 
-void load_entities() {
+void load_default_state() {
 
-    auto e = EntityManager::get().load_entity( "Cosa");
-    e = EntityManager::get().load_entity("OtraCosa");
-    e = EntityManager::get().load_entity("YOtraMas");
-    e = EntityManager::get().load_entity("Cosa");
-    e = EntityManager::get().load_entity("Cosa");
-    e = EntityManager::get().load_entity("Cosa");
-    e = EntityManager::get().load_entity("YOtraMas");
-    e = EntityManager::get().load_entity("Cosa");
-    e = EntityManager::get().load_entity("Cosa");
-    e = EntityManager::get().load_entity("Cosa");
-    e = EntityManager::get().load_entity("Cosa");
+    auto s = TextFileManager::get().get_scoped_resource("res/states/default_state.json");
+    auto j = json::parse(*s.resource);
+    EntityManager::get().clear_and_load_entities(j);
 
-    EntityManager::get().remove_entity(e);
-    EntityManager::get().remove_entity(5);
-
-    EntityManager::get().update_entities();
 }
-
 
 void access_entities_from_lua() {
     LUA.script(R"(
@@ -113,6 +108,7 @@ inline void tick() {
     InputSystem::get().update();
     BehaviourSystem::get().update();
 
+
     { // ====== BEG OF RENDER ======
         WindowManager::get().fill_events();
         RenderManager::get().begin_frame();
@@ -132,7 +128,7 @@ inline void tick() {
 
 int main() {
     start_up();
-    load_entities();
+    load_default_state();
 
 
     while (WindowManager::get().is_window_open()) {
@@ -140,7 +136,7 @@ int main() {
     }
 
     auto es = EntityManager::get().serialize_entities();
-    
+
     write_to_file("lastRunState.json", es.dump(4).c_str());
 
     shut_down();

@@ -33,9 +33,6 @@
     <ClCompile Include="src\_entity\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\_component\Component.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\memory\SmallMemoryAllocator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -121,6 +118,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\input\InputManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\_component\Component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -281,6 +281,12 @@
     <ClInclude Include="src\resources\TextureManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\resources\TextFileManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\debug\LoggingManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="dep\include\Member.inl">
@@ -298,5 +304,6 @@
     <None Include="dep\include\JsonCast.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="res\scripts\EntityTypes.lua" />
   </ItemGroup>
 </Project>

@@ -34,6 +34,19 @@ void write_to_file(const char * filename, const char * content) {
 
 }
 
+void append_to_file(const char * filename, const char * content) {
+
+    auto file = fopen(filename, "a");
+    if (file == nullptr) {
+        LOG("We couldn't open " << filename << " to write to");
+    }
+    else {
+        fputs(content, file);
+        fclose(file);
+    }
+
+}
+
 std::string read_from_file(const char* filename) {
     auto file = fopen(filename, "rb");
     if (file == nullptr) {
