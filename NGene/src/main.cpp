@@ -64,10 +64,14 @@ void shut_down() {
 
 void load_default_state() {
 
+    /*
     auto s = TextFileManager::get().get_scoped_resource("res/states/default_state.json");
     auto j = json::parse(*s.resource);
     EntityManager::get().clear_and_load_entities(j);
+    */
 
+    auto e = EntityManager::get().load_entity("Cosa");
+    e = EntityManager::get().load_entity("Cosa");
 }
 
 void access_entities_from_lua() {

@@ -94,22 +94,26 @@ void InputSystem::update() {
     Read the state of the axis and call the function registered
     for both of them.
     */
+    float x = InputManager::get().get_axis_position(sf::Joystick::Axis::X);
+    float y = InputManager::get().get_axis_position(sf::Joystick::Axis::Y);
+
+    float u = InputManager::get().get_axis_position(sf::Joystick::Axis::U);
+    float r = InputManager::get().get_axis_position(sf::Joystick::Axis::R);
+
     for (auto& entity : m_entities) {
         auto input = entity.second->get_component<InputComponent>();
 
         if (input->m_for_left_joystick)
             input->m_for_left_joystick(
-                (entity.second),
-                InputManager::get().get_axis_position(sf::Joystick::Axis::X),
-                InputManager::get().get_axis_position(sf::Joystick::Axis::Y)
-            );
+            (entity.second),
+                (abs(x) > input->m_joystick_threshold ? x : 0.0f),
+                (abs(y) > input->m_joystick_threshold ? y : 0.0f));
 
         if (input->m_for_right_joystick)
             input->m_for_right_joystick(
             (entity.second),
-                InputManager::get().get_axis_position(sf::Joystick::Axis::U),
-                InputManager::get().get_axis_position(sf::Joystick::Axis::R)
-            );
+                (abs(u) > input->m_joystick_threshold ? u : 0.0f),
+                (abs(r) > input->m_joystick_threshold ? r : 0.0f));
 
     }
 

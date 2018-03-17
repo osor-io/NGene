@@ -17,7 +17,7 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
         auto name = member.get_name();
         sol::object value_obj = table[name];
         if (value_obj.valid()) {
-            auto value = value_obj.as<sol::function>();
+            auto value = value_obj.as<MemberT>();
             member.set(*this, value);
         }
     });
@@ -31,10 +31,12 @@ DTOR(COMPONENT_TYPE)() {
 
 json COMPONENT_TYPE::to_json() {
     auto j = json{};
+    j["joystickThreshold"] = m_joystick_threshold;
     return j;
 }
 
 void COMPONENT_TYPE::load_json(const json& j) {
+    m_joystick_threshold = j["joystickThreshold"];
 }
 
 
@@ -44,6 +46,11 @@ void COMPONENT_TYPE::draw_component_inspector() {
     ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
 
     auto count = int{};
+
+    ImGui::Text("Joystick Threshold: "); ImGui::SameLine(150); ImGui::DragFloat("##Threshold", &m_joystick_threshold, 1.0f, 0.0f, 100.0f);
+
+    /*
+    // To print which functions are implemented
     meta::doForAllMembers<InputComponent>([this, &count](auto& member) {
         using MemberT = meta::get_member_type<decltype(member)>;
         auto name = member.get_name();
@@ -54,7 +61,7 @@ void COMPONENT_TYPE::draw_component_inspector() {
             ImGui::TextWrapped("%s: NOT REGISTERED", name);
         }
     });
-
+    */
 
     /*
     //To Check the window size and adjust default sizes:

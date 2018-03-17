@@ -20,7 +20,7 @@ public:
 
     /*
     Go to ComponentManager.h and register the name and constructor
-    of this component so it can be instantiated. 
+    of this component so it can be instantiated.
     */
 
 
@@ -36,6 +36,7 @@ public:
     std::function<void(Entity* entity, unsigned int button)> m_on_button_down;
     std::function<void(Entity* entity, float x, float y)> m_for_left_joystick;
     std::function<void(Entity* entity, float x, float y)> m_for_right_joystick;
+    float m_joystick_threshold{ 15.0f };
     // ====== END OF MEMBERS ======
 
 };
@@ -53,7 +54,8 @@ inline auto meta::registerMembers<InputComponent>() {
         member("onButtonUp", &InputComponent::m_on_button_up),
         member("onButtonDown", &InputComponent::m_on_button_down),
         member("forLeftJoystick", &InputComponent::m_for_left_joystick),
-        member("forRightJoystick", &InputComponent::m_for_right_joystick)
+        member("forRightJoystick", &InputComponent::m_for_right_joystick),
+        member("joystickThreshold", &InputComponent::m_joystick_threshold)
     );
 }
 
