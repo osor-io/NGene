@@ -74,7 +74,7 @@ void load_default_state() {
     */
 
     //If we want to check performance with more than one entity
-    //for (int i = 0; i < 50; ++i) {
+    //for (int i = 0; i < 100; ++i) {
         auto id = EntityManager::get().request_load_entity("Cosa");
         EntityManager::get().update_entities();
         auto entity = EntityManager::get().get_entity(id);

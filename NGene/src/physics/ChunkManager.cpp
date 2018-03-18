@@ -23,7 +23,11 @@ void ChunkManager::shut_down() {
 std::vector<Chunk> ChunkManager::get_relevant_chunks() const {
     auto vec = std::vector<Chunk>();
 
-    //@@TODO: get visible chunks using the render manager to calculate it.
+    for (auto x = m_min_relevant_chunk.first; x <= m_max_relevant_chunk.first; ++x) {
+        for (auto y = m_min_relevant_chunk.second; y <= m_max_relevant_chunk.second; ++y) {
+            vec.push_back(std::make_pair(x, y));
+        }
+    }
 
     return vec;
 }
@@ -105,17 +109,7 @@ void ChunkManager::update_entity_chunks() {
         auto entity = e.second.get();
         auto id = entity->get_id();
         auto transform = entity->get_component<TransformComponent>();
-
-        if (m_position_cache[id] == transform->get_position()) {
-            continue;
-        }
-        m_position_cache[id] = transform->get_position();
-
-
-        for (auto& c : m_entity_map[id]) {
-            m_chunk_map[c].erase(id);
-        }
-        m_entity_map[id].clear();
+        auto position = transform->get_position();
 
 
         auto extent = entity->get_component<ExtentComponent>();
@@ -128,9 +122,37 @@ void ChunkManager::update_entity_chunks() {
 
                 auto min_chunk = Chunk{};
                 auto max_chunk = Chunk{};
-                auto center = transform->get_position() + extent->m_offset;
+                auto center = position + extent->m_offset;
                 auto min_position = center - extent->m_extent;
                 auto max_position = center + extent->m_extent;
+
+
+                /*
+                Here we stop checking if the entity hasn't changed
+                */
+                {
+                    /*
+                    @@HACK
+                    This only fails if we move the offset and the extent in the 
+                    exact same (float) amount in the same frame. Which we are probably ok
+                    with since I don't plan on ever changing offset during runtime, only when
+                    debugging and setting up the scenes.
+                    */
+                    if (m_location_cache[id] == min_position) {
+                        continue;
+                    }
+                    m_location_cache[id] = min_position;
+
+                    for (auto& c : m_entity_map[id]) {
+                        m_chunk_map[c].erase(id);
+                    }
+                    m_entity_map[id].clear();
+                }
+
+                /*
+                We calculate the minimum and maximum chunks the entity can be in
+                by calculating the chunk of the minimum and maximum points.
+                */
 
                 min_chunk.first = gsl::narrow_cast<int>(std::floor(min_position.x / m_chunk_size));
                 min_chunk.second = gsl::narrow_cast<int>(std::floor(min_position.y / m_chunk_size));
@@ -140,11 +162,16 @@ void ChunkManager::update_entity_chunks() {
 
                 auto relevant = false;
 
+                /*
+                Now we instert the entity on the required maps and check if any of the
+                chunks it is in is relevant.
+                */
+
                 for (auto x = min_chunk.first; x <= max_chunk.first; ++x) {
                     for (auto y = min_chunk.second; y <= max_chunk.second; ++y) {
 
-                        auto chunk = std::make_pair(x,y);
-                        
+                        auto chunk = std::make_pair(x, y);
+
                         m_chunk_map[chunk].insert(id);
                         m_entity_map[id].insert(chunk);
 
@@ -158,7 +185,22 @@ void ChunkManager::update_entity_chunks() {
 
             }
             else {
-                auto position = transform->get_position();
+
+                /*
+                Here we stop checking if the entity hasn't changed
+                */
+                {
+                    if (m_location_cache[id] == position) {
+                        continue;
+                    }
+                    m_location_cache[id] = position;
+
+                    for (auto& c : m_entity_map[id]) {
+                        m_chunk_map[c].erase(id);
+                    }
+                    m_entity_map[id].clear();
+                }
+
                 auto chunk = Chunk{};
                 chunk.first = gsl::narrow_cast<int>(std::floor(position.x / m_chunk_size));
                 chunk.second = gsl::narrow_cast<int>(std::floor(position.y / m_chunk_size));
@@ -175,7 +217,6 @@ void ChunkManager::update_entity_chunks() {
 void ChunkManager::draw_debug_chunks() {
 
     auto current_chunk = m_min_relevant_chunk;
-
 
     auto draw_list = ImGui::GetWindowDrawList();
     draw_list->PushClipRectFullScreen();
@@ -209,11 +250,6 @@ void ChunkManager::draw_debug_chunks() {
         }
     }
     draw_list->PopClipRect();
-
-
-
-
-    //@@TODO: draw from min to max chunk
 }
 
 

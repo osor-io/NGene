@@ -142,6 +142,11 @@ void Entity::draw_debug_gui() {
     strncpy(name_arr, m_name.c_str(), sizeof(name_arr));
     name_arr[sizeof(name_arr) - 1] = 0;
 
+    char id_add[config::max_name_length];
+    snprintf(id_add, sizeof(id_add), "%s_%d", m_type.c_str(), m_id);
+
+    ImGui::PushID(id_add);
+
     auto open = ImGui::CollapsingHeader(name_arr);
 
     if (open || m_changed_header) {
@@ -157,6 +162,8 @@ void Entity::draw_debug_gui() {
             c.second->draw_debug_gui();
         }
     }
+
+    ImGui::PopID();
 
 }
 

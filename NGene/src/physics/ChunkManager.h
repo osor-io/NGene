@@ -50,7 +50,7 @@ private:
 
     ChunkMap m_chunk_map{};
     EntityMap m_entity_map{};
-    PositionCache m_position_cache{};
+    PositionCache m_location_cache{};
 
 
     Chunk m_min_relevant_chunk{};
