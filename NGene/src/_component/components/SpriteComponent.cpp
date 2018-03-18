@@ -3,6 +3,7 @@
 #include "../lua/LuaManager.h"
 #include <fstream>
 #include "../../resources/TextureManager.h"
+#include "../../config/Config.h"
 
 SpriteComponent::SpriteComponent(EntityId id) : ComponentTemplate(id, std::type_index(typeid(SpriteComponent))) {
     LOGF("NOT THISSSS");
@@ -44,6 +45,10 @@ void SpriteComponent::load_sprite() {
 
     if (m_texture)
         m_sprite.setTexture(*m_texture);
+
+
+    auto origin = m_sprite.getOrigin();
+    m_sprite.setOrigin(origin + (sf::Vector2f(m_texture->getSize()) / 2.f));
 
     /*
     //Old way of loading the texture directly
@@ -97,6 +102,7 @@ void SpriteComponent::set_sprite_rval(sf::Sprite && sprite) {
 void SpriteComponent::draw_component_inspector() {
 
     ImGui::SetNextWindowSize(ImVec2(320, 420), ImGuiCond_FirstUseEver);
+
     ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
 
     ImGui::Text("File Name: %s", m_filename.c_str());
@@ -118,13 +124,7 @@ void SpriteComponent::draw_component_inspector() {
         ImGui::Text("Texture for the sprite not available");
     }
 
-
-    //To Check the window size and adjust default sizes:
-    //ImGui::Text("Window Size: (%f, %f)", ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
-
     ImGui::End();
-
-
 }
 
 void SpriteComponent::expose_to_lua() {

@@ -34,7 +34,7 @@ public:
 
     void update_entities();
 
-    EntityId load_entity(const std::string & type, const sol::table & table= LUA["Entities"]);
+    EntityId request_load_entity(const std::string & type, const sol::table & table= LUA["Entities"]);
 
     void remove_entity(EntityId id);
 

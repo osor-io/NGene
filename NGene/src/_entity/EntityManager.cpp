@@ -84,7 +84,7 @@ void EntityManager::update_entities() {
 }
 
 
-EntityId EntityManager::load_entity(const std::string & type, const sol::table & table)
+EntityId EntityManager::request_load_entity(const std::string & type, const sol::table & table)
 {
     auto e = create_entity_internal(type, table);
 

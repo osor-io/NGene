@@ -32,12 +32,19 @@ void TransformComponent::draw_component_inspector() {
     ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
     ImGui::Text("Position: "); ImGui::SameLine(100); ImGui::DragFloat2("##Position", &(m_position.x), 1.0f, config::min_position.x, config::max_position.x);
 
-    /*
-    //To Check the window size and adjust default sizes:
-    ImGui::Text("Window Size: (%f, %f)", ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
-    */
-    ImGui::End();
+    if (ImGui::IsWindowFocused()) {
+        auto draw_list = ImGui::GetWindowDrawList();
+        auto centre = ImVec2(m_position.x, m_position.y);
+        auto color_center = ImGui::GetColorU32((ImVec4)ImColor(255, 0, 0));
+        auto color_line = ImGui::GetColorU32((ImVec4)ImColor(0, 255, 0));
+        draw_list->PushClipRectFullScreen();
+        draw_list->AddCircle(centre, 9.0f, color_line, 12, 4.0f);
+        draw_list->AddCircleFilled(centre, 8.0f, color_center);
+        draw_list->PopClipRect();
+    }
 
+  
+    ImGui::End();
 }
 
 

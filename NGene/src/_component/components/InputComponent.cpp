@@ -47,7 +47,7 @@ void COMPONENT_TYPE::draw_component_inspector() {
 
     auto count = int{};
 
-    ImGui::Text("Joystick Threshold: "); ImGui::SameLine(150); ImGui::DragFloat("##Threshold", &m_joystick_threshold, 1.0f, 0.0f, 100.0f);
+    ImGui::Text("Joystick Threshold: "); ImGui::SameLine(170); ImGui::DragFloat("##Threshold", &m_joystick_threshold, 1.0f, 0.0f, 100.0f);
 
     /*
     // To print which functions are implemented

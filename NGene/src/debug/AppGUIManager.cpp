@@ -27,6 +27,7 @@ void AppGUIManager::start_up() {
     style->ScrollbarSize = 15.0f;
     style->ScrollbarRounding = 9.0f;
     style->GrabMinSize = 5.0f;
+    style->GrabMinSize = 5.0f;
     style->GrabRounding = 3.0f;
 
     style->Colors[ImGuiCol_Text] = palette[0];

@@ -182,17 +182,17 @@ void test() {
             }
         )");
 
-        auto e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().load_entity(LUA["Entities"], "OtraCosa");
-        e = EntityManager::get().load_entity(LUA["Entities"], "YOtraMas");
-        e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().load_entity(LUA["Entities"], "YOtraMas");
-        e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().load_entity(LUA["Entities"], "Cosa");
+        auto e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().request_load_entity(LUA["Entities"], "OtraCosa");
+        e = EntityManager::get().request_load_entity(LUA["Entities"], "YOtraMas");
+        e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().request_load_entity(LUA["Entities"], "YOtraMas");
+        e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
+        e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
 
         for (const auto& id : EntityManager::get().get_entity_keys()) {
             LOG_NAMED(id);

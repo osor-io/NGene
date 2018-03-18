@@ -70,8 +70,11 @@ void load_default_state() {
     EntityManager::get().clear_and_load_entities(j);
     */
 
-    auto e = EntityManager::get().load_entity("Cosa");
-    e = EntityManager::get().load_entity("Cosa");
+    auto id = EntityManager::get().request_load_entity("Cosa");
+    EntityManager::get().update_entities();
+    auto entity = EntityManager::get().get_entity(id);
+    entity->set_name("All Mighty Entity");
+    entity->get_component<TransformComponent>()->set_position(sf::Vector2f(300.f, 300.f));
 }
 
 void access_entities_from_lua() {
