@@ -10,6 +10,7 @@
 #include <Manager.h>
 #include "../_entity/Entity.h"
 
+#include "./components/ExtentComponent.h"
 #include "./components/InputComponent.h"
 #include "./components/BehaviourComponent.h"
 #include "./components/TransformComponent.h"
@@ -43,6 +44,10 @@ private:
     InstanceMap m_instance_map{};
 
     const TypeMap m_type_map{
+        
+        std::make_pair(
+            meta::get_name<ExtentComponent>(),
+            std::type_index(typeid(ExtentComponent))),
 
         std::make_pair(
             meta::get_name<InputComponent>(),
@@ -66,6 +71,12 @@ private:
     };
 
     const FactoryMap m_factory_map{
+
+        std::make_pair(std::type_index(typeid(
+            ExtentComponent
+            )),[](Entity& entity ,const sol::table& table) {
+                entity.make_component<ExtentComponent>(entity.get_id(), table);
+            }),
 
         std::make_pair(std::type_index(typeid(
             InputComponent

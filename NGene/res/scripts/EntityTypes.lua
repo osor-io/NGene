@@ -5,6 +5,12 @@ Entities = {
             x = 0, 
             y = 10
         }, 
+        ExtentComponent = {
+            extentX = 40, 
+            extentY = 43, 
+            offsetX = 0, 
+            offsetY = 0
+        }, 
         PhraseComponent = {
             phrase = "I'm saying hi from this lua Object!! :D"
         }, 
@@ -87,6 +93,54 @@ Entities = {
                 SpriteComponent = {
                     filename = "file.png"
                 }}}
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
+
+                
 
                 
 

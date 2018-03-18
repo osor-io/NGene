@@ -5,6 +5,7 @@
 #include <../config/Config.h>
 #include "./cafe.inl"
 #include "../utils/File.h"
+#include "../physics/ChunkManager.h"
 
 AppGUIManager::AppGUIManager() {}
 
@@ -98,7 +99,12 @@ void AppGUIManager::draw_corner_overlay_debug_info() {
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.3f)); // Transparent background
     if (ImGui::Begin("Debug Overlay", &open, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings))
     {
-        ImGui::Text("Mouse Position: (%6.1f,%6.1f)", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
+        auto mouse_pos = ImGui::GetIO().MousePos;
+
+        auto chunk = ChunkManager::get().get_chunk_from_position(mouse_pos.x, mouse_pos.y);
+
+        ImGui::Text("Mouse Position: (%6.1f,%6.1f)", mouse_pos.x, mouse_pos.y);
+        ImGui::Text("Chunk: (%3d,%3d)", chunk.first, chunk.second);
         ImGui::Text("Frames Per Second: (%.1f)", (1.f / TimeManager::get().get_delta_time().asSeconds()));
         ImGui::Text("Frame Time: (%d) ms", (TimeManager::get().get_delta_time().asMilliseconds()));
         if (ImGui::BeginPopupContextWindow())
@@ -147,12 +153,12 @@ void AppGUIManager::draw_gui() {
 
         ImGui::PushFont(m_font);
 
-     
+
         ImGui::BeginMainMenuBar();
 
         if (ImGui::BeginMenu("File")) {
-        
-            if(ImGui::Button("New State")) {
+
+            if (ImGui::Button("New State")) {
                 ImGui::OpenPopup("Creating New State");
             }
             if (ImGui::BeginPopupModal("Creating New State", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
@@ -185,10 +191,10 @@ void AppGUIManager::draw_gui() {
             if (ImGui::Button("Save State")) {
                 ImGui::OpenPopup("Saving State");
             }
-            if(ImGui::BeginPopupModal("Saving State", nullptr, ImGuiWindowFlags_AlwaysAutoResize)){
+            if (ImGui::BeginPopupModal("Saving State", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
                 static char saving_filename[32];
                 ImGui::Text("Filename to save: "); ImGui::SameLine(150); ImGui::InputText("##Filename", saving_filename, 32);
-                if (ImGui::Button("OK", ImVec2(120, 0))) { 
+                if (ImGui::Button("OK", ImVec2(120, 0))) {
                     EntityManager::get().serialize_entities_to_file(saving_filename);
                     ImGui::CloseCurrentPopup();
                 }
@@ -197,24 +203,27 @@ void AppGUIManager::draw_gui() {
                 ImGui::EndPopup();
             }
 
-
             ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("View")) {
             ImGui::Checkbox("Entities & Components", &m_show_entities_components);
-            ImGui::Checkbox("ImGui Demo", &m_show_imgui_demo);
             ImGui::Checkbox("Debug Overlay", &m_show_debug_overlay);
-
+            ImGui::Checkbox("Chunks", &m_show_chunks);
+            ImGui::Checkbox("ImGui Demo", &m_show_imgui_demo);
             ImGui::EndMenu();
         }
 
+        /*Put here overlay things*/
+        if (m_show_chunks) ChunkManager::get().draw_debug_chunks();
+
         ImGui::EndMainMenuBar();
-        
+
 
         if (m_show_entities_components) draw_entity_component_editor();
         if (m_show_imgui_demo) ImGui::ShowDemoWindow();
         if (m_show_debug_overlay) draw_corner_overlay_debug_info();
+
 
         ImGui::PopFont();
 

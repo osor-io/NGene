@@ -189,7 +189,9 @@ echo.</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\physics\ChunkManager.cpp" />
     <ClCompile Include="src\input\InputManager.cpp" />
+    <ClCompile Include="src\_component\components\ExtentComponent.cpp" />
     <ClCompile Include="src\_component\components\InputComponent.cpp" />
     <ClCompile Include="src\_system\systems\BehaviourSystem.cpp" />
     <ClCompile Include="dep\src\ImGuizmo.cpp" />
@@ -227,11 +229,14 @@ echo.</Command>
     <ClCompile Include="src\window\WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\lua\LuaTypes.h" />
+    <ClInclude Include="src\physics\ChunkManager.h" />
     <ClInclude Include="src\debug\LoggingManager.h" />
     <ClInclude Include="src\resources\TextFileManager.h" />
     <ClInclude Include="src\resources\TextureManager.h" />
     <ClInclude Include="src\resources\ResourceManager.h" />
     <ClInclude Include="src\input\InputManager.h" />
+    <ClInclude Include="src\_component\components\ExtentComponent.h" />
     <ClInclude Include="src\_component\components\InputComponent.h" />
     <ClInclude Include="src\_system\systems\BehaviourSystem.h" />
     <ClInclude Include="dep\include\ImGuizmo.h" />

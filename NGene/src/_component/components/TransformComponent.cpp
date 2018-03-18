@@ -94,24 +94,6 @@ void TransformComponent::lua_set_position(const LuaVector2f & position) {
 
 void TransformComponent::expose_to_lua() {
 
-    LUA.new_usertype<LuaVector2f>("Vector2f",
-
-
-        /*
-        Methods:
-        Add here all the functions we want to expose to lua with REGISTER_METHOD(methodName)
-        */
-
-        /*
-        Data Members:
-        Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
-        */
-
-        "x", &LuaVector2f::x,
-        "y", &LuaVector2f::y
-
-        );
-
     LUA.new_usertype<TransformComponent>(meta::get_name<TransformComponent>(),
 
 

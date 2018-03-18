@@ -25,6 +25,7 @@ void BehaviourSystem::shut_down() {
 void BehaviourSystem::update() {
 
     for (auto& e : m_entities) {
+        //@@TODO: Check if entity is active and is in relevant chunk
         e.second->get_component<BehaviourComponent>()->get_on_update()(*(e.second), DELTA_SECONDS);
     }
 

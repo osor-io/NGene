@@ -35,5 +35,6 @@ private:
     bool m_show_entities_components{ true };
     bool m_show_imgui_demo{ false };
     bool m_show_debug_overlay{ true };
+    bool m_show_chunks{ true };
 
 };

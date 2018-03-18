@@ -46,6 +46,8 @@ public:
 
     std::vector<EntityId> get_entity_keys() const;
 
+    OwningEntitiesGroup& get_entities();
+
     json serialize_entities() const;
 
     void serialize_entities_to_file(const char* filename) const;

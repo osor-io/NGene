@@ -1,7 +1,7 @@
 #pragma once
 #include "../ComponentTemplate.h"
 #include <SFML\Graphics.hpp>
-
+#include "../lua/LuaTypes.h"
 
 namespace config {
 
@@ -9,15 +9,6 @@ namespace config {
     const sf::Vector2f max_position(2048.0f, 2048.0f);
 
 }
-
-struct LuaVector2f {
-    static sf::Vector2f to_sf(LuaVector2f vector) { return sf::Vector2f(vector.x, vector.y); }
-    LuaVector2f() {}
-    LuaVector2f(const sf::Vector2f vector) : x(vector.x), y(vector.y) {}
-    float x;
-    float y;
-};
-
 
 class TransformComponent : public ComponentTemplate<TransformComponent> {
 public:

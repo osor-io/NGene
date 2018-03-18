@@ -71,6 +71,15 @@ bool Entity::is_enabled() const {
     return m_enabled;
 }
 
+void Entity::set_in_relevant_chunk(bool in_relevant_chunk) {
+    m_in_relevant_chunk = in_relevant_chunk;
+}
+
+bool Entity::is_in_relevant_chunk() const {
+    return m_in_relevant_chunk;
+}
+
+#include "../_component/components/ExtentComponent.h"
 #include "../_component/components/InputComponent.h"
 #include "../_component/components/BehaviourComponent.h"
 #include "../_component/components/TransformComponent.h"
@@ -86,6 +95,7 @@ void Entity::expose_to_lua() {
     /*
     Here we expose the members of the components
     */
+    ExtentComponent::expose_to_lua();
     InputComponent::expose_to_lua();
     BehaviourComponent::expose_to_lua();
     TransformComponent::expose_to_lua();
@@ -97,6 +107,7 @@ void Entity::expose_to_lua() {
     */
     LUA.new_usertype<Entity>("Entity",
 
+        REGISTER_GET_COMPONENT(ExtentComponent),
         REGISTER_GET_COMPONENT(InputComponent),
         REGISTER_GET_COMPONENT(BehaviourComponent),
         REGISTER_GET_COMPONENT(TransformComponent),
@@ -139,6 +150,8 @@ void Entity::draw_debug_gui() {
 
         ImGui::Text("Id: %d", m_id); ImGui::SameLine(100); ImGui::Text("Type: %s", m_type.c_str());
         ImGui::Text("Name: "); ImGui::SameLine(100); ImGui::InputText("##Name", name_arr, config::max_name_length, ImGuiInputTextFlags_CallbackAlways, text_edit_callback, reinterpret_cast<void*>(this));
+        //@@TODO: Give the option to enable and disable entity
+        ImGui::Text("%s", (m_enabled ? "Enabled" : "Disabled")); ImGui::SameLine(100); ImGui::Text("%s", (m_in_relevant_chunk ? "Relevant" : "Not Relevant"));
 
         for (auto& c : m_components) {
             c.second->draw_debug_gui();

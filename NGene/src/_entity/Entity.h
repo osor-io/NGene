@@ -8,13 +8,12 @@
 #include <JsonCast.h>
 #include "../memory/SmallMemoryAllocator.h"
 #include "../config/Config.h"
-
+#include "../types/def.h"
 
 class EntityManager;
 
 class Component;
 
-using EntityId = unsigned int;
 
 namespace config {
     constexpr auto max_name_length = 32;
@@ -53,6 +52,9 @@ public:
     void set_enabled(bool);
     bool is_enabled() const;
 
+    void set_in_relevant_chunk(bool);
+    bool is_in_relevant_chunk() const;
+
     static void expose_to_lua();
 
     void draw_debug_gui();
@@ -89,6 +91,7 @@ private:
     bool m_changed_header{ false };
     unsigned int m_id;
     bool m_enabled{ true };
+    bool m_in_relevant_chunk{ true };
     std::string m_type;
     std::unordered_map<std::type_index, std::unique_ptr<Component>> m_components;
 
@@ -106,6 +109,7 @@ inline auto meta::registerMembers<Entity>() {
     return members(
         member("id", &Entity::m_id),
         member("name", &Entity::get_name_ref, &Entity::set_name),
-        member("type", &Entity::m_type)
+        member("type", &Entity::m_type),
+        member("enabled", &Entity::m_enabled)
     );
 }

@@ -17,11 +17,6 @@ EntityManager::~EntityManager() {}
 
 void EntityManager::start_up() {
 
-    /*
-    @@DOING
-    Load here all the entity types
-    */
-
     assert(TextFileManager::get().exists_resource("res/scripts/EntityTypes.lua"));
 
     auto script = TextFileManager::get().get_scoped_resource("res/scripts/EntityTypes.lua");
@@ -124,6 +119,10 @@ std::vector<EntityId> EntityManager::get_entity_keys() const {
         vec[i++] = e.first;
     }
     return vec;
+}
+
+EntityManager::OwningEntitiesGroup & EntityManager::get_entities() {
+    return m_entities;
 }
 
 

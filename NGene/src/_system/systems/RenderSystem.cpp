@@ -42,7 +42,7 @@ void RenderSystem::update() {
     for (auto& v : m_sorted_entities) {
 
         for (auto& entity : v.second) {
-            if (entity->is_enabled()) {
+            if (entity->is_enabled() && entity->is_in_relevant_chunk()) {
                 auto graphics_component = entity->get_component<SpriteComponent>();
                 auto transform_component = entity->get_component<TransformComponent>();
 
