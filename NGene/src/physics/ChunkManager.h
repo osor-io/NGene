@@ -45,8 +45,16 @@ public:
     const EntitySet& get_entities_of_chunk(Chunk chunk);
 
 private:
-    ChunkLengthType m_chunk_size{ 128 };
+    ChunkLengthType m_chunk_size{ 64 };
     unsigned int m_chunk_threshold{ 1 };
+
+    /*
+    This is used in case an entity enters a chunk exactly in the frame that we have to check
+    something in that new chunk, we register the entity as being in the chunks that it
+    really is plus "m_safe_threshold" more in each direction.
+    */
+    unsigned int m_safe_threshold{ 1 };
+
 
     ChunkMap m_chunk_map{};
     EntityMap m_entity_map{};

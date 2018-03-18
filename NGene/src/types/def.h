@@ -2,11 +2,12 @@
 
 #include <utility>
 #include <unordered_set>
+#include <set>
 
 
 using byte = unsigned char;
 using EntityId = unsigned int;
-using EntitySet = std::unordered_set<EntityId>;
+using EntitySet = std::set<EntityId>;
 using Chunk = std::pair<int, int>;
 
 struct ChunkHash {
