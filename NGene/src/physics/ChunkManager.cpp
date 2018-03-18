@@ -69,7 +69,7 @@ inline bool is_chunk_in_range(const Chunk& chunk, const Chunk& min_chunk, const 
         (chunk.second >= min_chunk.second && chunk.second <= max_chunk.second);
 }
 
-const std::vector<EntityId>& ChunkManager::get_entities_of_chunk(Chunk chunk) {
+const EntitySet& ChunkManager::get_entities_of_chunk(Chunk chunk) {
     return m_chunk_map[chunk];
 }
 
@@ -91,18 +91,41 @@ void ChunkManager::update_entity_chunks() {
         gsl::narrow_cast<int>(std::floor((viewport.top + viewport.height) / m_chunk_size) + m_chunk_threshold)
     );
 
-    //@@OPTIMIZATION: Keep previous maps and only change the ones that moved.
-    m_chunk_map.clear();
-    m_entity_map.clear();
 
     for (auto& e : entities) {
+
+        /*
+        @@OPTIMIZATION: For static entities we should only calculate the chunks once
+        and maybe put them in a different map.
+
+        This might not be necessary now that we are caching the previous transform and
+        checking if things are moving.
+        */
+
         auto entity = e.second.get();
+        auto id = entity->get_id();
         auto transform = entity->get_component<TransformComponent>();
+
+        if (m_position_cache[id] == transform->get_position()) {
+            continue;
+        }
+        m_position_cache[id] = transform->get_position();
+
+
+        for (auto& c : m_entity_map[id]) {
+            m_chunk_map[c].erase(id);
+        }
+        m_entity_map[id].clear();
+
+
         auto extent = entity->get_component<ExtentComponent>();
 
-        //@@TODO add other check with the extent components.
+        /*
+        Add here other checks with other components if we need it to.
+        */
         if (transform) {
             if (extent) {
+
                 auto min_chunk = Chunk{};
                 auto max_chunk = Chunk{};
                 auto center = transform->get_position() + extent->m_offset;
@@ -122,8 +145,8 @@ void ChunkManager::update_entity_chunks() {
 
                         auto chunk = std::make_pair(x,y);
                         
-                        m_chunk_map[chunk].push_back(entity->get_id());
-                        m_entity_map[entity->get_id()].insert(chunk);
+                        m_chunk_map[chunk].insert(id);
+                        m_entity_map[id].insert(chunk);
 
                         if (!relevant) {
                             relevant = is_chunk_in_range(chunk, m_min_relevant_chunk, m_max_relevant_chunk);
@@ -139,8 +162,8 @@ void ChunkManager::update_entity_chunks() {
                 auto chunk = Chunk{};
                 chunk.first = gsl::narrow_cast<int>(std::floor(position.x / m_chunk_size));
                 chunk.second = gsl::narrow_cast<int>(std::floor(position.y / m_chunk_size));
-                m_chunk_map[chunk].push_back(entity->get_id());
-                m_entity_map[entity->get_id()].insert(chunk);
+                m_chunk_map[chunk].insert(id);
+                m_entity_map[id].insert(chunk);
                 entity->set_in_relevant_chunk(is_chunk_in_range(chunk, m_min_relevant_chunk, m_max_relevant_chunk));
             }
         }

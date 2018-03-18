@@ -6,12 +6,14 @@
 #include <vector>
 #include "../types/def.h"
 #include <gsl\gsl>
+#include "SFML/Window.hpp"
 
 
 class ChunkManager : public Manager<ChunkManager> {
     friend class CRSP<ChunkManager>;
-    using ChunkMap = std::unordered_map<Chunk, std::vector<EntityId>, ChunkHash>;
+    using ChunkMap = std::unordered_map<Chunk, EntitySet, ChunkHash>;
     using EntityMap = std::unordered_map<EntityId, ChunkSet>;
+    using PositionCache = std::unordered_map<EntityId, sf::Vector2f>;
     using ChunkLengthType = float;
 private:
     ChunkManager();
@@ -40,7 +42,7 @@ public:
     /*
     It is not const vecause it might create an empty vector for the required chunk
     */
-    const std::vector<EntityId>& get_entities_of_chunk(Chunk chunk);
+    const EntitySet& get_entities_of_chunk(Chunk chunk);
 
 private:
     ChunkLengthType m_chunk_size{ 128 };
@@ -48,6 +50,8 @@ private:
 
     ChunkMap m_chunk_map{};
     EntityMap m_entity_map{};
+    PositionCache m_position_cache{};
+
 
     Chunk m_min_relevant_chunk{};
     Chunk m_max_relevant_chunk{};
