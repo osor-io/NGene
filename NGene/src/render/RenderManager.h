@@ -28,6 +28,8 @@ public:
     void begin_frame();
     void end_frame();
 
+    sf::Vector2i map_coords_to_pixel(sf::Vector2f position, bool scaled = true);
+
 private:
 
     sf::Color m_clear_color{ sf::Color::Black };

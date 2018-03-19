@@ -69,7 +69,6 @@ Chunk ChunkManager::get_chunk_from_position(float x, float y) const {
     );
 }
 
-
 inline bool is_chunk_in_range(const Chunk& chunk, const Chunk& min_chunk, const Chunk& max_chunk) {
 
     return  (chunk.first >= min_chunk.first && chunk.first <= max_chunk.first) &&
@@ -85,21 +84,20 @@ void ChunkManager::update_entity_chunks() {
     auto& entities = EntityManager::get().get_entities();
 
     const auto& render_target = RenderManager::get().get_main_render_target();
-
+    const auto zoom = RenderManager::get().get_current_zoom();
     const auto& view = render_target->getView();
     const auto& center = view.getCenter();
     const auto& size = view.getSize();
 
     m_min_relevant_chunk = std::make_pair(
-        gsl::narrow_cast<int>(std::floor((center.x - size.x / 2.f) / m_chunk_size) - m_chunk_threshold),
-        gsl::narrow_cast<int>(std::floor((center.y - size.y / 2.f) / m_chunk_size) - m_chunk_threshold)
+        gsl::narrow_cast<int>(std::floor((center.x - (size.x * zoom) / 2.f) / m_chunk_size) - m_chunk_threshold),
+        gsl::narrow_cast<int>(std::floor((center.y - (size.y * zoom) / 2.f) / m_chunk_size) - m_chunk_threshold)
     );
 
     m_max_relevant_chunk = std::make_pair(
-        gsl::narrow_cast<int>(std::floor((center.x + size.x / 2.f) / m_chunk_size) + m_chunk_threshold),
-        gsl::narrow_cast<int>(std::floor((center.y + size.y / 2.f) / m_chunk_size) + m_chunk_threshold)
+        gsl::narrow_cast<int>(std::floor((center.x + (size.x * zoom) / 2.f) / m_chunk_size) + m_chunk_threshold),
+        gsl::narrow_cast<int>(std::floor((center.y + (size.y * zoom) / 2.f) / m_chunk_size) + m_chunk_threshold)
     );
-
 
     for (auto& e : entities) {
 
@@ -223,11 +221,11 @@ void ChunkManager::draw_debug_chunks() {
     const auto converted_chunk_size = m_chunk_size * RenderManager::get().get_current_zoom();
 
     //@@TODO: get here the min and max with the default size, not the scaled one
-    const auto beg = RenderManager::get().get_main_render_target()->mapCoordsToPixel(sf::Vector2f(
+    const auto beg = RenderManager::get().map_coords_to_pixel(sf::Vector2f(
         m_min_relevant_chunk.first * m_chunk_size,
         m_min_relevant_chunk.second * m_chunk_size));
 
-    const auto end = RenderManager::get().get_main_render_target()->mapCoordsToPixel(sf::Vector2f(
+    const auto end = RenderManager::get().map_coords_to_pixel(sf::Vector2f(
         m_max_relevant_chunk.first * m_chunk_size,
         m_max_relevant_chunk.second * m_chunk_size));
 

@@ -90,3 +90,27 @@ void RenderManager::end_frame() {
     m_main_target->display();
     TimeManager::get().end_of_frame();
 }
+
+sf::Vector2i RenderManager::map_coords_to_pixel(sf::Vector2f position, bool scaled){
+
+    if (scaled) {
+        return m_main_target->mapCoordsToPixel(position);
+    }
+    else {
+        auto view = m_main_target->getView();
+        auto previous_size = view.getSize();
+
+        auto size = m_main_target->getDefaultView().getSize();
+        view.setSize(size);
+        m_main_target->setView(view);
+
+        auto ret = m_main_target->mapCoordsToPixel(position);
+
+        view.setSize(previous_size);
+        m_main_target->setView(view);
+
+        return ret;
+    }
+
+    return sf::Vector2i();
+}
