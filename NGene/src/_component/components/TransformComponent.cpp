@@ -7,6 +7,7 @@
 #include "../_entity/Entity.h"
 #include <sstream>
 #include <ImGuizmo.h>
+#include "../render/RenderManager.h"
 
 TransformComponent::TransformComponent(EntityId id) : ComponentTemplate(id, std::type_index(typeid(TransformComponent))) {
 }
@@ -34,12 +35,16 @@ void TransformComponent::draw_component_inspector() {
 
     if (ImGui::IsWindowFocused()) {
         auto draw_list = ImGui::GetWindowDrawList();
-        auto centre = ImVec2(m_position.x, m_position.y);
-        auto color_center = ImGui::GetColorU32((ImVec4)ImColor(255, 0, 0));
-        auto color_line = ImGui::GetColorU32((ImVec4)ImColor(0, 255, 0));
+
+        auto render_centre = RenderManager::get().get_main_render_target()->mapCoordsToPixel(m_position);
+        
+        auto im_centre = ImVec2(render_centre.x, render_centre.y);
+
+        const auto color_center = ImGui::GetColorU32((ImVec4)ImColor(255, 0, 0));
+        const auto color_line = ImGui::GetColorU32((ImVec4)ImColor(0, 255, 0));
         draw_list->PushClipRectFullScreen();
-        draw_list->AddCircle(centre, 9.0f, color_line, 12, 4.0f);
-        draw_list->AddCircleFilled(centre, 8.0f, color_center);
+        draw_list->AddCircle(im_centre, 9.0f, color_line, 12, 4.0f);
+        draw_list->AddCircleFilled(im_centre, 8.0f, color_center);
         draw_list->PopClipRect();
     }
 

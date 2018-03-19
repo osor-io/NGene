@@ -201,6 +201,7 @@ echo.</Command>
     <ClCompile Include="dep\src\Tileset.cpp" />
     <ClCompile Include="src\physics\ChunkManager.cpp" />
     <ClCompile Include="src\input\InputManager.cpp" />
+    <ClCompile Include="src\_component\components\CameraComponent.cpp" />
     <ClCompile Include="src\_component\components\ExtentComponent.cpp" />
     <ClCompile Include="src\_component\components\InputComponent.cpp" />
     <ClCompile Include="src\_component\components\TiledMapComponent.cpp" />
@@ -213,9 +214,10 @@ echo.</Command>
     <ClCompile Include="src\config\Config.cpp" />
     <ClCompile Include="src\debug\cafe.inl" />
     <ClCompile Include="src\render\RenderManager.cpp" />
-    <ClCompile Include="src\debug\AppGUIManager.cpp" />
+    <ClCompile Include="src\debug\DeveloperModeManager.cpp" />
     <ClCompile Include="src\utils\File.cpp" />
     <ClCompile Include="src\lua\LuaManager.cpp" />
+    <ClCompile Include="src\_system\systems\CameraSystem.cpp" />
     <ClCompile Include="src\_system\systems\InputSystem.cpp" />
     <ClCompile Include="src\_system\systems\RenderSystem.cpp" />
     <ClCompile Include="src\utils\Debug.cpp" />
@@ -264,6 +266,7 @@ echo.</Command>
     <ClInclude Include="src\resources\TextureManager.h" />
     <ClInclude Include="src\resources\ResourceManager.h" />
     <ClInclude Include="src\input\InputManager.h" />
+    <ClInclude Include="src\_component\components\CameraComponent.h" />
     <ClInclude Include="src\_component\components\ExtentComponent.h" />
     <ClInclude Include="src\_component\components\InputComponent.h" />
     <ClInclude Include="src\_component\components\TiledMapComponent.h" />
@@ -277,11 +280,12 @@ echo.</Command>
     <ClInclude Include="src\_component\examples\ExampleComponent.h" />
     <ClInclude Include="src\config\Config.h" />
     <ClInclude Include="src\render\RenderManager.h" />
-    <ClInclude Include="src\debug\AppGUIManager.h" />
+    <ClInclude Include="src\debug\DeveloperModeManager.h" />
     <ClInclude Include="src\utils\File.h" />
     <ClInclude Include="src\lua\LuaManager.h" />
     <ClInclude Include="src\utils\Manager.h" />
     <ClInclude Include="src\_component\ComponentTemplate.h" />
+    <ClInclude Include="src\_system\systems\CameraSystem.h" />
     <ClInclude Include="src\_system\systems\InputSystem.h" />
     <ClInclude Include="src\_system\systems\RenderSystem.h" />
     <ClInclude Include="src\utils\Debug.h" />

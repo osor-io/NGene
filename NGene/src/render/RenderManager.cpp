@@ -1,5 +1,5 @@
 #include "RenderManager.h"
-#include "../debug/AppGUIManager.h"
+#include "../debug/DeveloperModeManager.h"
 #include "../time/TimeManager.h"
 #include "../window/WindowManager.h"
 
@@ -54,7 +54,7 @@ void RenderManager::end_frame() {
     */
     ImGui::SFML::Update(*m_main_target, DELTA_TIME);
 
-    AppGUIManager::get().draw_gui();
+    DeveloperModeManager::get().draw_gui();
 
 
     /*

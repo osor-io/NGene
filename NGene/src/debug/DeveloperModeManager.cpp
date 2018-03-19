@@ -1,4 +1,4 @@
-#include "AppGUIManager.h"
+#include "DeveloperModeManager.h"
 #include "../time/TimeManager.h"
 #include "../_entity/EntityManager.h"
 #include <Debug.h>
@@ -7,11 +7,11 @@
 #include "../utils/File.h"
 #include "../physics/ChunkManager.h"
 
-AppGUIManager::AppGUIManager() {}
+DeveloperModeManager::DeveloperModeManager() {}
 
-AppGUIManager::~AppGUIManager() {}
+DeveloperModeManager::~DeveloperModeManager() {}
 
-void AppGUIManager::start_up() {
+void DeveloperModeManager::start_up() {
 
     ImGuiStyle * style = &ImGui::GetStyle();
 
@@ -84,12 +84,12 @@ void AppGUIManager::start_up() {
 
 }
 
-void AppGUIManager::shut_down() {
+void DeveloperModeManager::shut_down() {
 
 
 }
 
-void AppGUIManager::draw_corner_overlay_debug_info() {
+void DeveloperModeManager::draw_corner_overlay_debug_info() {
     bool open = true;
     const float DISTANCE = 10.0f;
     static int corner = 2;
@@ -120,7 +120,7 @@ void AppGUIManager::draw_corner_overlay_debug_info() {
     ImGui::PopStyleColor();
 }
 
-void AppGUIManager::draw_entity_component_editor() {
+void DeveloperModeManager::draw_entity_component_editor() {
 
     ImGui::SetNextWindowSize(ImVec2(430, 450), ImGuiCond_FirstUseEver);
     if (!ImGui::Begin("Entities & Components"))
@@ -139,15 +139,15 @@ void AppGUIManager::draw_entity_component_editor() {
 
 }
 
-void AppGUIManager::set_debug_open(bool open) {
+void DeveloperModeManager::set_debug_open(bool open) {
     m_debug_open = open;
 }
 
-bool AppGUIManager::is_debug_open() const {
+bool DeveloperModeManager::is_debug_open() const {
     return m_debug_open;
 }
 
-void AppGUIManager::draw_gui() {
+void DeveloperModeManager::draw_gui() {
 
     if (m_debug_open) {
 

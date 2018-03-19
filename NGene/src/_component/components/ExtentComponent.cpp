@@ -51,6 +51,7 @@ Only for debug purposes, to draw the extent where it should be
 */
 #include "../_entity/EntityManager.h"
 #include "../_component/components/TransformComponent.h"
+#include "../render/RenderManager.h"
 
 void COMPONENT_TYPE::draw_component_inspector() {
 
@@ -65,7 +66,9 @@ void COMPONENT_TYPE::draw_component_inspector() {
 
     if (transform) {
 
-        auto center = transform->get_position();
+        auto centeri = RenderManager::get().get_main_render_target()->mapCoordsToPixel(transform->get_position());
+
+        auto center = sf::Vector2f(centeri);
 
         center += m_offset;
 

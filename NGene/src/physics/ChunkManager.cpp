@@ -83,16 +83,18 @@ void ChunkManager::update_entity_chunks() {
 
     const auto& render_target = RenderManager::get().get_main_render_target();
 
-    const auto& viewport = render_target->getViewport(render_target->getView());
+    const auto& view = render_target->getView();
+    const auto& center = view.getCenter();
+    const auto& size = view.getSize();
 
     m_min_relevant_chunk = std::make_pair(
-        gsl::narrow_cast<int>(std::floor((viewport.left) / m_chunk_size) - m_chunk_threshold),
-        gsl::narrow_cast<int>(std::floor((viewport.top) / m_chunk_size) - m_chunk_threshold)
+        gsl::narrow_cast<int>(std::floor((center.x - size.x / 2.f) / m_chunk_size) - m_chunk_threshold),
+        gsl::narrow_cast<int>(std::floor((center.y - size.y / 2.f) / m_chunk_size) - m_chunk_threshold)
     );
 
     m_max_relevant_chunk = std::make_pair(
-        gsl::narrow_cast<int>(std::floor((viewport.left + viewport.width) / m_chunk_size) + m_chunk_threshold),
-        gsl::narrow_cast<int>(std::floor((viewport.top + viewport.height) / m_chunk_size) + m_chunk_threshold)
+        gsl::narrow_cast<int>(std::floor((center.x + size.x / 2.f) / m_chunk_size) + m_chunk_threshold),
+        gsl::narrow_cast<int>(std::floor((center.y + size.y / 2.f) / m_chunk_size) + m_chunk_threshold)
     );
 
 
@@ -221,6 +223,16 @@ void ChunkManager::draw_debug_chunks() {
 
     auto current_chunk = m_min_relevant_chunk;
 
+    /*
+    const auto origin_center = RenderManager::get().get_main_render_target()->getView().getCenter();
+    const auto origin_size = RenderManager::get().get_main_render_target()->getView().getSize();
+    const auto origin = origin_center - origin_size / 2.0f;
+    */
+
+    const auto origin = RenderManager::get().get_main_render_target()->mapCoordsToPixel(sf::Vector2f(
+        m_min_relevant_chunk.first,
+        m_min_relevant_chunk.second));
+
     auto draw_list = ImGui::GetWindowDrawList();
     draw_list->PushClipRectFullScreen();
     for (auto x = m_min_relevant_chunk.first; x <= m_max_relevant_chunk.first; ++x) {
@@ -228,12 +240,11 @@ void ChunkManager::draw_debug_chunks() {
 
             auto count = get_entities_of_chunk(std::make_pair(x, y)).size();
 
-
             draw_list->AddQuadFilled(
-                ImVec2((x * m_chunk_size), (y*m_chunk_size)),
-                ImVec2((x * m_chunk_size) + m_chunk_size, (y*m_chunk_size)),
-                ImVec2((x * m_chunk_size) + m_chunk_size, (y*m_chunk_size) + m_chunk_size),
-                ImVec2((x * m_chunk_size), (y*m_chunk_size) + m_chunk_size),
+                ImVec2(origin.x + (x * m_chunk_size), origin.y + (y*m_chunk_size)),
+                ImVec2(origin.x + (x * m_chunk_size) + m_chunk_size, origin.y + (y*m_chunk_size)),
+                ImVec2(origin.x + (x * m_chunk_size) + m_chunk_size, origin.y + (y*m_chunk_size) + m_chunk_size),
+                ImVec2(origin.x + (x * m_chunk_size), origin.y + (y*m_chunk_size) + m_chunk_size),
                 ImGui::GetColorU32((ImVec4)ImColor(
                 (count == 0 ? 0 : 100 * count),
                     0,
@@ -242,10 +253,10 @@ void ChunkManager::draw_debug_chunks() {
             );
 
             draw_list->AddQuad(
-                ImVec2((x * m_chunk_size), (y*m_chunk_size)),
-                ImVec2((x * m_chunk_size) + m_chunk_size, (y*m_chunk_size)),
-                ImVec2((x * m_chunk_size) + m_chunk_size, (y*m_chunk_size) + m_chunk_size),
-                ImVec2((x * m_chunk_size), (y*m_chunk_size) + m_chunk_size),
+                ImVec2(origin.x + (x * m_chunk_size), origin.y + (y*m_chunk_size)),
+                ImVec2(origin.x + (x * m_chunk_size) + m_chunk_size, origin.y + (y*m_chunk_size)),
+                ImVec2(origin.x + (x * m_chunk_size) + m_chunk_size, origin.y + (y*m_chunk_size) + m_chunk_size),
+                ImVec2(origin.x + (x * m_chunk_size), origin.y + (y*m_chunk_size) + m_chunk_size),
                 ImGui::GetColorU32((ImVec4)ImColor(50 * count, 0, 255, 200))
             );
 

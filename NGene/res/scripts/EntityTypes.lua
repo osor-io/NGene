@@ -80,7 +80,9 @@ Entities = {
                     transform.position.y = transform.position.y + (y * 3 * deltaTime) 
                 end
             end
-        }}, 
+        }}
+
+        , 
         
         OtraCosa = {
             PhraseComponent = {
@@ -95,109 +97,125 @@ Entities = {
                 }, 
                 SpriteComponent = {
                     filename = "file.png"
-                }},
+                }}, 
                 DefaultMap = {
 
                     TiledMapComponent = {
-                    filename = "res/assets/demo.tmx",
-                    mainLayer = 0;
-                }
+                        filename = "res/assets/demo.tmx", 
+                        mainLayer = 0; 
+                    }}, 
 
+                    DefaultCamera = {
 
-                }}
+                        TransformComponent = {
+                            x = 0, 
+                            y = 10
+                        }, 
+                        CameraComponent = {
 
-                
+                            mainCamera = true
+                        }}}
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-                
+                        
 
-               
+                        
+
+                        
+
+                        
+
+                        
+
+                        
+
+                       

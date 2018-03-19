@@ -9,7 +9,7 @@
 #include "./time/TimeManager.h"
 #include "./window/WindowManager.h"
 #include "./render/RenderManager.h"
-#include "./debug/AppGUIManager.h"
+#include "./debug/DeveloperModeManager.h"
 #include "./lua/LuaManager.h"
 
 #include "./_entity/EntityManager.h"
@@ -19,6 +19,7 @@
 #include "./_system/systems/TileMapSystem.h"
 #include "./_system/systems/InputSystem.h"
 #include "./_system/systems/BehaviourSystem.h"
+#include "./_system/systems/CameraSystem.h"
 #include "./_system/systems/RenderSystem.h"
 
 
@@ -32,7 +33,7 @@ void start_up() {
     TimeManager::get().start_up();
     WindowManager::get().start_up();
     RenderManager::get().start_up();
-    AppGUIManager::get().start_up();
+    DeveloperModeManager::get().start_up();
     InputManager::get().start_up();
 
     SystemManager::get().start_up();
@@ -42,6 +43,7 @@ void start_up() {
     TileMapSystem::get().start_up();
     InputSystem::get().start_up();
     BehaviourSystem::get().start_up();
+    CameraSystem::get().start_up();
     RenderSystem::get().start_up();
 
 }
@@ -49,6 +51,7 @@ void start_up() {
 void shut_down() {
 
     RenderSystem::get().shut_down();
+    CameraSystem::get().shut_down();
     BehaviourSystem::get().shut_down();
     InputSystem::get().shut_down();
     TileMapSystem::get().shut_down();
@@ -58,7 +61,7 @@ void shut_down() {
     SystemManager::get().shut_down();
 
     InputManager::get().shut_down();
-    AppGUIManager::get().shut_down();
+    DeveloperModeManager::get().shut_down();
     RenderManager::get().shut_down();
     WindowManager::get().shut_down();
     TimeManager::get().shut_down();
@@ -76,17 +79,18 @@ void load_default_state() {
     auto j = json::parse(*s.resource);
     EntityManager::get().clear_and_load_entities(j);
     */
-
+    
     //If we want to check performance with more than one entity
     //for (int i = 0; i < 100; ++i) {
-    auto id = EntityManager::get().request_load_entity("Cosa");
+    const auto id = EntityManager::get().request_load_entity("Cosa");
     EntityManager::get().update_entities();
     auto entity = EntityManager::get().get_entity(id);
     entity->set_name("All Mighty Entity");
     entity->get_component<TransformComponent>()->set_position(sf::Vector2f(300.f, 300.f));
     //}
     
-    auto map_id = EntityManager::get().request_load_entity("DefaultMap");
+    const auto map_id = EntityManager::get().request_load_entity("DefaultMap");
+    const auto camera_id = EntityManager::get().request_load_entity("DefaultCamera");
 
 }
 
@@ -130,6 +134,7 @@ inline void tick() {
     TileMapSystem::get().update();
     InputSystem::get().update();
     BehaviourSystem::get().update();
+    CameraSystem::get().update();
 
 }
 

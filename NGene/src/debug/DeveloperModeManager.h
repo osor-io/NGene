@@ -8,11 +8,11 @@
 #include <SFML/Graphics.hpp>
 
 
-class AppGUIManager : public Manager<AppGUIManager> {
-    friend class CRSP<AppGUIManager>;
+class DeveloperModeManager : public Manager<DeveloperModeManager> {
+    friend class CRSP<DeveloperModeManager>;
 private:
-    AppGUIManager();
-    ~AppGUIManager();
+    DeveloperModeManager();
+    ~DeveloperModeManager();
 
 public:
 
