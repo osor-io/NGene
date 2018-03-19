@@ -7,13 +7,14 @@
 #include "../types/def.h"
 #include <gsl\gsl>
 #include "SFML/Window.hpp"
+#include <utility>
 
 
 class ChunkManager : public Manager<ChunkManager> {
     friend class CRSP<ChunkManager>;
     using ChunkMap = std::unordered_map<Chunk, EntitySet, ChunkHash>;
     using EntityMap = std::unordered_map<EntityId, ChunkSet>;
-    using PositionCache = std::unordered_map<EntityId, sf::Vector2f>;
+    using PositionCache = std::unordered_map<EntityId, std::pair<sf::Vector2f, sf::Vector2f>>;
     using ChunkLengthType = float;
 private:
     ChunkManager();

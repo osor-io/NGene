@@ -60,9 +60,12 @@ bool ChunkManager::share_chunks(EntityId a, EntityId b) const {
 }
 
 Chunk ChunkManager::get_chunk_from_position(float x, float y) const {
+
+    auto pos = RenderManager::get().get_main_render_target()->mapPixelToCoords(sf::Vector2i(x, y));
+
     return std::make_pair(
-        gsl::narrow_cast<int>(std::floor((x) / m_chunk_size)),
-        gsl::narrow_cast<int>(std::floor((y) / m_chunk_size))
+        gsl::narrow_cast<int>(std::floor((pos.x) / m_chunk_size)),
+        gsl::narrow_cast<int>(std::floor((pos.y) / m_chunk_size))
     );
 }
 
@@ -129,17 +132,11 @@ void ChunkManager::update_entity_chunks() {
                 Here we stop checking if the entity hasn't changed
                 */
                 {
-                    /*
-                    @@HACK
-                    This only fails if we move the offset and the extent in the
-                    exact same (float) amount in the same frame. Which we are probably ok
-                    with since I don't plan on ever changing offset during runtime, only when
-                    debugging and setting up the scenes.
-                    */
-                    if (m_location_cache[id] == min_position) {
+                    if (m_location_cache[id].first == min_position && m_location_cache[id].second == max_position) {
                         continue;
                     }
-                    m_location_cache[id] = min_position;
+                    m_location_cache[id].first = min_position;
+                    m_location_cache[id].second = max_position;
 
                     for (auto& c : m_entity_map[id]) {
                         m_chunk_map[c].erase(id);
@@ -163,10 +160,10 @@ void ChunkManager::update_entity_chunks() {
                 Here we stop checking if the entity hasn't changed
                 */
                 {
-                    if (m_location_cache[id] == position) {
+                    if (m_location_cache[id].first == position) {
                         continue;
                     }
-                    m_location_cache[id] = position;
+                    m_location_cache[id].first = position;
 
                     for (auto& c : m_entity_map[id]) {
                         m_chunk_map[c].erase(id);
@@ -223,40 +220,48 @@ void ChunkManager::draw_debug_chunks() {
 
     auto current_chunk = m_min_relevant_chunk;
 
-    /*
-    const auto origin_center = RenderManager::get().get_main_render_target()->getView().getCenter();
-    const auto origin_size = RenderManager::get().get_main_render_target()->getView().getSize();
-    const auto origin = origin_center - origin_size / 2.0f;
-    */
+    const auto beg = RenderManager::get().get_main_render_target()->mapCoordsToPixel(sf::Vector2f(
+        m_min_relevant_chunk.first * m_chunk_size,
+        m_min_relevant_chunk.second * m_chunk_size));
 
-    const auto origin = RenderManager::get().get_main_render_target()->mapCoordsToPixel(sf::Vector2f(
-        m_min_relevant_chunk.first,
-        m_min_relevant_chunk.second));
+    const auto end = RenderManager::get().get_main_render_target()->mapCoordsToPixel(sf::Vector2f(
+        m_max_relevant_chunk.first * m_chunk_size,
+        m_max_relevant_chunk.second * m_chunk_size));
 
     auto draw_list = ImGui::GetWindowDrawList();
     draw_list->PushClipRectFullScreen();
-    for (auto x = m_min_relevant_chunk.first; x <= m_max_relevant_chunk.first; ++x) {
-        for (auto y = m_min_relevant_chunk.second; y <= m_max_relevant_chunk.second; ++y) {
 
-            auto count = get_entities_of_chunk(std::make_pair(x, y)).size();
+    auto i = m_min_relevant_chunk.first;
+
+    for (auto x = beg.x;
+        x <= end.x;
+        x += m_chunk_size, ++i) {
+
+        auto j = m_min_relevant_chunk.second;
+
+        for (auto y = beg.y;
+            y <= end.y;
+            y += m_chunk_size, ++j) {
+
+            auto count = get_entities_of_chunk(std::make_pair(i, j)).size();
 
             draw_list->AddQuadFilled(
-                ImVec2(origin.x + (x * m_chunk_size), origin.y + (y*m_chunk_size)),
-                ImVec2(origin.x + (x * m_chunk_size) + m_chunk_size, origin.y + (y*m_chunk_size)),
-                ImVec2(origin.x + (x * m_chunk_size) + m_chunk_size, origin.y + (y*m_chunk_size) + m_chunk_size),
-                ImVec2(origin.x + (x * m_chunk_size), origin.y + (y*m_chunk_size) + m_chunk_size),
+                ImVec2(x, y),
+                ImVec2(x + m_chunk_size, y),
+                ImVec2(x + m_chunk_size, y + m_chunk_size),
+                ImVec2(x, y + m_chunk_size),
                 ImGui::GetColorU32((ImVec4)ImColor(
                 (count == 0 ? 0 : 100 * count),
                     0,
                     (count == 0 ? 255 : 0),
-                    (count == 0 ? 20 : 70)))
+                    (count == 0 ? 20 : 150)))
             );
 
             draw_list->AddQuad(
-                ImVec2(origin.x + (x * m_chunk_size), origin.y + (y*m_chunk_size)),
-                ImVec2(origin.x + (x * m_chunk_size) + m_chunk_size, origin.y + (y*m_chunk_size)),
-                ImVec2(origin.x + (x * m_chunk_size) + m_chunk_size, origin.y + (y*m_chunk_size) + m_chunk_size),
-                ImVec2(origin.x + (x * m_chunk_size), origin.y + (y*m_chunk_size) + m_chunk_size),
+                ImVec2(x, y),
+                ImVec2(x + m_chunk_size, y),
+                ImVec2(x + m_chunk_size, y + m_chunk_size),
+                ImVec2(x, y + m_chunk_size),
                 ImGui::GetColorU32((ImVec4)ImColor(50 * count, 0, 255, 200))
             );
 
