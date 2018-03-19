@@ -30,11 +30,23 @@ void RenderSystem::update() {
 
     auto target = RenderManager::get().get_main_render_target();
 
+    TiledMapComponent* tilemap = nullptr;
+
+
     for (auto& v : m_sorted_entities) {
         std::sort(v.second.begin(), v.second.end(), [](Entity * a, Entity * b) ->bool {
             return a->get_component<TransformComponent>()->m_position.y < b->get_component<TransformComponent>()->m_position.y;
         });
     }
+
+
+    /*
+    First we render the layers up to the main one
+    */
+    for (const auto& l : m_background_layers) {
+        target->draw(*l);
+    }
+
 
     /*
     We iterate through all the entities we are interested in.
@@ -54,6 +66,14 @@ void RenderSystem::update() {
 
     }
 
+
+    /*
+    Now we render the foreground layers
+    */
+    for (const auto& l : m_foreground_layers) {
+        target->draw(*l);
+    }
+
 }
 
 
@@ -63,13 +83,53 @@ void RenderSystem::register_entity(Entity& entity) {
         auto spriteComponent = entity.get_component<SpriteComponent>();
         m_sorted_entities[spriteComponent->m_layer].push_back(&entity);
     }
+    else if (entity.has_component<TiledMapComponent>()) {
+
+        /*
+        We are trying to load a map when we already have one :(
+        */
+        assert(m_current_map_entity == nullptr);
+        assert(m_background_layers.size() == 0);
+        assert(m_foreground_layers.size() == 0);
+
+
+        m_current_map_entity = &entity;
+        auto tiledmap = m_current_map_entity->get_component<TiledMapComponent>();
+        if (tiledmap->m_map_ready) {
+
+            const auto& layers = tiledmap->m_map.getLayers();
+
+            for (auto i = 0; i <= tiledmap->m_main_layer; ++i) {
+                if (layers[i].get() && layers[i].get()->getType() == tmx::Layer::Type::Tile) {
+                    m_background_layers.push_back(std::make_unique<MapLayer>(tiledmap->m_map, i));
+                }
+            }
+
+            for (auto i = tiledmap->m_main_layer + 1; i < layers.size(); ++i) {
+                if (layers[i].get() && layers[i].get()->getType() == tmx::Layer::Type::Tile) {
+                    m_foreground_layers.push_back(std::make_unique<MapLayer>(tiledmap->m_map, i));
+                }
+            }
+
+        }
+
+    }
 }
 
 void RenderSystem::deregister_entity(EntityId id) {
-    m_entities.erase(id);
-    auto e = EntityManager::get().get_entity(id);
-    auto& v = m_sorted_entities[e->get_component<SpriteComponent>()->m_layer];
-    v.erase(std::remove(v.begin(), v.end(), e), v.end());
+
+    if (m_current_map_entity && id == m_current_map_entity->get_id()) {
+        m_current_map_entity = nullptr;
+        m_background_layers.clear();
+        m_foreground_layers.clear();
+    }
+    else {
+
+        m_entities.erase(id);
+        auto e = EntityManager::get().get_entity(id);
+        auto& v = m_sorted_entities[e->get_component<SpriteComponent>()->m_layer];
+        v.erase(std::remove(v.begin(), v.end(), e), v.end());
+    }
 }
 
 

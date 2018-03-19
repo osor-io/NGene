@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <../_component/components/TransformComponent.h>
+#include "../_component/components/TiledMapComponent.h"
 
 
 class RenderSystem : public System<RenderSystem> {
@@ -26,7 +27,12 @@ public:
     void deregister_entity(EntityId id) override;
 
 private:
+    Entity * m_current_map_entity{ nullptr };
     EntitiesGroup m_entities;
     LayerVectors m_sorted_entities;
+
+    std::vector<std::unique_ptr<MapLayer>> m_background_layers{};
+    std::vector<std::unique_ptr<MapLayer>> m_foreground_layers{};
+
 };
 

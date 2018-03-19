@@ -35,20 +35,27 @@ public:
     void update_entity_chunks();
 
     /*
-    Not const because it might require to generate vectors for new chunks without entities
+    There are not const because it might require to generate vectors for new chunks without entities
     */
-    void draw_debug_chunks() ;
+    void draw_debug_chunks();
 
-    /*
-    It is not const vecause it might create an empty vector for the required chunk
-    */
+    void draw_debug_chunk_configuration();
+
     const EntitySet& get_entities_of_chunk(Chunk chunk);
 
 private:
+
+    /**
+    The length of the side of each square chunk
+    */
     ChunkLengthType m_chunk_size{ 64 };
+
+    /**
+    Number of chunks outside the visible screen that we still consider relevant
+    */
     unsigned int m_chunk_threshold{ 1 };
 
-    /*
+    /**
     This is used in case an entity enters a chunk exactly in the frame that we have to check
     something in that new chunk, we register the entity as being in the chunks that it
     really is plus "m_safe_threshold" more in each direction.

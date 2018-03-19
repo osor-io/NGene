@@ -16,9 +16,11 @@
 #include "./_component/ComponentManager.h"
 #include "./_system/SystemManager.h"
 
+#include "./_system/systems/TileMapSystem.h"
 #include "./_system/systems/InputSystem.h"
 #include "./_system/systems/BehaviourSystem.h"
 #include "./_system/systems/RenderSystem.h"
+
 
 void start_up() {
 
@@ -37,6 +39,7 @@ void start_up() {
     ComponentManager::get().start_up();
     EntityManager::get().start_up();
 
+    TileMapSystem::get().start_up();
     InputSystem::get().start_up();
     BehaviourSystem::get().start_up();
     RenderSystem::get().start_up();
@@ -48,6 +51,7 @@ void shut_down() {
     RenderSystem::get().shut_down();
     BehaviourSystem::get().shut_down();
     InputSystem::get().shut_down();
+    TileMapSystem::get().shut_down();
 
     EntityManager::get().shut_down();
     ComponentManager::get().shut_down();
@@ -75,12 +79,15 @@ void load_default_state() {
 
     //If we want to check performance with more than one entity
     //for (int i = 0; i < 100; ++i) {
-        auto id = EntityManager::get().request_load_entity("Cosa");
-        EntityManager::get().update_entities();
-        auto entity = EntityManager::get().get_entity(id);
-        entity->set_name("All Mighty Entity");
-        entity->get_component<TransformComponent>()->set_position(sf::Vector2f(300.f, 300.f));
+    auto id = EntityManager::get().request_load_entity("Cosa");
+    EntityManager::get().update_entities();
+    auto entity = EntityManager::get().get_entity(id);
+    entity->set_name("All Mighty Entity");
+    entity->get_component<TransformComponent>()->set_position(sf::Vector2f(300.f, 300.f));
     //}
+    
+    auto map_id = EntityManager::get().request_load_entity("DefaultMap");
+
 }
 
 void access_entities_from_lua() {
@@ -119,23 +126,29 @@ void access_entities_from_lua() {
 inline void tick() {
 
     ChunkManager::get().update_entity_chunks();
+
+    TileMapSystem::get().update();
     InputSystem::get().update();
     BehaviourSystem::get().update();
 
+}
 
-    { // ====== BEG OF RENDER ======
-        WindowManager::get().fill_events();
-        RenderManager::get().begin_frame();
-        /*
-        Everything that renders something goes in the
-        next scope
-        */
-        {
-            RenderSystem::get().update();
-        }
-        RenderManager::get().end_frame();
-    } // ====== END OF RENDER ======
+inline void render() {
 
+    WindowManager::get().fill_events();
+    RenderManager::get().begin_frame();
+    /*
+    Everything that renders something goes in the
+    next scope
+    */
+    {
+        RenderSystem::get().update();
+    }
+    RenderManager::get().end_frame();
+
+}
+
+inline void post_render() {
     EntityManager::get().update_entities();
 }
 
@@ -146,7 +159,20 @@ int main() {
 
 
     while (WindowManager::get().is_window_open()) {
+
+        auto beg = TimeManager::get().query_cycle_counter();
+
         tick();
+
+        auto end = TimeManager::get().query_cycle_counter();
+        auto ms = TimeManager::get().cycles_to_ms(end - beg);
+
+        //@@NOTE: Use this to know the time needed to update the game (without rendering)
+        //LOG_NAMED(ms);
+
+        render();
+        post_render();
+
     }
 
     auto es = EntityManager::get().serialize_entities();

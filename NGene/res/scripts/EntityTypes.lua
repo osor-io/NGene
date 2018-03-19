@@ -25,8 +25,8 @@ Entities = {
                 local x = getAxisPosition(Axis.X)
                 local y = getAxisPosition(Axis.Y)
                 if(transform) then
-                    --transform.position.x = transform.position.x + (x * 3 * deltaTime) 
-                    --transform.position.y = transform.position.y + (y * 3 * deltaTime) 
+                    transform.position.x = transform.position.x + (3.0 * deltaTime) 
+                    transform.position.y = transform.position.y + (3.0 * deltaTime) 
                 else 
                     print("We got no transform")
                 end
@@ -95,7 +95,16 @@ Entities = {
                 }, 
                 SpriteComponent = {
                     filename = "file.png"
-                }}}
+                }},
+                DefaultMap = {
+
+                    TiledMapComponent = {
+                    filename = "res/assets/demo.tmx",
+                    mainLayer = 0;
+                }
+
+
+                }}
 
                 
 

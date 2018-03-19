@@ -10,6 +10,7 @@
 #include <Manager.h>
 #include "../_entity/Entity.h"
 
+#include "./components/TiledMapComponent.h"
 #include "./components/ExtentComponent.h"
 #include "./components/InputComponent.h"
 #include "./components/BehaviourComponent.h"
@@ -44,7 +45,11 @@ private:
     InstanceMap m_instance_map{};
 
     const TypeMap m_type_map{
-        
+      
+        std::make_pair(
+            meta::get_name<TiledMapComponent>(),
+            std::type_index(typeid(TiledMapComponent))),
+
         std::make_pair(
             meta::get_name<ExtentComponent>(),
             std::type_index(typeid(ExtentComponent))),
@@ -71,6 +76,12 @@ private:
     };
 
     const FactoryMap m_factory_map{
+
+        std::make_pair(std::type_index(typeid(
+            TiledMapComponent
+            )),[](Entity& entity ,const sol::table& table) {
+                entity.make_component<TiledMapComponent>(entity.get_id(), table);
+            }),
 
         std::make_pair(std::type_index(typeid(
             ExtentComponent

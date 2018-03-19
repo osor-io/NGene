@@ -16,7 +16,7 @@ void AppGUIManager::start_up() {
     ImGuiStyle * style = &ImGui::GetStyle();
 
     auto palette = config::get_rusty_palette();
-
+    
 
     style->WindowPadding = ImVec2(15, 15);
     style->WindowRounding = 5.0f;
@@ -209,13 +209,16 @@ void AppGUIManager::draw_gui() {
         if (ImGui::BeginMenu("View")) {
             ImGui::Checkbox("Entities & Components", &m_show_entities_components);
             ImGui::Checkbox("Debug Overlay", &m_show_debug_overlay);
-            ImGui::Checkbox("Chunks", &m_show_chunks);
+            ImGui::Checkbox("Show Chunks", &m_show_chunks);
+            ImGui::Checkbox("Chunk Configuration", &m_show_chunk_configuration);
             ImGui::Checkbox("ImGui Demo", &m_show_imgui_demo);
             ImGui::EndMenu();
         }
 
         /*Put here overlay things*/
         if (m_show_chunks) ChunkManager::get().draw_debug_chunks();
+        if (m_show_chunk_configuration) ChunkManager::get().draw_debug_chunk_configuration();
+
 
         ImGui::EndMainMenuBar();
 

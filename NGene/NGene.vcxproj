@@ -189,10 +189,21 @@ echo.</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="dep\src\detail\pugixml.cpp" />
+    <ClCompile Include="dep\src\FreeFuncs.cpp" />
+    <ClCompile Include="dep\src\ImageLayer.cpp" />
+    <ClCompile Include="dep\src\Map.cpp" />
+    <ClCompile Include="dep\src\miniz.c" />
+    <ClCompile Include="dep\src\Object.cpp" />
+    <ClCompile Include="dep\src\ObjectGroup.cpp" />
+    <ClCompile Include="dep\src\Property.cpp" />
+    <ClCompile Include="dep\src\TileLayer.cpp" />
+    <ClCompile Include="dep\src\Tileset.cpp" />
     <ClCompile Include="src\physics\ChunkManager.cpp" />
     <ClCompile Include="src\input\InputManager.cpp" />
     <ClCompile Include="src\_component\components\ExtentComponent.cpp" />
     <ClCompile Include="src\_component\components\InputComponent.cpp" />
+    <ClCompile Include="src\_component\components\TiledMapComponent.cpp" />
     <ClCompile Include="src\_system\systems\BehaviourSystem.cpp" />
     <ClCompile Include="dep\src\ImGuizmo.cpp" />
     <ClCompile Include="dep\src\ImSequencer.cpp" />
@@ -227,8 +238,25 @@ echo.</Command>
     <ClCompile Include="src\_component\components\TransformComponent.cpp" />
     <ClCompile Include="src\time\TimeManager.cpp" />
     <ClCompile Include="src\window\WindowManager.cpp" />
+    <ClCompile Include="src\_system\systems\TileMapSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dep\include\tmxlite\Config.hpp" />
+    <ClInclude Include="dep\include\tmxlite\detail\Android.hpp" />
+    <ClInclude Include="dep\include\tmxlite\detail\Log.hpp" />
+    <ClInclude Include="dep\include\tmxlite\FreeFuncs.hpp" />
+    <ClInclude Include="dep\include\tmxlite\ImageLayer.hpp" />
+    <ClInclude Include="dep\include\tmxlite\Layer.hpp" />
+    <ClInclude Include="dep\include\tmxlite\Map.hpp" />
+    <ClInclude Include="dep\include\tmxlite\Object.hpp" />
+    <ClInclude Include="dep\include\tmxlite\ObjectGroup.hpp" />
+    <ClInclude Include="dep\include\tmxlite\Property.hpp" />
+    <ClInclude Include="dep\include\tmxlite\TileLayer.hpp" />
+    <ClInclude Include="dep\include\tmxlite\Tileset.hpp" />
+    <ClInclude Include="dep\include\tmxlite\Types.hpp" />
+    <ClInclude Include="dep\src\detail\pugiconfig.hpp" />
+    <ClInclude Include="dep\src\detail\pugixml.hpp" />
+    <ClInclude Include="dep\src\miniz.h" />
     <ClInclude Include="src\lua\LuaTypes.h" />
     <ClInclude Include="src\physics\ChunkManager.h" />
     <ClInclude Include="src\debug\LoggingManager.h" />
@@ -238,6 +266,7 @@ echo.</Command>
     <ClInclude Include="src\input\InputManager.h" />
     <ClInclude Include="src\_component\components\ExtentComponent.h" />
     <ClInclude Include="src\_component\components\InputComponent.h" />
+    <ClInclude Include="src\_component\components\TiledMapComponent.h" />
     <ClInclude Include="src\_system\systems\BehaviourSystem.h" />
     <ClInclude Include="dep\include\ImGuizmo.h" />
     <ClInclude Include="dep\include\ImSequencer.h" />
@@ -286,12 +315,14 @@ echo.</Command>
     <ClInclude Include="src\_component\components\TransformComponent.h" />
     <ClInclude Include="src\time\TimeManager.h" />
     <ClInclude Include="src\window\WindowManager.h" />
+    <ClInclude Include="src\_system\systems\TileMapSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dep\include\detail\template_helpers.inl" />
     <None Include="dep\include\JsonCast.inl" />
     <None Include="dep\include\Member.inl" />
     <None Include="dep\include\Meta.inl" />
+    <None Include="dep\include\tmxlite\Types.inl" />
     <None Include="res\scripts\EntityTypes.lua" />
     <None Include="src\test\testmain.inl" />
   </ItemGroup>

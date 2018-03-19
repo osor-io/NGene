@@ -98,10 +98,12 @@ void ChunkManager::update_entity_chunks() {
 
     for (auto& e : entities) {
 
-        
+
         auto entity = e.second.get();
         auto id = entity->get_id();
         auto transform = entity->get_component<TransformComponent>();
+        if (!transform) continue;
+
         auto position = transform->get_position();
 
 
@@ -148,11 +150,11 @@ void ChunkManager::update_entity_chunks() {
                 by calculating the chunk of the minimum and maximum points.
                 */
 
-                min_chunk.first = gsl::narrow_cast<int>(std::floor(min_position.x / m_chunk_size)) - m_safe_threshold;
-                min_chunk.second = gsl::narrow_cast<int>(std::floor(min_position.y / m_chunk_size)) - m_safe_threshold;
+                min_chunk.first = gsl::narrow_cast<int>(std::floor(min_position.x / m_chunk_size));
+                min_chunk.second = gsl::narrow_cast<int>(std::floor(min_position.y / m_chunk_size));
 
-                max_chunk.first = gsl::narrow_cast<int>(std::floor(max_position.x / m_chunk_size)) + m_safe_threshold;
-                max_chunk.second = gsl::narrow_cast<int>(std::floor(max_position.y / m_chunk_size)) + m_safe_threshold;
+                max_chunk.first = gsl::narrow_cast<int>(std::floor(max_position.x / m_chunk_size));
+                max_chunk.second = gsl::narrow_cast<int>(std::floor(max_position.y / m_chunk_size));
             }
             else {
                 /*
@@ -174,13 +176,18 @@ void ChunkManager::update_entity_chunks() {
                     gsl::narrow_cast<int>(std::floor(position.x / m_chunk_size)),
                     gsl::narrow_cast<int>(std::floor(position.y / m_chunk_size)));
 
-                min_chunk.first = chunk.first - m_safe_threshold;
-                min_chunk.second = chunk.second - m_safe_threshold;
-
-                max_chunk.first = chunk.first + m_safe_threshold;
-                max_chunk.second = chunk.second + m_safe_threshold;
-
+                min_chunk = max_chunk = chunk;
             }
+
+            /*
+            @@TODO: Only do this if the entity is dynamic, that is, it
+            can move.
+            */
+            min_chunk.first -= m_safe_threshold;
+            min_chunk.second -= m_safe_threshold;
+
+            max_chunk.first += m_safe_threshold;
+            max_chunk.second += m_safe_threshold;
 
 
             auto relevant = false;
@@ -246,6 +253,23 @@ void ChunkManager::draw_debug_chunks() {
         }
     }
     draw_list->PopClipRect();
+}
+
+void ChunkManager::draw_debug_chunk_configuration() {
+
+    ImGui::SetNextWindowSize(ImVec2(430, 200), ImGuiCond_FirstUseEver);
+    if (!ImGui::Begin("Chunk Configuration"))
+    {
+        ImGui::End();
+        return;
+    }
+
+    ImGui::Text("Chunk Size"); ImGui::SameLine(150); ImGui::DragFloat("##Chunk Size", &m_chunk_size, 1.0f, 32.f, 512.f);
+    ImGui::Text("Map Threshold"); ImGui::SameLine(150); ImGui::DragInt("##Map Threshold", reinterpret_cast<int*>(&m_chunk_threshold), 1.0f, 0, 10);
+    ImGui::Text("Entity Threshold"); ImGui::SameLine(150); ImGui::DragInt("##Entity Threshold", reinterpret_cast<int*>(&m_safe_threshold), 1.0f, 0, 10);
+
+    ImGui::End();
+
 }
 
 
