@@ -80,41 +80,55 @@ Entities = {
                     transform.position.y = transform.position.y + (y * 3 * deltaTime) 
                 end
             end
-        }}
+        }
+    },
+    
+    OtraCosa = {
+        PhraseComponent = {
+            phrase = "I'm saying hi from this lua Object!! :D"
+        }, 
+        SpriteComponent = {
+            filename = "file.png"
+        }
+    }, 
 
-        , 
-        
-        OtraCosa = {
-            PhraseComponent = {
-                phrase = "I'm saying hi from this lua Object!! :D"
-            }, 
-            SpriteComponent = {
-                filename = "file.png"
-            }}, 
-            YOtraMas = {
-                PhraseComponent = {
-                    phrase = "I'm saying hi from this lua Object!! :D"
-                }, 
-                SpriteComponent = {
-                    filename = "file.png"
-                }}, 
-                DefaultMap = {
+    YOtraMas = {
+        PhraseComponent = {
+            phrase = "I'm saying hi from this lua Object!! :D"
+        }, 
+        SpriteComponent = {
+            filename = "file.png"
+        }
+    },
 
-                    TiledMapComponent = {
-                        filename = "res/assets/demo.tmx", 
-                        mainLayer = 0; 
-                    }}, 
+    DefaultMap = {
+        TiledMapComponent = {
+            filename = "res/assets/demo.tmx", 
+            mainLayer = 0; 
+        }
+    }, 
 
-                    DefaultCamera = {
+    DefaultCamera = {
+        TransformComponent = {
+            x = 0, 
+            y = 10
+        }, 
+        CameraComponent = {
+            mainCamera = true
+        }
+    }
+    
+}
 
-                        TransformComponent = {
-                            x = 0, 
-                            y = 10
-                        }, 
-                        CameraComponent = {
+                        
 
-                            mainCamera = true
-                        }}}
+                        
+
+                        
+
+                        
+
+                        
 
                         
 

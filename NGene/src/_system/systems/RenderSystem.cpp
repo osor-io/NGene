@@ -111,8 +111,7 @@ void RenderSystem::register_entity(Entity& entity) {
                 }
             }
 
-        }
-
+        } 
     }
 }
 
@@ -123,12 +122,12 @@ void RenderSystem::deregister_entity(EntityId id) {
         m_background_layers.clear();
         m_foreground_layers.clear();
     }
-    else {
-
+    else if (m_entities.find(id) != m_entities.end()) {
         m_entities.erase(id);
         auto e = EntityManager::get().get_entity(id);
         auto& v = m_sorted_entities[e->get_component<SpriteComponent>()->m_layer];
         v.erase(std::remove(v.begin(), v.end(), e), v.end());
+
     }
 }
 
