@@ -41,6 +41,27 @@ sf::RenderTarget* RenderManager::get_main_render_target() {
     return m_main_target;
 }
 
+void RenderManager::set_main_target_params(sf::Vector2f center, float zoom) {
+
+    m_current_center = center;
+    m_current_zoom = zoom;
+
+    auto view = m_main_target->getView();
+    auto size = m_main_target->getDefaultView().getSize();
+    size *= 1.0f / zoom;
+    view.setCenter(center);
+    view.setSize(size);
+    m_main_target->setView(view);
+}
+
+sf::Vector2f RenderManager::get_current_center() const {
+    return m_current_center;
+}
+
+float RenderManager::get_current_zoom() const {
+    return m_current_zoom;
+}
+
 void RenderManager::begin_frame() {
     m_main_target->clear(m_clear_color);
 }

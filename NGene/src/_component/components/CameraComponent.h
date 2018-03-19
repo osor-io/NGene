@@ -29,6 +29,7 @@ public:
     */
     // ====== BEG OF MEMBERS ======
     bool m_main_camera{false};
+    float m_zoom{ 1.0f };
     // ====== END OF MEMBERS ======
 
 };
@@ -41,7 +42,8 @@ inline auto meta::registerName<CameraComponent>() {
 template<>
 inline auto meta::registerMembers<CameraComponent>() {
     return members(
-        member("mainCamera", &CameraComponent::m_main_camera)
+        member("mainCamera", &CameraComponent::m_main_camera),
+        member("zoom", &CameraComponent::m_zoom)
     );
 }
 

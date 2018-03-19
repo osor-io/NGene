@@ -31,12 +31,14 @@ json COMPONENT_TYPE::to_json() {
     auto j = json{};
 
     j["mainCamera"] = m_main_camera;
+    j["zoom"] = m_zoom;
 
     return j;
 }
 
 void COMPONENT_TYPE::load_json(const json& j) {
     m_main_camera = j["mainCamera"];
+    m_zoom = j["zoom"];
 }
 
 void COMPONENT_TYPE::draw_component_inspector() {
@@ -45,6 +47,8 @@ void COMPONENT_TYPE::draw_component_inspector() {
     ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
 
     ImGui::Checkbox("Main Camera", &m_main_camera);
+    ImGui::Text("Zoom: "); ImGui::SameLine(100); ImGui::SliderFloat("##Zoom", &m_zoom, .2f, 5.0f);
+
 
     /*
     //To Check the window size and adjust default sizes:
@@ -72,7 +76,8 @@ void COMPONENT_TYPE::expose_to_lua()
         Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
         */
 
-        "mainCamera",&COMPONENT_TYPE::m_main_camera
+        "mainCamera", &COMPONENT_TYPE::m_main_camera,
+        "zoom", &COMPONENT_TYPE::m_zoom
 
         );
 

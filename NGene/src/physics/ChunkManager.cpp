@@ -220,6 +220,9 @@ void ChunkManager::draw_debug_chunks() {
 
     auto current_chunk = m_min_relevant_chunk;
 
+    const auto converted_chunk_size = m_chunk_size * RenderManager::get().get_current_zoom();
+
+    //@@TODO: get here the min and max with the default size, not the scaled one
     const auto beg = RenderManager::get().get_main_render_target()->mapCoordsToPixel(sf::Vector2f(
         m_min_relevant_chunk.first * m_chunk_size,
         m_min_relevant_chunk.second * m_chunk_size));
@@ -235,21 +238,23 @@ void ChunkManager::draw_debug_chunks() {
 
     for (auto x = beg.x;
         x <= end.x;
-        x += m_chunk_size, ++i) {
+        x += converted_chunk_size, ++i) {
 
         auto j = m_min_relevant_chunk.second;
 
+        ImGui::BeginChild("##avoiding_limit");
+
         for (auto y = beg.y;
             y <= end.y;
-            y += m_chunk_size, ++j) {
+            y += converted_chunk_size, ++j) {
 
             auto count = get_entities_of_chunk(std::make_pair(i, j)).size();
 
             draw_list->AddQuadFilled(
                 ImVec2(x, y),
-                ImVec2(x + m_chunk_size, y),
-                ImVec2(x + m_chunk_size, y + m_chunk_size),
-                ImVec2(x, y + m_chunk_size),
+                ImVec2(x + converted_chunk_size, y),
+                ImVec2(x + converted_chunk_size, y + converted_chunk_size),
+                ImVec2(x, y + converted_chunk_size),
                 ImGui::GetColorU32((ImVec4)ImColor(
                 (count == 0 ? 0 : 100 * count),
                     0,
@@ -259,14 +264,17 @@ void ChunkManager::draw_debug_chunks() {
 
             draw_list->AddQuad(
                 ImVec2(x, y),
-                ImVec2(x + m_chunk_size, y),
-                ImVec2(x + m_chunk_size, y + m_chunk_size),
-                ImVec2(x, y + m_chunk_size),
+                ImVec2(x + converted_chunk_size, y),
+                ImVec2(x + converted_chunk_size, y + converted_chunk_size),
+                ImVec2(x, y + converted_chunk_size),
                 ImGui::GetColorU32((ImVec4)ImColor(50 * count, 0, 255, 200))
             );
 
 
         }
+
+        ImGui::EndChild();
+
     }
     draw_list->PopClipRect();
 }

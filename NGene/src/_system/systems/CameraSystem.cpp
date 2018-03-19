@@ -43,10 +43,8 @@ void CameraSystem::update() {
     auto render_target = RenderManager::get().get_main_render_target();
 
     if (main_camera_entity) {
-        auto center = main_camera_entity->get_component<TransformComponent>()->m_position;
-        auto view = render_target->getView();
-        view.setCenter(center);
-        render_target->setView(view);
+        const auto center = main_camera_entity->get_component<TransformComponent>()->m_position;
+        RenderManager::get().set_main_target_params(center, main_camera_entity->get_component<CameraComponent>()->m_zoom);   
     }
     else {
         render_target->setView(render_target->getDefaultView());

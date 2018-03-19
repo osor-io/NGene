@@ -114,10 +114,11 @@ Entities = {
             y = 10
         }, 
         CameraComponent = {
-            mainCamera = true
+            mainCamera = true,
+            zoom = 1.0
         }
     }
-    
+
 }
 
                         

@@ -20,6 +20,11 @@ public:
 
     sf::RenderTarget* get_main_render_target();
 
+    void set_main_target_params(sf::Vector2f center, float zoom);
+
+    sf::Vector2f get_current_center() const;
+    float get_current_zoom() const;
+
     void begin_frame();
     void end_frame();
 
@@ -27,6 +32,9 @@ private:
 
     sf::Color m_clear_color{ sf::Color::Black };
     sf::RenderWindow* m_main_target;
+
+    sf::Vector2f m_current_center{ 0.0f,0.0f };
+    float m_current_zoom{ 1.0f };
 
 
 };
