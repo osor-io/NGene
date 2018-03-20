@@ -143,7 +143,8 @@ void COMPONENT_TYPE::expose_to_lua()
         Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
         */
 
-        "extent", &COMPONENT_TYPE::m_extent
+        "extent", &COMPONENT_TYPE::m_extent,
+        "offset", &COMPONENT_TYPE::m_offset
 
         );
 

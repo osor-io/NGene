@@ -10,7 +10,7 @@ CTOR(COMPONENT_TYPE)(EntityId id) : ComponentTemplate(id, std::type_index(typeid
 
 CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
     : ComponentTemplate(id, std::type_index(typeid(COMPONENT_TYPE))) {
-    
+
         {
             sol::object value_x = table["extentX"];
             sol::object value_y = table["extentY"];
@@ -23,6 +23,12 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
             sol::object value_y = table["offsetY"];
             assert(value_x.valid() && value_y.valid());
             m_offset = sf::Vector2f(value_x.as<float>(), value_y.as<float>());
+        }
+
+        {
+            sol::object value = table["extraChunkThreshold"];
+            if (value.valid());
+            m_extra_chunk_threshold = value.as<unsigned int>();
         }
 
 }
@@ -41,6 +47,8 @@ json COMPONENT_TYPE::to_json() {
     j["offset"]["x"] = m_offset.x;
     j["offset"]["y"] = m_offset.y;
 
+    j["extraChunkThreshold"] = m_extra_chunk_threshold;
+
     return j;
 }
 
@@ -50,6 +58,8 @@ void COMPONENT_TYPE::load_json(const json& j) {
 
     m_offset.x = j["offset"]["x"];
     m_offset.y = j["offset"]["y"];
+
+    m_extra_chunk_threshold = j["extraChunkThreshold"];
 }
 
 /*
@@ -66,7 +76,7 @@ void COMPONENT_TYPE::draw_component_inspector() {
 
     ImGui::Text("Extent: "); ImGui::SameLine(100); ImGui::DragFloat2("##Extent", &(m_extent.x));
     ImGui::Text("Offset: "); ImGui::SameLine(100); ImGui::DragFloat2("##Offset", &(m_offset.x));
-
+    ImGui::Text("Extra Threshold: "); ImGui::SameLine(150); ImGui::DragInt("##Threshold", (int*)&m_extra_chunk_threshold, 1.0f, 0, 5);
 
     const auto transform = EntityManager::get().get_entity(m_parent_id)->get_component<TransformComponent>();
 
@@ -115,7 +125,10 @@ void COMPONENT_TYPE::expose_to_lua()
         Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
         */
 
-        "extent", &COMPONENT_TYPE::m_extent
+        "extent", &COMPONENT_TYPE::m_extent,
+        "offset", &COMPONENT_TYPE::m_offset,
+        "extraChunkThreshold", &COMPONENT_TYPE::m_extra_chunk_threshold
+
 
         );
 

@@ -125,8 +125,9 @@ void ChunkManager::update_entity_chunks() {
 
             if (extent) {
                 auto center = position + extent->m_offset;
-                auto min_position = center - extent->m_extent;
-                auto max_position = center + extent->m_extent;
+                auto extra_chunk_threshold = extent->m_extra_chunk_threshold * m_chunk_size;
+                auto min_position = center - extent->m_extent - sf::Vector2f(extra_chunk_threshold, extra_chunk_threshold);
+                auto max_position = center + extent->m_extent + sf::Vector2f(extra_chunk_threshold, extra_chunk_threshold);
 
 
                 /*
@@ -275,31 +276,32 @@ void ChunkManager::draw_debug_chunks() {
             auto count_all = get_entities_of_chunk(std::make_pair(i, j)).size();
             auto count_colliding = get_colliding_entities_of_chunk(std::make_pair(i, j)).size();
 
-
-            draw_list->AddQuadFilled(
-                ImVec2(x, y),
-                ImVec2(x + converted_chunk_size, y),
-                ImVec2(x + converted_chunk_size, y + converted_chunk_size),
-                ImVec2(x, y + converted_chunk_size),
-                ImGui::GetColorU32((ImVec4)ImColor(
+            if (count_colliding > 0) {
+                draw_list->AddQuadFilled(
+                    ImVec2(x, y),
+                    ImVec2(x + converted_chunk_size, y),
+                    ImVec2(x + converted_chunk_size, y + converted_chunk_size),
+                    ImVec2(x, y + converted_chunk_size),
+                    ImGui::GetColorU32((ImVec4)ImColor(
+                    (count_colliding == 0 ? 0 : 100 * count_colliding),
+                        0,
+                        (count_colliding == 0 ? 255 : 0),
+                        (count_colliding == 0 ? 20 : 150)))
+                );
+            }
+            else {
+                draw_list->AddQuadFilled(
+                    ImVec2(x, y),
+                    ImVec2(x + converted_chunk_size, y),
+                    ImVec2(x + converted_chunk_size, y + converted_chunk_size),
+                    ImVec2(x, y + converted_chunk_size),
+                    ImGui::GetColorU32((ImVec4)ImColor(
                     (count_all == 0 ? 0 : 255 * count_all),
-                    (count_all == 0 ? 0 : 255 * count_all),
-                    0,
-                    (count_all == 0 ? 20 : 150)))
-            );
-
-
-            draw_list->AddQuadFilled(
-                ImVec2(x, y),
-                ImVec2(x + converted_chunk_size, y),
-                ImVec2(x + converted_chunk_size, y + converted_chunk_size),
-                ImVec2(x, y + converted_chunk_size),
-                ImGui::GetColorU32((ImVec4)ImColor(
-                (count_colliding == 0 ? 0 : 100 * count_colliding),
-                    0,
-                    (count_colliding == 0 ? 255 : 0),
-                    (count_colliding == 0 ? 20 : 150)))
-            );
+                        (count_all == 0 ? 0 : 255 * count_all),
+                        0,
+                        (count_all == 0 ? 20 : 150)))
+                );
+            }
 
             draw_list->AddQuad(
                 ImVec2(x, y),

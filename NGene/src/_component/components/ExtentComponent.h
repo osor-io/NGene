@@ -29,9 +29,9 @@ public:
     as add it in "drawComponentInspector()" to be able to see it
     */
     // ====== BEG OF MEMBERS ======
-
     sf::Vector2f m_offset{ 0.0f,0.0f };
     sf::Vector2f m_extent{ 10.0f,10.0f };
+    unsigned int m_extra_chunk_threshold{ 0 };
     // ====== END OF MEMBERS ======
 
 };
@@ -45,7 +45,8 @@ template<>
 inline auto meta::registerMembers<ExtentComponent>() {
     return members(
         member("extent", &ExtentComponent::m_extent),
-        member("offset", &ExtentComponent::m_offset)
+        member("offset", &ExtentComponent::m_offset),
+        member("extraChunkThreshold", &ExtentComponent::m_extra_chunk_threshold)
     );
 }
 
