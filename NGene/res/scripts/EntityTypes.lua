@@ -1,18 +1,23 @@
 
 Entities = {
-    Cosa = {
+    DynamicObject = {
         TransformComponent = {
             x = 0, 
             y = 10
         }, 
-        ---[[
         ExtentComponent = {
             extentX = 40, 
             extentY = 43, 
             offsetX = 0, 
             offsetY = 0
-        }, 
-        --]] 
+        },
+        CollisionComponent = {
+            extentX = 40, 
+            extentY = 43, 
+            offsetX = 0, 
+            offsetY = 0,
+            dynamic = true
+        },  
         PhraseComponent = {
             phrase = "I'm saying hi from this lua Object!! :D"
         }, 
@@ -25,8 +30,23 @@ Entities = {
                 local x = getAxisPosition(Axis.X)
                 local y = getAxisPosition(Axis.Y)
                 if(transform) then
-                    transform.position.x = transform.position.x + (3.0 * deltaTime) 
-                    transform.position.y = transform.position.y + (3.0 * deltaTime) 
+                    --[[
+                    transform.position.x = transform.position.x + (10.0 * deltaTime) 
+                    transform.position.y = transform.position.y + (10.0 * deltaTime) 
+                    --]]
+
+                    if (isKeyPressed(Key.A)) then
+                        transform.position.x = transform.position.x - (70.0 * deltaTime) 
+                    elseif (isKeyPressed(Key.D)) then
+                        transform.position.x = transform.position.x + (70.0 * deltaTime)
+                    end
+
+                    if (isKeyPressed(Key.W)) then
+                        transform.position.y = transform.position.y - (70.0 * deltaTime)
+                    elseif (isKeyPressed(Key.S)) then
+                        transform.position.y = transform.position.y + (70.0 * deltaTime)
+                    end
+
                 else 
                     print("We got no transform")
                 end
@@ -83,6 +103,27 @@ Entities = {
         }
     },
     
+
+    StaticObject = {
+        TransformComponent = {
+            x = 0, 
+            y = 10
+        },
+        ExtentComponent = {
+            extentX = 40, 
+            extentY = 43, 
+            offsetX = 0, 
+            offsetY = 0
+        },
+        CollisionComponent = {
+            extentX = 40, 
+            extentY = 43, 
+            offsetX = 0, 
+            offsetY = 0,
+            dynamic = false
+        }
+    }, 
+
     OtraCosa = {
         PhraseComponent = {
             phrase = "I'm saying hi from this lua Object!! :D"

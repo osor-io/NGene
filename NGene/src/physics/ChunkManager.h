@@ -8,14 +8,20 @@
 #include <gsl\gsl>
 #include "SFML/Window.hpp"
 #include <utility>
+#include <../_entity/Entity.h>
+#include <../_entity/EntityManager.h>
+
+#include "../_component/components/TransformComponent.h"
+#include "../_component/components/CollisionComponent.h"
 
 
 class ChunkManager : public Manager<ChunkManager> {
     friend class CRSP<ChunkManager>;
-    using ChunkMap = std::unordered_map<Chunk, EntitySet, ChunkHash>;
+    using ChunkMap = std::unordered_map<Chunk, EntityIdSet, ChunkHash>;
     using EntityMap = std::unordered_map<EntityId, ChunkSet>;
     using PositionCache = std::unordered_map<EntityId, std::pair<sf::Vector2f, sf::Vector2f>>;
     using ChunkLengthType = float;
+    using GroupedEntities = std::unordered_map<Chunk, std::set<Entity*>, ChunkHash>;
 private:
     ChunkManager();
     ~ChunkManager();
@@ -35,6 +41,8 @@ public:
 
     void update_entity_chunks();
 
+    void clear();
+
     /*
     There are not const because it might require to generate vectors for new chunks without entities
     */
@@ -42,7 +50,57 @@ public:
 
     void draw_debug_chunk_configuration();
 
-    const EntitySet& get_entities_of_chunk(Chunk chunk);
+    const EntityIdSet& get_entities_of_chunk(Chunk chunk);
+
+    const std::set<Entity*>& get_colliding_entities_of_chunk(Chunk chunk);
+
+    /*
+    @@TODO @@OPTIMIZATION
+    We can make a specific version of this function for the elements with a collision component
+    so we can return an internal member that we calculate on our "update_entity_chunks" instead
+    of calculating it on request like we are doing here
+    */
+
+    /**
+    Returns a vector of vectors with the entities grouped by chunks, that is, in each vector
+    we have all the entities that are in a particular chunk, entities can be repeated in more
+    than one vector.
+    */
+    template<typename... T>
+    GroupedEntities get_grouped_entities_with_components() {
+
+        auto general = GroupedEntities{};
+
+        for (auto & c : m_chunk_map) {
+
+            if (c.second.size() == 0) continue;
+
+            auto& entity_set = c.second;
+
+            auto entities_in_chunk = std::vector<Entity*>{};
+
+            for (auto& e : entity_set) {
+                auto entity = EntityManager::get().get_entity(e);
+
+                if (!entity->is_in_relevant_chunk()) continue;
+
+                auto checks = { entity->has_component<T>()... };
+
+                if (std::all_of(checks.begin(), checks.end(), [](bool i) {return i; })) {
+                    entities_in_chunk.push_back(entity);
+                }
+            }
+
+            general[c.first] = (std::move(entities_in_chunk));
+
+        }
+        return general;
+    }
+
+    template<>
+    GroupedEntities get_grouped_entities_with_components<TransformComponent, CollisionComponent>() {
+        return m_collision_components_cache;
+    }
 
 private:
 
@@ -71,6 +129,8 @@ private:
 
     Chunk m_min_relevant_chunk{};
     Chunk m_max_relevant_chunk{};
+
+    GroupedEntities m_collision_components_cache{};
 
 
 };

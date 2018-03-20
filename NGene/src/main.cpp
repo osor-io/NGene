@@ -20,6 +20,8 @@
 #include "./_system/systems/InputSystem.h"
 #include "./_system/systems/BehaviourSystem.h"
 #include "./_system/systems/CameraSystem.h"
+#include "./_system/systems/CollisionSystem.h"
+#include "./_system/systems/TransformSystem.h"
 #include "./_system/systems/RenderSystem.h"
 
 
@@ -44,6 +46,8 @@ void start_up() {
     InputSystem::get().start_up();
     BehaviourSystem::get().start_up();
     CameraSystem::get().start_up();
+    CollisionSystem::get().start_up();
+    TransformSystem::get().start_up();
     RenderSystem::get().start_up();
 
 }
@@ -51,6 +55,8 @@ void start_up() {
 void shut_down() {
 
     RenderSystem::get().shut_down();
+    TransformSystem::get().shut_down();
+    CollisionSystem::get().shut_down();
     CameraSystem::get().shut_down();
     BehaviourSystem::get().shut_down();
     InputSystem::get().shut_down();
@@ -79,16 +85,17 @@ void load_default_state() {
     auto j = json::parse(*s.resource);
     EntityManager::get().clear_and_load_entities(j);
     */
-    
+
     //If we want to check performance with more than one entity
     //for (int i = 0; i < 100; ++i) {
-    const auto id = EntityManager::get().request_load_entity("Cosa");
+    const auto id = EntityManager::get().request_load_entity("DynamicObject");
     EntityManager::get().update_entities();
     auto entity = EntityManager::get().get_entity(id);
     entity->set_name("All Mighty Entity");
     entity->get_component<TransformComponent>()->set_position(sf::Vector2f(300.f, 300.f));
     //}
     
+    const auto static_id = EntityManager::get().request_load_entity("StaticObject");
     const auto map_id = EntityManager::get().request_load_entity("DefaultMap");
     const auto camera_id = EntityManager::get().request_load_entity("DefaultCamera");
 
@@ -127,6 +134,9 @@ void access_entities_from_lua() {
         )");
 }
 
+#include "./_component/components/TransformComponent.h"
+#include "./_component/components/SpriteComponent.h"
+
 inline void tick() {
 
     ChunkManager::get().update_entity_chunks();
@@ -135,7 +145,9 @@ inline void tick() {
     InputSystem::get().update();
     BehaviourSystem::get().update();
     CameraSystem::get().update();
+    CollisionSystem::get().update();
 
+    TransformSystem::get().update();
 }
 
 inline void render() {

@@ -9,6 +9,7 @@
 #include <cassert>
 #include "File.h"
 #include "json.hpp"
+#include "../physics/ChunkManager.h"
 
 EntityManager::EntityManager() {}
 
@@ -44,6 +45,7 @@ void EntityManager::update_entities() {
             SystemManager::get().deregister_entity_in_systems(e.second->get_id());
         }
         m_entities.clear();
+        ChunkManager::get().clear();
         m_next_id = 0;
 
         if (m_requested_load) {

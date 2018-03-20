@@ -1,7 +1,7 @@
-#include "ExtentComponent.h"
+#include "CollisionComponent.h"
 #include "../lua/LuaManager.h"
 
-#define COMPONENT_TYPE ExtentComponent
+#define COMPONENT_TYPE CollisionComponent
 #define CTOR(x) x##::##x
 #define DTOR(x) x##::##~##x
 #define STRINGIFY(s) #s
@@ -25,6 +25,12 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
             m_offset = sf::Vector2f(value_x.as<float>(), value_y.as<float>());
         }
 
+        {
+            sol::object value = table["dynamic"];
+            assert(value.valid());
+            m_dynamic = value.as<bool>();
+        }
+
 }
 
 
@@ -40,6 +46,17 @@ json COMPONENT_TYPE::to_json() {
 
     j["offset"]["x"] = m_offset.x;
     j["offset"]["y"] = m_offset.y;
+    
+    /*
+    I don't want to change wether it is dynamic
+    or not at runtime or in the editor, it is something
+    inherent to the entity or the collider so it
+    should be changed only when defining the type.
+    
+    //j["dynamic"] = m_dynamic;
+
+    */
+    
 
     return j;
 }
@@ -50,6 +67,16 @@ void COMPONENT_TYPE::load_json(const json& j) {
 
     m_offset.x = j["offset"]["x"];
     m_offset.y = j["offset"]["y"];
+
+    /*
+    I don't want to change wether it is dynamic
+    or not at runtime or in the editor, it is something
+    inherent to the entity or the collider so it
+    should be changed only when defining the type.
+
+    //m_dynamic = j["dynamic"];
+
+    */
 }
 
 /*
@@ -66,7 +93,8 @@ void COMPONENT_TYPE::draw_component_inspector() {
 
     ImGui::Text("Extent: "); ImGui::SameLine(100); ImGui::DragFloat2("##Extent", &(m_extent.x));
     ImGui::Text("Offset: "); ImGui::SameLine(100); ImGui::DragFloat2("##Offset", &(m_offset.x));
-
+    //ImGui::Checkbox("Dynamic", &m_dynamic);
+    ImGui::Text("%s", (m_dynamic ? "Dynamic" : "Static"));
 
     const auto transform = EntityManager::get().get_entity(m_parent_id)->get_component<TransformComponent>();
 
@@ -85,7 +113,7 @@ void COMPONENT_TYPE::draw_component_inspector() {
             ImVec2((center.x + m_extent.x), (center.y - m_extent.y)),
             ImVec2((center.x + m_extent.x), (center.y + m_extent.y)),
             ImVec2((center.x - m_extent.x), (center.y + m_extent.y)),
-            ImGui::GetColorU32((ImVec4)ImColor(0, 255, 0, 150)),
+            ImGui::GetColorU32((ImVec4)ImColor(255, 255, 0, 150)),
             2.0f
         );
         draw_list->PopClipRect();

@@ -10,6 +10,7 @@
 #include <Manager.h>
 #include "../_entity/Entity.h"
 
+#include "./components/CollisionComponent.h"
 #include "./components/CameraComponent.h"
 #include "./components/TiledMapComponent.h"
 #include "./components/ExtentComponent.h"
@@ -45,8 +46,16 @@ public:
 private:
     InstanceMap m_instance_map{};
 
+    /*
+    @@TODO: Refactor these make_pairs into a macro
+    */
+
     const TypeMap m_type_map{
-  
+
+        std::make_pair(
+            meta::get_name<CollisionComponent>(),
+            std::type_index(typeid(CollisionComponent))),
+
         std::make_pair(
             meta::get_name<CameraComponent>(),
             std::type_index(typeid(CameraComponent))),
@@ -81,6 +90,12 @@ private:
     };
 
     const FactoryMap m_factory_map{
+
+        std::make_pair(std::type_index(typeid(
+            CollisionComponent
+            )),[](Entity& entity ,const sol::table& table) {
+                entity.make_component<CollisionComponent>(entity.get_id(), table);
+            }),
 
         std::make_pair(std::type_index(typeid(
             CameraComponent

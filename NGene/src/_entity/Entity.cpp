@@ -79,6 +79,7 @@ bool Entity::is_in_relevant_chunk() const {
     return m_in_relevant_chunk;
 }
 
+#include "../_component/components/CollisionComponent.h"
 #include "../_component/components/CameraComponent.h"
 #include "../_component/components/TiledMapComponent.h"
 #include "../_component/components/ExtentComponent.h"
@@ -97,6 +98,7 @@ void Entity::expose_to_lua() {
     /*
     Here we expose the members of the components
     */
+    CollisionComponent::expose_to_lua();
     CameraComponent::expose_to_lua();
     TiledMapComponent::expose_to_lua();
     ExtentComponent::expose_to_lua();
@@ -111,6 +113,7 @@ void Entity::expose_to_lua() {
     */
     LUA.new_usertype<Entity>("Entity",
 
+        REGISTER_GET_COMPONENT(CollisionComponent),
         REGISTER_GET_COMPONENT(CameraComponent),
         REGISTER_GET_COMPONENT(TiledMapComponent),
         REGISTER_GET_COMPONENT(ExtentComponent),

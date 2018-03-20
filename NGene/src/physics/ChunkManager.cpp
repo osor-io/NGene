@@ -1,5 +1,4 @@
 #include "ChunkManager.h"
-#include "../_entity/Entitymanager.h"
 #include "../_component/components/TransformComponent.h"
 #include "../_component/components/ExtentComponent.h"
 #include "../render/RenderManager.h"
@@ -75,8 +74,12 @@ inline bool is_chunk_in_range(const Chunk& chunk, const Chunk& min_chunk, const 
         (chunk.second >= min_chunk.second && chunk.second <= max_chunk.second);
 }
 
-const EntitySet& ChunkManager::get_entities_of_chunk(Chunk chunk) {
+const EntityIdSet& ChunkManager::get_entities_of_chunk(Chunk chunk) {
     return m_chunk_map[chunk];
+}
+
+const std::set<Entity*>& ChunkManager::get_colliding_entities_of_chunk(Chunk chunk) {
+    return m_collision_components_cache[chunk];
 }
 
 void ChunkManager::update_entity_chunks() {
@@ -138,6 +141,7 @@ void ChunkManager::update_entity_chunks() {
 
                     for (auto& c : m_entity_map[id]) {
                         m_chunk_map[c].erase(id);
+                        m_collision_components_cache[c].erase(entity);
                     }
                     m_entity_map[id].clear();
                 }
@@ -165,6 +169,7 @@ void ChunkManager::update_entity_chunks() {
 
                     for (auto& c : m_entity_map[id]) {
                         m_chunk_map[c].erase(id);
+                        m_collision_components_cache[c].erase(entity);
                     }
                     m_entity_map[id].clear();
                 }
@@ -176,18 +181,24 @@ void ChunkManager::update_entity_chunks() {
                 min_chunk = max_chunk = chunk;
             }
 
-            /*
-            @@TODO: Only do this if the entity is dynamic, that is, it
-            can move.
-            */
-            min_chunk.first -= m_safe_threshold;
-            min_chunk.second -= m_safe_threshold;
 
-            max_chunk.first += m_safe_threshold;
-            max_chunk.second += m_safe_threshold;
+            auto collision_component = entity->get_component<CollisionComponent>();
+
+            /*
+            We default to adding the threshold unless we know the entity
+            is not dynamic.
+            */
+            if (!collision_component || collision_component->m_dynamic) {
+                min_chunk.first -= m_safe_threshold;
+                min_chunk.second -= m_safe_threshold;
+
+                max_chunk.first += m_safe_threshold;
+                max_chunk.second += m_safe_threshold;
+            }
 
 
             auto relevant = false;
+
             /*
             Now we instert the entity on the required maps and check if any of the
             chunks it is in is relevant.
@@ -204,6 +215,11 @@ void ChunkManager::update_entity_chunks() {
                     if (!relevant) {
                         relevant = is_chunk_in_range(chunk, m_min_relevant_chunk, m_max_relevant_chunk);
                     }
+
+                    if (collision_component) {
+                        m_collision_components_cache[chunk].insert(entity);
+                    }
+
                 }
             }
 
@@ -211,6 +227,15 @@ void ChunkManager::update_entity_chunks() {
         }
 
     }
+
+}
+
+void ChunkManager::clear() {
+
+    m_chunk_map.clear();
+    m_entity_map.clear();
+    m_location_cache.clear();
+    m_collision_components_cache.clear();
 
 }
 
@@ -246,7 +271,10 @@ void ChunkManager::draw_debug_chunks() {
             y <= end.y;
             y += converted_chunk_size, ++j) {
 
-            auto count = get_entities_of_chunk(std::make_pair(i, j)).size();
+
+            auto count_all = get_entities_of_chunk(std::make_pair(i, j)).size();
+            auto count_colliding = get_colliding_entities_of_chunk(std::make_pair(i, j)).size();
+
 
             draw_list->AddQuadFilled(
                 ImVec2(x, y),
@@ -254,10 +282,23 @@ void ChunkManager::draw_debug_chunks() {
                 ImVec2(x + converted_chunk_size, y + converted_chunk_size),
                 ImVec2(x, y + converted_chunk_size),
                 ImGui::GetColorU32((ImVec4)ImColor(
-                (count == 0 ? 0 : 100 * count),
+                    (count_all == 0 ? 0 : 255 * count_all),
+                    (count_all == 0 ? 0 : 255 * count_all),
                     0,
-                    (count == 0 ? 255 : 0),
-                    (count == 0 ? 20 : 150)))
+                    (count_all == 0 ? 20 : 150)))
+            );
+
+
+            draw_list->AddQuadFilled(
+                ImVec2(x, y),
+                ImVec2(x + converted_chunk_size, y),
+                ImVec2(x + converted_chunk_size, y + converted_chunk_size),
+                ImVec2(x, y + converted_chunk_size),
+                ImGui::GetColorU32((ImVec4)ImColor(
+                (count_colliding == 0 ? 0 : 100 * count_colliding),
+                    0,
+                    (count_colliding == 0 ? 255 : 0),
+                    (count_colliding == 0 ? 20 : 150)))
             );
 
             draw_list->AddQuad(
@@ -265,7 +306,7 @@ void ChunkManager::draw_debug_chunks() {
                 ImVec2(x + converted_chunk_size, y),
                 ImVec2(x + converted_chunk_size, y + converted_chunk_size),
                 ImVec2(x, y + converted_chunk_size),
-                ImGui::GetColorU32((ImVec4)ImColor(50 * count, 0, 255, 200))
+                ImGui::GetColorU32((ImVec4)ImColor(50 * count_colliding, 0, 255, 200))
             );
 
 

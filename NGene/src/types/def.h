@@ -7,7 +7,7 @@
 
 using byte = unsigned char;
 using EntityId = unsigned int;
-using EntitySet = std::set<EntityId>;
+using EntityIdSet = std::set<EntityId>;
 using Chunk = std::pair<int, int>;
 
 struct ChunkHash {

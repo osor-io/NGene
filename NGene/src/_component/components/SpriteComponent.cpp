@@ -38,6 +38,7 @@ void SpriteComponent::load_sprite() {
     if (m_texture) {
         auto released = TextureManager::get().release_required_resource(m_filename);
         assert(released);
+        m_texture = nullptr;
     }
 
     if (TextureManager::get().exists_resource(m_filename))
@@ -48,18 +49,8 @@ void SpriteComponent::load_sprite() {
 
 
     auto origin = m_sprite.getOrigin();
-    m_sprite.setOrigin(origin + (sf::Vector2f(m_texture->getSize()) / 2.f));
 
-    /*
-    //Old way of loading the texture directly
-    if (m_filename.size() > 0) {
-        std::ifstream f(m_filename.c_str());
-
-        if (f.good() && m_texture.loadFromFile(m_filename)) {
-            m_sprite = sf::Sprite(m_texture);
-        }
-    }
-    */
+    m_sprite.setOrigin(sf::Vector2f(m_texture->getSize()) / 2.f);
 }
 
 

@@ -34,6 +34,7 @@ public:
 
     // ====== BEG OF MEMBERS ======
     sf::Vector2f m_position;
+    sf::Vector2f m_previous_position;
     // ====== END OF MEMBERS ======
 
 };

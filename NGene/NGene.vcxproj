@@ -202,6 +202,7 @@ echo.</Command>
     <ClCompile Include="src\physics\ChunkManager.cpp" />
     <ClCompile Include="src\input\InputManager.cpp" />
     <ClCompile Include="src\_component\components\CameraComponent.cpp" />
+    <ClCompile Include="src\_component\components\CollisionComponent.cpp" />
     <ClCompile Include="src\_component\components\ExtentComponent.cpp" />
     <ClCompile Include="src\_component\components\InputComponent.cpp" />
     <ClCompile Include="src\_component\components\TiledMapComponent.cpp" />
@@ -218,6 +219,7 @@ echo.</Command>
     <ClCompile Include="src\utils\File.cpp" />
     <ClCompile Include="src\lua\LuaManager.cpp" />
     <ClCompile Include="src\_system\systems\CameraSystem.cpp" />
+    <ClCompile Include="src\_system\systems\CollisionSystem.cpp" />
     <ClCompile Include="src\_system\systems\InputSystem.cpp" />
     <ClCompile Include="src\_system\systems\RenderSystem.cpp" />
     <ClCompile Include="src\utils\Debug.cpp" />
@@ -241,6 +243,7 @@ echo.</Command>
     <ClCompile Include="src\time\TimeManager.cpp" />
     <ClCompile Include="src\window\WindowManager.cpp" />
     <ClCompile Include="src\_system\systems\TileMapSystem.cpp" />
+    <ClCompile Include="src\_system\systems\TransformSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dep\include\tmxlite\Config.hpp" />
@@ -267,6 +270,7 @@ echo.</Command>
     <ClInclude Include="src\resources\ResourceManager.h" />
     <ClInclude Include="src\input\InputManager.h" />
     <ClInclude Include="src\_component\components\CameraComponent.h" />
+    <ClInclude Include="src\_component\components\CollisionComponent.h" />
     <ClInclude Include="src\_component\components\ExtentComponent.h" />
     <ClInclude Include="src\_component\components\InputComponent.h" />
     <ClInclude Include="src\_component\components\TiledMapComponent.h" />
@@ -286,6 +290,7 @@ echo.</Command>
     <ClInclude Include="src\utils\Manager.h" />
     <ClInclude Include="src\_component\ComponentTemplate.h" />
     <ClInclude Include="src\_system\systems\CameraSystem.h" />
+    <ClInclude Include="src\_system\systems\CollisionSystem.h" />
     <ClInclude Include="src\_system\systems\InputSystem.h" />
     <ClInclude Include="src\_system\systems\RenderSystem.h" />
     <ClInclude Include="src\utils\Debug.h" />
@@ -320,6 +325,7 @@ echo.</Command>
     <ClInclude Include="src\time\TimeManager.h" />
     <ClInclude Include="src\window\WindowManager.h" />
     <ClInclude Include="src\_system\systems\TileMapSystem.h" />
+    <ClInclude Include="src\_system\systems\TransformSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dep\include\detail\template_helpers.inl" />
