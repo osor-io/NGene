@@ -243,15 +243,6 @@ const bool AABBSweep(
     u1 = std::min(u_1.x, u_1.y);
 
     if (u0 <= u1) {
-        LOG_NAMED(a.min(AABB::Axis::x));
-        LOG_NAMED(a.max(AABB::Axis::x));
-        LOG_NAMED(b.min(AABB::Axis::x));
-        LOG_NAMED(b.max(AABB::Axis::x));
-
-        LOG_NAMED(a.min(AABB::Axis::y));
-        LOG_NAMED(a.max(AABB::Axis::y));
-        LOG_NAMED(b.min(AABB::Axis::y));
-        LOG_NAMED(b.max(AABB::Axis::y));
         return true;
     }
 

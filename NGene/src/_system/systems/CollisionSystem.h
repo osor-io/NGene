@@ -2,8 +2,10 @@
 #include "../System.h"
 #include <map>
 #include <memory>
-#include "../types/def.h"
 #include <set>
+#include "../types/def.h"
+#include <../physics/ChunkManager.h>
+
 
 class CollisionSystem : public System<CollisionSystem> {
     using EntitiesGroup = std::map<EntityId, Entity*>;
@@ -19,9 +21,15 @@ public:
     void register_entity(Entity& entity) override;
     void deregister_entity(EntityId id) override;
 
-    std::set<Entity*> check_entity_set(std::set<Entity*> set);
+    std::set<Entity*> check_entity_set(const std::set<Entity*>& set);
+
+    std::set<Entity*> recheck_entity_set(const std::set<Entity*>& set_to_check, const ChunkManager::GroupedEntities& all_entities);
+
 
 private:
+
+    void execute_collisions(Entity* entity_a, Entity* entity_b, std::set<Entity*>& to_recheck, bool rechecking = false);
+    
     EntitiesGroup m_entities;
     std::unordered_set<std::pair<EntityId, EntityId>, PairIntIntHash> m_already_checked{};
 };

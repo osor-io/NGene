@@ -16,6 +16,7 @@
 
 
 class ChunkManager : public Manager<ChunkManager> {
+public:
     friend class CRSP<ChunkManager>;
     using ChunkMap = std::unordered_map<Chunk, EntityIdSet, PairIntIntHash>;
     using EntityMap = std::unordered_map<EntityId, ChunkSet>;
@@ -35,6 +36,8 @@ public:
 
     ChunkSet get_chunks_of(EntityId id) const;
 
+    ChunkSet calculate_chunks(Entity* entity) const;
+    
     Chunk get_chunk_from_position(float x, float y) const;
 
     bool share_chunks(EntityId a, EntityId b) const;

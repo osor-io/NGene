@@ -35,6 +35,82 @@ std::unordered_set<Chunk, PairIntIntHash> ChunkManager::get_chunks_of(EntityId i
     return m_entity_map.at(id);
 }
 
+ChunkSet ChunkManager::calculate_chunks(Entity * entity) const {
+
+    auto chunk_set = ChunkSet{};
+
+    auto id = entity->get_id();
+    auto transform = entity->get_component<TransformComponent>();
+    if (!transform) return chunk_set;
+
+    auto position = transform->get_position();
+
+    auto extent = entity->get_component<ExtentComponent>();
+
+    /*
+    Add here other checks with other components if we need it to.
+    */
+
+    auto min_chunk = Chunk{};
+    auto max_chunk = Chunk{};
+
+    if (extent) {
+        auto center = position + extent->m_offset;
+        auto extra_chunk_threshold = extent->m_extra_chunk_threshold * m_chunk_size;
+        auto min_position = center - extent->m_extent - sf::Vector2f(extra_chunk_threshold, extra_chunk_threshold);
+        auto max_position = center + extent->m_extent + sf::Vector2f(extra_chunk_threshold, extra_chunk_threshold);
+
+        /*
+        We calculate the minimum and maximum chunks the entity can be in
+        by calculating the chunk of the minimum and maximum points.
+        */
+
+        min_chunk.first = gsl::narrow_cast<int>(std::floor(min_position.x / m_chunk_size));
+        min_chunk.second = gsl::narrow_cast<int>(std::floor(min_position.y / m_chunk_size));
+
+        max_chunk.first = gsl::narrow_cast<int>(std::floor(max_position.x / m_chunk_size));
+        max_chunk.second = gsl::narrow_cast<int>(std::floor(max_position.y / m_chunk_size));
+    }
+    else {
+        auto chunk = std::make_pair(
+            gsl::narrow_cast<int>(std::floor(position.x / m_chunk_size)),
+            gsl::narrow_cast<int>(std::floor(position.y / m_chunk_size)));
+
+        min_chunk = max_chunk = chunk;
+    }
+    auto collision_component = entity->get_component<CollisionComponent>();
+
+    /*
+    We default to adding the threshold unless we know the entity
+    is not dynamic.
+    */
+    if (!collision_component || collision_component->m_dynamic) {
+        min_chunk.first -= m_safe_threshold;
+        min_chunk.second -= m_safe_threshold;
+
+        max_chunk.first += m_safe_threshold;
+        max_chunk.second += m_safe_threshold;
+    }
+
+
+    /*
+    Now we instert the entity on the required maps and check if any of the
+    chunks it is in is relevant.
+    */
+
+    for (auto x = min_chunk.first; x <= max_chunk.first; ++x) {
+        for (auto y = min_chunk.second; y <= max_chunk.second; ++y) {
+
+            auto chunk = std::make_pair(x, y);
+
+            chunk_set.insert(chunk);
+        }
+    }
+
+    return chunk_set;
+
+}
+
 bool ChunkManager::share_chunks(EntityId a, EntityId b) const {
     const auto& set_a = m_entity_map.at(a);
     const auto& set_b = m_entity_map.at(a);
