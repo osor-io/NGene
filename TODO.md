@@ -2,9 +2,10 @@
 
 ## @@TODO
 
-* Input System and Input Component with OnSomething functions
+
+* Read Tiled maps from lua into new members of the Tiled Map Component
+* Think how we should organize the different colliders of the map to fill when reading the lua file of the map
 * Pool per Component Type
-* Load TMX maps (from the Tiled Editor Software)
 
 ## @@DOING
 

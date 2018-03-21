@@ -156,15 +156,15 @@ Entities = {
 
     DefaultMap = {
         TiledMapComponent = {
-            filename = "res/assets/demo.tmx", 
+            filename = "res/assets/maps/demo.tmx", 
             mainLayer = 0; 
         }
-    }, 
+    },
 
     DefaultCamera = {
         TransformComponent = {
             x = 0, 
-            y = 10
+            y = 0
         }, 
         CameraComponent = {
             mainCamera = true,

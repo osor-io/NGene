@@ -180,7 +180,7 @@ void DeveloperModeManager::draw_gui() {
                 if (ImGui::Button("Alright, maybe no", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
                 ImGui::EndPopup();
             }
-
+            
             if (ImGui::Button("Load State")) {
                 ImGui::OpenPopup("Loading State");
             }
@@ -195,7 +195,7 @@ void DeveloperModeManager::draw_gui() {
                 if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
                 ImGui::EndPopup();
             }
-
+            
             if (ImGui::Button("Save State")) {
                 ImGui::OpenPopup("Saving State");
             }

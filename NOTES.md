@@ -1,5 +1,12 @@
 # Notes
 
+## Cool Stuff
+
+- Continuous collision detection using **Minkowski Differences**.
+- **Chunk system** to optimize collision detection and relevant entities.
+- **Editor/Developer Mode** to allow for quick iteration times, testing and development of the content.
+- **State Saving/Loading/Reloading** to manage the attributes and state of all the entities and its components on a given moment.
+
 ## Ideas
 
 ### Raspberry Pi

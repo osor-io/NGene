@@ -1,6 +1,8 @@
 #include "TiledMapComponent.h"
 #include "../lua/LuaManager.h"
 #include "File.h"
+#include "../debug/LoggingManager.h"
+#include <sstream>
 
 #define COMPONENT_TYPE TiledMapComponent
 #define CTOR(x) x##::##x
@@ -26,6 +28,11 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
     if (file_exists(filename)) {
         m_map.load(filename);
         m_map_ready = true;
+    }
+    else {
+        auto ss = std::stringstream{};
+        ss << "Map File [" << filename << "] could not be found";
+        LOGF(ss.str().c_str());
     }
 }
 
