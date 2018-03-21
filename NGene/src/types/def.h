@@ -10,7 +10,7 @@ using EntityId = unsigned int;
 using EntityIdSet = std::set<EntityId>;
 using Chunk = std::pair<int, int>;
 
-struct ChunkHash {
+struct PairIntIntHash {
     template <typename T, typename U>
     std::size_t operator()(const std::pair<T, U> &x) const
     {
@@ -20,4 +20,4 @@ struct ChunkHash {
     }
 };
 
-using ChunkSet = std::unordered_set<Chunk, ChunkHash>;
+using ChunkSet = std::unordered_set<Chunk, PairIntIntHash>;

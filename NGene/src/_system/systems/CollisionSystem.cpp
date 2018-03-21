@@ -2,6 +2,8 @@
 #include <../_component/components/CollisionComponent.h>
 #include <../time/TimeManager.h>
 #include <../physics/ChunkManager.h>
+#include "../physics/AABB.h"
+#include "../math/Vector.h"
 
 
 CollisionSystem::CollisionSystem() {}
@@ -21,6 +23,7 @@ void CollisionSystem::shut_down() {
 
 }
 
+/*
 inline float calculate_swept_collision_time(
     TransformComponent*& transform_component_a,
     TransformComponent*& transform_component_b,
@@ -105,18 +108,18 @@ inline float calculate_swept_collision_time(
     auto entry_time = std::max(in_time_x, in_time_y);
     auto exit_time = std::min(out_time_x, out_time_y);
 
-    
+
     if (entry_time > exit_time || in_time_x < 0.f && in_time_y < 0.f || in_time_x > 1.f || in_time_y > 1.f) {
-        /*
-        There was no collision
-        */
+
+        //There was no collision
+
         normal_x = 0.0f;
         normal_y = 0.0f;
         return 1.0f;
     }
     else {
         if (in_time_x > in_time_y) {
-        
+
             if (distance_near_side_x < 0.f) {
                 normal_x = 1.0f;
                 normal_y = 0.0f;
@@ -140,12 +143,14 @@ inline float calculate_swept_collision_time(
         }
         return entry_time;
     }
-
 }
+*/
 
 void CollisionSystem::update() {
 
     const auto& grouped_entities = ChunkManager::get().get_grouped_entities_with_components<TransformComponent, CollisionComponent>();
+
+    auto already_checked = std::unordered_set<std::pair<EntityId, EntityId>, PairIntIntHash>{};
 
 
     for (const auto & v : grouped_entities) {
@@ -159,8 +164,14 @@ void CollisionSystem::update() {
                 auto new_position = sf::Vector2f{};
 
                 for (auto b = std::next(a); b != v.second.end(); ++b) {
-                    
+
                     auto entity_b = (*b);
+
+                    auto id_pair = std::make_pair(entity_a->get_id(), entity_b->get_id());
+                    if (already_checked.find(id_pair) != already_checked.end()) {
+                        continue;
+                    }
+                    already_checked.insert(id_pair);
 
                     auto transform_component_b = entity_b->get_component<TransformComponent>();
 
@@ -168,9 +179,6 @@ void CollisionSystem::update() {
 
 
                     if (!collision_component_a->m_dynamic && !collision_component_b->m_dynamic) {
-                        /*
-
-                        */
                         continue;
                     }
                     else if (collision_component_a->m_dynamic && !collision_component_b->m_dynamic ||
@@ -181,27 +189,118 @@ void CollisionSystem::update() {
                         auto dynamic_entity = (collision_component_a->m_dynamic ? entity_a : entity_b);
                         auto static_entity = (collision_component_a->m_dynamic ? entity_b : entity_a);
 
-                        float normal_x, normal_y;
-                        auto velocity = sf::Vector2f{};
+                        transform_component_a = dynamic_entity->get_component<TransformComponent>();
+                        transform_component_b = static_entity->get_component<TransformComponent>();
 
-                        const auto collision_time = calculate_swept_collision_time(
-                            transform_component_a,
-                            transform_component_b,
-                            collision_component_a,
-                            collision_component_b,
-                            velocity,
-                            normal_x, normal_y
-                        );
-
-                        auto transform_to_move = (collision_component_a->m_dynamic ? transform_component_a : transform_component_b);
+                        collision_component_a = dynamic_entity->get_component<CollisionComponent>();
+                        collision_component_b = static_entity->get_component<CollisionComponent>();
 
 
-                        LOG_NAMED(collision_time);
-                        LOG_NAMED(normal_x);
-                        LOG_NAMED(normal_y);
-                        //LOG("Before: " << transform_to_move->m_position.x << ", " << transform_to_move->m_position.y);
-                        //transform_to_move->m_position = transform_to_move->m_previous_position + ((transform_to_move->m_position - transform_to_move->m_previous_position) * collision_time);
-                        //LOG("After: " << transform_to_move->m_position.x << ", " << transform_to_move->m_position.y);
+                        auto box_a = AABB(transform_component_a->m_previous_position + collision_component_a->m_offset,
+                            collision_component_a->m_extent);
+
+                        auto box_b = AABB(transform_component_b->m_previous_position + collision_component_b->m_offset,
+                            collision_component_b->m_extent);
+
+                        auto minkowski_difference = box_b - box_a;
+
+                        auto collided = minkowski_difference.has_origin();
+
+                        if (collided) {
+
+                            LOG("They Were already colliding");
+
+                            auto penetration_vector = minkowski_difference.closest_point_on_bounds_to_point(sf::Vector2f(0.0f, 0.0f));
+
+                            auto new_position_a = transform_component_a->m_previous_position + penetration_vector;
+
+                            auto velocity_a = transform_component_a->m_position - transform_component_a->m_previous_position;
+
+                            if (magnitude_squared(penetration_vector) > 0.0f) {
+                                auto norm = normalize(penetration_vector);
+                                auto tan = tangent(norm);
+                                velocity_a = dot(velocity_a, tan) * tan;
+                            }
+
+                            transform_component_a->m_position = new_position_a + velocity_a;
+
+                            //@@OPTIMIZE @@TODO: Clean this up and optimize it
+                            /*
+                            We need to recheck since in case we are exactly by the
+                            box we can't project the velocity onto the penetration vector
+                            and we have to allow movement. Other way would be to get a 
+                            normal vector from the AABB to project on.
+                            */
+                            if (magnitude_squared(penetration_vector) == 0.0f) {
+                                auto box_a = AABB(transform_component_a->m_position + collision_component_a->m_offset,
+                                    collision_component_a->m_extent);
+
+                                auto box_b = AABB(transform_component_b->m_position + collision_component_b->m_offset,
+                                    collision_component_b->m_extent);
+
+                                auto minkowski_difference = box_b - box_a;
+
+                                auto collided = minkowski_difference.has_origin();
+
+                                if (collided) {
+
+                                    LOG("They Were already colliding");
+
+                                    auto penetration_vector = minkowski_difference.closest_point_on_bounds_to_point(sf::Vector2f(0.0f, 0.0f));
+
+                                    auto new_position_a = transform_component_a->m_position + penetration_vector;
+
+                                    auto velocity_a = transform_component_a->m_position - transform_component_a->m_position;
+
+                                    if (magnitude_squared(penetration_vector) > 0.0f) {
+                                        auto norm = normalize(penetration_vector);
+                                        auto tan = tangent(norm);
+                                        velocity_a = dot(velocity_a, tan) * tan;
+                                    }
+
+                                    transform_component_a->m_position = new_position_a + velocity_a;
+
+                                }
+                            }
+                            //asdasdasd
+
+
+                        }
+                        else {
+
+                            auto velocity_a = transform_component_a->m_position - transform_component_a->m_previous_position;
+                            auto velocity_b = transform_component_b->m_position - transform_component_b->m_previous_position;
+
+                            auto relative_motion = velocity_a - velocity_b;
+
+                            auto h = minkowski_difference.ray_intersection_fraction(sf::Vector2f(0.0f, 0.0f), relative_motion);
+
+
+                            if (h < std::numeric_limits<float>::infinity()) {
+
+                                LOG("They Will collide in this frame");
+
+                                /*
+                                Maybe we should get the minimum h and then calculate when we finish the inner loop for the entity.
+                                */
+                                auto new_position_a = transform_component_a->m_previous_position + velocity_a * h;
+                                auto new_position_b = transform_component_b->m_previous_position + velocity_b * h;
+
+                                auto norm = normalize(relative_motion);
+                                auto tan = tangent(norm);
+                                velocity_a = dot(velocity_a, tan) * tan;
+                                velocity_b = dot(velocity_b, tan) * tan;
+
+                                transform_component_a->m_position = new_position_a + velocity_a;
+                                transform_component_b->m_position = new_position_b + velocity_b;
+                            }
+                            else {
+                                //Nothing, no collisions here
+                                //LOG("Everything is fine");
+                            }
+
+                        }
+
 
 
                         /*
@@ -213,38 +312,39 @@ void CollisionSystem::update() {
                     }
                     else {
 
+                        /*
+                        Simple Discrete Minkowski Difference check.
+                        In the Minkowski difference of two shapes, we know for sure if those two shapes are colliding
+                        if and only if the origin (0,0) is inside that difference.
 
-                        auto center_a = transform_component_a->get_position_ref() + collision_component_a->m_offset;
-                        auto center_b = transform_component_b->get_position_ref() + collision_component_b->m_offset;
+                        Why? Because the Minkowski difference mathematically represents substracting every single point
+                        from one shape from all the other shapes of the other point (infinite points indeed). Then, we
+                        know that if two objects are colliding they for sure are sharing at least one point. If we do
+                        the difference, since they share one point if the are colliding, that point will substract from
+                        itself leaving the point (0,0) in the resulting shape, that is, the origin.
 
-                        auto half_size_a = collision_component_a->m_extent;
-                        auto half_size_b = collision_component_b->m_extent;
+                        So, basically, if the origin is in the difference, then there was an equal point in both shapes.
+                        Or even simpler, they are colliding.
+                        */
 
-                        auto velocity_a = transform_component_a->m_position - transform_component_a->m_previous_position;
-                        auto velocity_b = transform_component_b->m_position - transform_component_b->m_previous_position;
+                        auto box_a = AABB(transform_component_a->m_position + collision_component_a->m_offset,
+                            collision_component_a->m_extent);
 
+                        auto box_b = AABB(transform_component_b->m_position + collision_component_b->m_offset,
+                            collision_component_b->m_extent);
 
-                        // Traditional AABB SAT collision testing
-                        //@@TODO: Do swept and/or apply correction vectors to the transform
-                        if (fabs(center_a.x - center_b.x) < (half_size_a.x + half_size_b.x) &&
-                            fabs(center_a.y - center_b.y) < (half_size_a.y + half_size_b.y)) {
-                            LOG("They collide");
+                        auto mink_diff = box_a - box_b;
+
+                        auto collided = mink_diff.has_origin();
+                        if (collided) {
+                            auto correction_vector = mink_diff.closest_point_on_bounds_to_point(sf::Vector2f(0.0f, 0.0f));
+                            transform_component_a->m_position -= correction_vector;
                         }
-
-
                     }
                 }
-                
-                //transform_component_a->m_position = new_position;
-
             }
-
-
-
         }
     }
-
-
 }
 
 

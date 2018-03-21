@@ -31,7 +31,7 @@ std::vector<Chunk> ChunkManager::get_relevant_chunks() const {
     return vec;
 }
 
-std::unordered_set<Chunk, ChunkHash> ChunkManager::get_chunks_of(EntityId id) const {
+std::unordered_set<Chunk, PairIntIntHash> ChunkManager::get_chunks_of(EntityId id) const {
     return m_entity_map.at(id);
 }
 

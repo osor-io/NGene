@@ -17,11 +17,11 @@
 
 class ChunkManager : public Manager<ChunkManager> {
     friend class CRSP<ChunkManager>;
-    using ChunkMap = std::unordered_map<Chunk, EntityIdSet, ChunkHash>;
+    using ChunkMap = std::unordered_map<Chunk, EntityIdSet, PairIntIntHash>;
     using EntityMap = std::unordered_map<EntityId, ChunkSet>;
     using PositionCache = std::unordered_map<EntityId, std::pair<sf::Vector2f, sf::Vector2f>>;
     using ChunkLengthType = float;
-    using GroupedEntities = std::unordered_map<Chunk, std::set<Entity*>, ChunkHash>;
+    using GroupedEntities = std::unordered_map<Chunk, std::set<Entity*>, PairIntIntHash>;
 private:
     ChunkManager();
     ~ChunkManager();
