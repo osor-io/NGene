@@ -2,6 +2,7 @@
 #include "../System.h"
 #include <map>
 #include <memory>
+#include "../types/def.h"
 
 class CollisionSystem : public System<CollisionSystem> {
     using EntitiesGroup = std::map<EntityId, Entity*>;
@@ -19,5 +20,6 @@ public:
 
 private:
     EntitiesGroup m_entities;
+    std::unordered_set<std::pair<EntityId, EntityId>, PairIntIntHash> m_already_checked{};
 };
 

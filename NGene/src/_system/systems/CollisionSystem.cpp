@@ -150,8 +150,7 @@ void CollisionSystem::update() {
 
     const auto& grouped_entities = ChunkManager::get().get_grouped_entities_with_components<TransformComponent, CollisionComponent>();
 
-    auto already_checked = std::unordered_set<std::pair<EntityId, EntityId>, PairIntIntHash>{};
-
+    m_already_checked.clear();
 
     for (const auto & v : grouped_entities) {
         if (v.second.size() > 1) {
@@ -167,16 +166,21 @@ void CollisionSystem::update() {
 
                     auto entity_b = (*b);
 
+                    /*
+                    We save the entities checked per frame to avoid repeated checks
+                    with entities that are in the same groups of chunks.
+                    */
                     auto id_pair = std::make_pair(entity_a->get_id(), entity_b->get_id());
-                    if (already_checked.find(id_pair) != already_checked.end()) {
+                    if (m_already_checked.find(id_pair) != m_already_checked.end()) {
                         continue;
                     }
-                    already_checked.insert(id_pair);
+                    m_already_checked.insert(id_pair);
 
                     auto transform_component_b = entity_b->get_component<TransformComponent>();
-
                     auto collision_component_b = entity_b->get_component<CollisionComponent>();
 
+                    auto velocity_a = transform_component_a->m_position - transform_component_a->m_previous_position;
+                    auto velocity_b = transform_component_b->m_position - transform_component_b->m_previous_position;
 
                     if (!collision_component_a->m_dynamic && !collision_component_b->m_dynamic) {
                         continue;
@@ -208,68 +212,60 @@ void CollisionSystem::update() {
 
                         if (collided) {
 
-                            LOG("They Were already colliding");
+                            /*
+                            We were already colliding.
+                            Actually, we should only be exactly by the collider, touching it
+                            since the "else" branch makes it impossible to get into one of the colliders.
+                            */
 
-                            auto penetration_vector = minkowski_difference.closest_point_on_bounds_to_point(sf::Vector2f(0.0f, 0.0f));
+                            /*
+                            We get how much we are penetrating inside the collider.
+                            */
+                            auto penetration_vector = sf::Vector2f{};
 
+                            /*
+                            And the normal vector that points towards the direction we cannot move.
+                            */
+                            auto normal_vector = sf::Vector2f{};
+
+                            std::tie(penetration_vector, normal_vector) = minkowski_difference.closest_point_on_bounds_to_point(sf::Vector2f(0.0f, 0.0f));
+
+                            /*
+                            Our new position will start from a valid one, taking the previous position and
+                            adding the penetration vector so we are not colliding anymore in case we were
+                            inside the collider.
+                            */
                             auto new_position_a = transform_component_a->m_previous_position + penetration_vector;
 
-                            auto velocity_a = transform_component_a->m_position - transform_component_a->m_previous_position;
-
+                            /*
+                            Now in case that we have entered the collider (which shouldn't happen)
+                            we only allow velocities that don't move us towards the penetration vector
+                            to keep us from moving into it again just after solving it.
+                            */
                             if (magnitude_squared(penetration_vector) > 0.0f) {
                                 auto norm = normalize(penetration_vector);
-                                auto tan = tangent(norm);
-                                velocity_a = dot(velocity_a, tan) * tan;
+                                if (dot(velocity_a, norm) > 0) {
+                                    auto tan = tangent(norm);
+                                    velocity_a = dot(velocity_a, tan) * tan;
+                                }
+                            }
+                            /*
+                            In the same way, but this actually happens very frequently, if we
+                            are right by the collider and the penetration vector is (0,0) then
+                            we simply avoid moving in the same direction that the normal of the 
+                            side we are colliding into pointing inwards.
+                            */
+                            else {
+                                if (dot(velocity_a, normal_vector) > 0) {
+                                    auto tan = tangent(normal_vector);
+                                    velocity_a = dot(velocity_a, tan) * tan;
+                                }
                             }
 
                             transform_component_a->m_position = new_position_a + velocity_a;
-
-                            //@@OPTIMIZE @@TODO: Clean this up and optimize it
-                            /*
-                            We need to recheck since in case we are exactly by the
-                            box we can't project the velocity onto the penetration vector
-                            and we have to allow movement. Other way would be to get a 
-                            normal vector from the AABB to project on.
-                            */
-                            if (magnitude_squared(penetration_vector) == 0.0f) {
-                                auto box_a = AABB(transform_component_a->m_position + collision_component_a->m_offset,
-                                    collision_component_a->m_extent);
-
-                                auto box_b = AABB(transform_component_b->m_position + collision_component_b->m_offset,
-                                    collision_component_b->m_extent);
-
-                                auto minkowski_difference = box_b - box_a;
-
-                                auto collided = minkowski_difference.has_origin();
-
-                                if (collided) {
-
-                                    LOG("They Were already colliding");
-
-                                    auto penetration_vector = minkowski_difference.closest_point_on_bounds_to_point(sf::Vector2f(0.0f, 0.0f));
-
-                                    auto new_position_a = transform_component_a->m_position + penetration_vector;
-
-                                    auto velocity_a = transform_component_a->m_position - transform_component_a->m_position;
-
-                                    if (magnitude_squared(penetration_vector) > 0.0f) {
-                                        auto norm = normalize(penetration_vector);
-                                        auto tan = tangent(norm);
-                                        velocity_a = dot(velocity_a, tan) * tan;
-                                    }
-
-                                    transform_component_a->m_position = new_position_a + velocity_a;
-
-                                }
-                            }
-                            //asdasdasd
-
-
                         }
                         else {
 
-                            auto velocity_a = transform_component_a->m_position - transform_component_a->m_previous_position;
-                            auto velocity_b = transform_component_b->m_position - transform_component_b->m_previous_position;
 
                             auto relative_motion = velocity_a - velocity_b;
 
@@ -278,7 +274,9 @@ void CollisionSystem::update() {
 
                             if (h < std::numeric_limits<float>::infinity()) {
 
-                                LOG("They Will collide in this frame");
+                                /*
+                                We know they will collide in this frame.
+                                */
 
                                 /*
                                 Maybe we should get the minimum h and then calculate when we finish the inner loop for the entity.
@@ -295,20 +293,13 @@ void CollisionSystem::update() {
                                 transform_component_b->m_position = new_position_b + velocity_b;
                             }
                             else {
-                                //Nothing, no collisions here
-                                //LOG("Everything is fine");
+                                /*
+                                There is no collision between the two entities!
+                                */
                             }
 
                         }
 
-
-
-                        /*
-                        auto remaining_time = 1.0f - collision_time;
-                        auto dot_product = (transform_to_move->m_position.x * normal_x + transform_to_move->m_position.y * normal_y) * remaining_time;
-                        transform_to_move->m_position.x = dot_product * normal_y;
-                        transform_to_move->m_position.y = dot_product * normal_x;
-                        */
                     }
                     else {
 
@@ -337,7 +328,7 @@ void CollisionSystem::update() {
 
                         auto collided = mink_diff.has_origin();
                         if (collided) {
-                            auto correction_vector = mink_diff.closest_point_on_bounds_to_point(sf::Vector2f(0.0f, 0.0f));
+                            auto correction_vector = std::get<0>(mink_diff.closest_point_on_bounds_to_point(sf::Vector2f(0.0f, 0.0f)));
                             transform_component_a->m_position -= correction_vector;
                         }
                     }

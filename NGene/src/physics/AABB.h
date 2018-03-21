@@ -30,7 +30,7 @@ struct AABB {
 
     const bool has_origin() const;
 
-    const Vector closest_point_on_bounds_to_point(const Vector& point) const;
+    const std::tuple<AABB::Vector, AABB::Vector> closest_point_on_bounds_to_point(const Vector& point) const;
 
     const float ray_intersection_fraction(const Vector& origin, const Vector& direction) const;
 

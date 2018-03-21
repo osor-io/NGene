@@ -58,28 +58,32 @@ const bool AABB::has_origin() const {
         );
 }
 
-const AABB::Vector AABB::closest_point_on_bounds_to_point(const Vector & point) const {
+const std::tuple<AABB::Vector, AABB::Vector> AABB::closest_point_on_bounds_to_point(const Vector & point) const {
 
     const auto l_max = max();
     const auto l_min = min();
 
     auto min_dist = fabs(point.x - l_min.x);
+    auto normal = Vector(1.0f, 0.0f);
     auto bounds_point = Vector(l_min.x, point.y);
 
     if (fabs(l_max.x - point.x) < min_dist) {
         min_dist = fabs(l_max.x - point.x);
+        normal = Vector(-1.0f, 0.0f);
         bounds_point = Vector(l_max.x, point.y);
     }
     if (fabs(l_max.y - point.y) < min_dist) {
         min_dist = fabs(l_max.y - point.y);
+        normal = Vector(0.0f, -1.0f);
         bounds_point = Vector(point.x, l_max.y);
     }
     if (fabs(l_min.y - point.y) < min_dist) {
         min_dist = fabs(l_min.y - point.y);
+        normal = Vector(0.0f, 1.0f);
         bounds_point = Vector(point.x, l_min.y);
     }
 
-    return bounds_point;
+    return std::make_tuple(bounds_point, normal);
 }
 
 const float AABB::ray_intersection_fraction(const Vector & origin, const Vector & direction) const {
@@ -90,7 +94,7 @@ const float AABB::ray_intersection_fraction(const Vector & origin, const Vector 
     auto local_max = max();
 
     auto f1 = ray_intersection_fraction_of_first_ray(
-        origin, 
+        origin,
         end,
         Vector(local_min.x, local_min.y),
         Vector(local_min.x, local_max.y));
@@ -113,7 +117,7 @@ const float AABB::ray_intersection_fraction(const Vector & origin, const Vector 
         Vector(local_max.x, local_min.y),
         Vector(local_min.x, local_min.y));
 
-    return std::min({f1,f2,f3,f4});
+    return std::min({ f1,f2,f3,f4 });
 
 }
 
@@ -128,12 +132,12 @@ const float AABB::ray_intersection_fraction_of_first_ray(const Vector & origin_a
     auto denominator = cross(r, s);
 
     if (numerator == 0.f && denominator == 0.f) {
-        
+
         // Lines are colinear
         return std::numeric_limits<float>::infinity();
     }
-    else if(denominator == 0.f) {
-    
+    else if (denominator == 0.f) {
+
         //Lines are parallel
         return std::numeric_limits<float>::infinity();
     }
