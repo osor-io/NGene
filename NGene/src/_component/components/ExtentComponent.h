@@ -17,6 +17,9 @@ public:
     static void expose_to_lua();  // Go To Entity.cpp and call this
     // ====== END OF REQUIREMENTS ======
 
+
+    void draw_rect();
+
     /*
     Go to ComponentManager.h and register the name and constructor
     of this component so it can be instantiated.

@@ -78,33 +78,9 @@ void COMPONENT_TYPE::draw_component_inspector() {
     ImGui::Text("Offset: "); ImGui::SameLine(100); ImGui::DragFloat2("##Offset", &(m_offset.x));
     ImGui::Text("Extra Threshold: "); ImGui::SameLine(150); ImGui::DragInt("##Threshold", (int*)&m_extra_chunk_threshold, 1.0f, 0, 5);
 
-    const auto transform = EntityManager::get().get_entity(m_parent_id)->get_component<TransformComponent>();
-
-    if (transform) {
-
-        auto centeri = RenderManager::get().get_main_render_target()->mapCoordsToPixel(transform->get_position());
-
-        auto center = sf::Vector2f(centeri);
-
-        center += m_offset;
-
-        auto draw_list = ImGui::GetWindowDrawList();
-        draw_list->PushClipRectFullScreen();
-        draw_list->AddQuad(
-            ImVec2((center.x - m_extent.x), (center.y - m_extent.y)),
-            ImVec2((center.x + m_extent.x), (center.y - m_extent.y)),
-            ImVec2((center.x + m_extent.x), (center.y + m_extent.y)),
-            ImVec2((center.x - m_extent.x), (center.y + m_extent.y)),
-            ImGui::GetColorU32((ImVec4)ImColor(0, 255, 0, 150)),
-            2.0f
-        );
-        draw_list->PopClipRect();
-
-    }
-
+    draw_rect();
 
     ImGui::End();
-
 }
 
 #define REGISTER_METHOD(method) #method , &PhraseComponent::method
@@ -132,4 +108,28 @@ void COMPONENT_TYPE::expose_to_lua()
 
         );
 
+}
+
+void ExtentComponent::draw_rect() {
+    const auto transform = EntityManager::get().get_entity(m_parent_id)->get_component<TransformComponent>();
+
+    if (transform) {
+        auto centeri = RenderManager::get().get_main_render_target()->mapCoordsToPixel(transform->get_position());
+
+        auto center = sf::Vector2f(centeri);
+
+        center += m_offset;
+
+        auto draw_list = ImGui::GetWindowDrawList();
+        draw_list->PushClipRectFullScreen();
+        draw_list->AddQuad(
+            ImVec2((center.x - m_extent.x), (center.y - m_extent.y)),
+            ImVec2((center.x + m_extent.x), (center.y - m_extent.y)),
+            ImVec2((center.x + m_extent.x), (center.y + m_extent.y)),
+            ImVec2((center.x - m_extent.x), (center.y + m_extent.y)),
+            ImGui::GetColorU32((ImVec4)ImColor(0, 255, 0, 150)),
+            2.0f
+        );
+        draw_list->PopClipRect();
+    }
 }

@@ -10,7 +10,7 @@ CTOR(COMPONENT_TYPE)(EntityId id) : ComponentTemplate(id, std::type_index(typeid
 
 CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
     : ComponentTemplate(id, std::type_index(typeid(COMPONENT_TYPE))) {
-    
+
         {
             sol::object value_x = table["extentX"];
             sol::object value_y = table["extentY"];
@@ -46,17 +46,17 @@ json COMPONENT_TYPE::to_json() {
 
     j["offset"]["x"] = m_offset.x;
     j["offset"]["y"] = m_offset.y;
-    
+
     /*
     I don't want to change wether it is dynamic
     or not at runtime or in the editor, it is something
     inherent to the entity or the collider so it
     should be changed only when defining the type.
-    
+
     //j["dynamic"] = m_dynamic;
 
     */
-    
+
 
     return j;
 }
@@ -96,29 +96,7 @@ void COMPONENT_TYPE::draw_component_inspector() {
     //ImGui::Checkbox("Dynamic", &m_dynamic);
     ImGui::Text("%s", (m_dynamic ? "Dynamic" : "Static"));
 
-    const auto transform = EntityManager::get().get_entity(m_parent_id)->get_component<TransformComponent>();
-
-    if (transform) {
-
-        auto centeri = RenderManager::get().get_main_render_target()->mapCoordsToPixel(transform->get_position());
-
-        auto center = sf::Vector2f(centeri);
-
-        center += m_offset;
-
-        auto draw_list = ImGui::GetWindowDrawList();
-        draw_list->PushClipRectFullScreen();
-        draw_list->AddQuad(
-            ImVec2((center.x - m_extent.x), (center.y - m_extent.y)),
-            ImVec2((center.x + m_extent.x), (center.y - m_extent.y)),
-            ImVec2((center.x + m_extent.x), (center.y + m_extent.y)),
-            ImVec2((center.x - m_extent.x), (center.y + m_extent.y)),
-            ImGui::GetColorU32((ImVec4)ImColor(255, 255, 0, 150)),
-            2.0f
-        );
-        draw_list->PopClipRect();
-
-    }
+    draw_rect();
 
 
     ImGui::End();
@@ -148,4 +126,30 @@ void COMPONENT_TYPE::expose_to_lua()
 
         );
 
+}
+
+void CollisionComponent::draw_rect() {
+    const auto transform = EntityManager::get().get_entity(m_parent_id)->get_component<TransformComponent>();
+
+    if (transform) {
+
+        auto centeri = RenderManager::get().get_main_render_target()->mapCoordsToPixel(transform->get_position());
+
+        auto center = sf::Vector2f(centeri);
+
+        center += m_offset;
+
+        auto draw_list = ImGui::GetWindowDrawList();
+        draw_list->PushClipRectFullScreen();
+        draw_list->AddQuad(
+            ImVec2((center.x - m_extent.x), (center.y - m_extent.y)),
+            ImVec2((center.x + m_extent.x), (center.y - m_extent.y)),
+            ImVec2((center.x + m_extent.x), (center.y + m_extent.y)),
+            ImVec2((center.x - m_extent.x), (center.y + m_extent.y)),
+            ImGui::GetColorU32((ImVec4)ImColor(255, 255, 0, 150)),
+            2.0f
+        );
+        draw_list->PopClipRect();
+
+    }
 }

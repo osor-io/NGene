@@ -6,6 +6,8 @@
 #include "./cafe.inl"
 #include "../utils/File.h"
 #include "../physics/ChunkManager.h"
+#include "../render/RenderManager.h"
+#include "../_component/ComponentManager.h"
 
 DeveloperModeManager::DeveloperModeManager() {}
 
@@ -16,7 +18,7 @@ void DeveloperModeManager::start_up() {
     ImGuiStyle * style = &ImGui::GetStyle();
 
     auto palette = config::get_rusty_palette();
-    
+
 
     style->WindowPadding = ImVec2(15, 15);
     style->WindowRounding = 5.0f;
@@ -101,9 +103,11 @@ void DeveloperModeManager::draw_corner_overlay_debug_info() {
     {
         auto mouse_pos = ImGui::GetIO().MousePos;
 
+        auto real_mouse_pos = RenderManager::get().get_main_render_target()->mapPixelToCoords(sf::Vector2i(mouse_pos.x, mouse_pos.y));
+
         auto chunk = ChunkManager::get().get_chunk_from_position(mouse_pos.x, mouse_pos.y);
 
-        ImGui::Text("Mouse Position: (%6.1f,%6.1f)", mouse_pos.x, mouse_pos.y);
+        ImGui::Text("Mouse Position: (%6.1f,%6.1f)", real_mouse_pos.x, real_mouse_pos.y);
         ImGui::Text("Chunk: (%3d,%3d)", chunk.first, chunk.second);
         ImGui::Text("Frames Per Second: (%.1f)", (1.f / TimeManager::get().get_delta_time().asSeconds()));
         ImGui::Text("Frame Time: (%d) ms", (TimeManager::get().get_delta_time().asMilliseconds()));
@@ -145,6 +149,10 @@ void DeveloperModeManager::set_debug_open(bool open) {
 
 bool DeveloperModeManager::is_debug_open() const {
     return m_debug_open;
+}
+
+bool DeveloperModeManager::show_collisions() const {
+    return m_show_collisions;
 }
 
 void DeveloperModeManager::draw_gui() {
@@ -203,6 +211,10 @@ void DeveloperModeManager::draw_gui() {
                 ImGui::EndPopup();
             }
 
+            if (ImGui::Button("Reload State")) {
+                EntityManager::get().clear_and_load_entities(EntityManager::get().serialize_entities());
+            }
+
             ImGui::EndMenu();
         }
 
@@ -210,6 +222,7 @@ void DeveloperModeManager::draw_gui() {
             ImGui::Checkbox("Entities & Components", &m_show_entities_components);
             ImGui::Checkbox("Debug Overlay", &m_show_debug_overlay);
             ImGui::Checkbox("Show Chunks", &m_show_chunks);
+            ImGui::Checkbox("Show Collisions", &m_show_collisions);
             ImGui::Checkbox("Chunk Configuration", &m_show_chunk_configuration);
             ImGui::Checkbox("ImGui Demo", &m_show_imgui_demo);
             ImGui::EndMenu();
@@ -218,18 +231,30 @@ void DeveloperModeManager::draw_gui() {
         /*Put here overlay things*/
         if (m_show_chunks) ChunkManager::get().draw_debug_chunks();
         if (m_show_chunk_configuration) ChunkManager::get().draw_debug_chunk_configuration();
+        if (m_show_collisions) {
 
+            if (ComponentManager::get().has_components<ExtentComponent>()) {
 
+                for (auto & extent : ComponentManager::get().get_components<ExtentComponent>()) {
+                    reinterpret_cast<ExtentComponent*>(extent)->draw_rect();
+                }
+            }
+
+            if (ComponentManager::get().has_components<CollisionComponent>()) {
+                for (auto & collision : ComponentManager::get().get_components<CollisionComponent>()) {
+                    reinterpret_cast<CollisionComponent*>(collision)->draw_rect();
+                }
+            }
+        }
+        
         ImGui::EndMainMenuBar();
 
 
         if (m_show_entities_components) draw_entity_component_editor();
         if (m_show_imgui_demo) ImGui::ShowDemoWindow();
         if (m_show_debug_overlay) draw_corner_overlay_debug_info();
-
+        
 
         ImGui::PopFont();
-
     }
-
 }

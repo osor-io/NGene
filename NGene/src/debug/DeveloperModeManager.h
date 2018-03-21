@@ -27,6 +27,8 @@ public:
     void set_debug_open(bool);
     bool is_debug_open() const;
 
+    bool show_collisions() const;
+
 private:
     ImFont * m_font;
     bool m_debug_open{ true };
@@ -36,6 +38,7 @@ private:
     bool m_show_imgui_demo{ false };
     bool m_show_debug_overlay{ true };
     bool m_show_chunks{ false };
+    bool m_show_collisions{ false };
     bool m_show_chunk_configuration{ false };
 
 };

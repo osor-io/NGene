@@ -122,8 +122,8 @@ Entities = {
             y = 10
         },
         ExtentComponent = {
-            extentX = 40, 
-            extentY = 43, 
+            extentX = 800, 
+            extentY = 800, 
             offsetX = 0, 
             offsetY = 0
         },

@@ -21,6 +21,7 @@
 #include "./components/PhraseComponent.h"
 
 class ComponentManager : public Manager<ComponentManager> {
+public:
     using ComponentVector = std::vector<Component*>;
     using InstanceMap = std::unordered_map<std::type_index, ComponentVector>;
     using TypeMap = std::unordered_map<std::string, std::type_index>;
@@ -35,6 +36,12 @@ public:
 
     void start_up() override;
     void shut_down() override;
+
+    template<typename T>
+    bool has_components() const;
+
+    template<typename T>
+    const ComponentVector& get_components();
 
     void add_component_instance(const std::type_index& type, Component* component);
     void remove_component_instance(const std::type_index& type, Component* component);
@@ -148,3 +155,13 @@ private:
     };
 
 };
+
+template<typename T>
+inline bool ComponentManager::has_components() const {
+    return m_instance_map.find(std::type_index(typeid(T))) != m_instance_map.end();
+}
+
+template<typename T>
+inline const ComponentManager::ComponentVector & ComponentManager::get_components() {
+    return m_instance_map.at(std::type_index(typeid(T)));
+}

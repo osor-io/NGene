@@ -4,7 +4,7 @@
 #include "../physics/AABB.h"
 #include "../math/Vector.h"
 
-#define RECHECK_LIMIT 10
+#define RECHECK_LIMIT 100
 
 CollisionSystem::CollisionSystem() {}
 
@@ -38,7 +38,7 @@ void CollisionSystem::update() {
 
             auto remaining_to_recheck = check_entity_set(v.second);
             
-            for (auto i = 0; (remaining_to_recheck.size() > 0 || i < RECHECK_LIMIT); ++i) {
+            for (auto i = 0; (remaining_to_recheck.size() > 0 && i < RECHECK_LIMIT); ++i) {
                 for (auto e : remaining_to_recheck) {
                     auto transform = e->get_component<TransformComponent>();
                     transform->m_previous_position = transform->m_position;

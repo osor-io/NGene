@@ -61,17 +61,19 @@ json TransformComponent::to_json() {
     j["position"]["x"] = m_position.x;
     j["position"]["y"] = m_position.y;
 
+    j["previous_position"]["x"] = m_previous_position.x;
+    j["previous_position"]["y"] = m_previous_position.y;
+
     return j;
 }
 
 void TransformComponent::load_json(const json& j) {
 
-    auto v = sf::Vector2f{};
+    m_position.x = j["position"]["x"];
+    m_position.y = j["position"]["y"];
 
-    v.x = j["position"]["x"];
-    v.y = j["position"]["y"];
-
-    set_position(v);
+    m_previous_position.x = j["previous_position"]["x"];
+    m_previous_position.y = j["previous_position"]["y"];
 }
 
 sf::Vector2f TransformComponent::get_position() const {
