@@ -3,6 +3,7 @@
 #include <map>
 #include <memory>
 #include "../types/def.h"
+#include <set>
 
 class CollisionSystem : public System<CollisionSystem> {
     using EntitiesGroup = std::map<EntityId, Entity*>;
@@ -17,6 +18,8 @@ public:
     void shut_down() override;
     void register_entity(Entity& entity) override;
     void deregister_entity(EntityId id) override;
+
+    std::set<Entity*> check_entity_set(std::set<Entity*> set);
 
 private:
     EntitiesGroup m_entities;

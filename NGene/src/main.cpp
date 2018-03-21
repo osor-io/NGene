@@ -87,13 +87,13 @@ void load_default_state() {
     */
 
     //If we want to check performance with more than one entity
-    //for (int i = 0; i < 100; ++i) {
+    for (int i = 0; i < 3; ++i) {
     const auto id = EntityManager::get().request_load_entity("DynamicObject");
     EntityManager::get().update_entities();
     auto entity = EntityManager::get().get_entity(id);
     entity->set_name("All Mighty Entity");
     entity->get_component<TransformComponent>()->set_position(sf::Vector2f(300.f, 300.f));
-    //}
+    }
     
     const auto static_id_1 = EntityManager::get().request_load_entity("StaticObject");
     const auto static_id_2 = EntityManager::get().request_load_entity("StaticObject");
