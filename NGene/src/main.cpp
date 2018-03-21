@@ -95,7 +95,8 @@ void load_default_state() {
     entity->get_component<TransformComponent>()->set_position(sf::Vector2f(300.f, 300.f));
     //}
     
-    const auto static_id = EntityManager::get().request_load_entity("StaticObject");
+    const auto static_id_1 = EntityManager::get().request_load_entity("StaticObject");
+    const auto static_id_2 = EntityManager::get().request_load_entity("StaticObject");
     const auto map_id = EntityManager::get().request_load_entity("DefaultMap");
     const auto camera_id = EntityManager::get().request_load_entity("DefaultCamera");
 

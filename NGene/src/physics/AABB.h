@@ -2,12 +2,19 @@
 
 struct AABB {
 
+    using Vector = sf::Vector2f;
+
     enum class Axis {
         x,
         y
     };
 
-    using Vector = sf::Vector2f;
+
+#define NORMAL_LEFT     sf::Vector2f{1.0f,0.0f};
+#define NORMAL_RIGHT    sf::Vector2f{-1.0f,0.0f};
+#define NORMAL_UP       sf::Vector2f{0.0f,-1.0f};
+#define NORMAL_DOWN     sf::Vector2f{0.0f,1.0f};
+
 
     Vector position;
     Vector extents;
@@ -30,9 +37,9 @@ struct AABB {
 
     const bool has_origin() const;
 
-    const std::tuple<AABB::Vector, AABB::Vector> closest_point_on_bounds_to_point(const Vector& point) const;
+    const std::tuple<Vector, Vector> closest_point_on_bounds_to_point(const Vector& point) const;
 
-    const float ray_intersection_fraction(const Vector& origin, const Vector& direction) const;
+    const std::tuple<float, Vector> ray_intersection_fraction(const Vector& origin, const Vector& direction) const;
 
     const float ray_intersection_fraction_of_first_ray(
         const Vector& origin_a,

@@ -36,15 +36,27 @@ Entities = {
                     --]]
 
                     if (isKeyPressed(Key.A)) then
-                        transform.position.x = transform.position.x - (70.0 * deltaTime) 
+                        transform.position.x = transform.position.x - (200.0 * deltaTime) 
                     elseif (isKeyPressed(Key.D)) then
-                        transform.position.x = transform.position.x + (70.0 * deltaTime)
+                        transform.position.x = transform.position.x + (200.0 * deltaTime)
                     end
 
                     if (isKeyPressed(Key.W)) then
-                        transform.position.y = transform.position.y - (70.0 * deltaTime)
+                        transform.position.y = transform.position.y - (200.0 * deltaTime)
                     elseif (isKeyPressed(Key.S)) then
-                        transform.position.y = transform.position.y + (70.0 * deltaTime)
+                        transform.position.y = transform.position.y + (200.0 * deltaTime)
+                    end
+
+                     if (isKeyPressed(Key.J)) then
+                        transform.position.x = transform.position.x - (20000.0 * deltaTime) 
+                    elseif (isKeyPressed(Key.L)) then
+                        transform.position.x = transform.position.x + (20000.0 * deltaTime)
+                    end
+
+                    if (isKeyPressed(Key.I)) then
+                        transform.position.y = transform.position.y - (20000.0 * deltaTime)
+                    elseif (isKeyPressed(Key.K)) then
+                        transform.position.y = transform.position.y + (20000.0 * deltaTime)
                     end
 
                 else 
@@ -64,25 +76,25 @@ Entities = {
         }, 
         InputComponent = {
             onKeyUp = function (this, button)
-                print("Down: ", button)
+                --print("Down: ", button)
                 if(button == Key.A) then
-                    print("Key was an A")
+                    --print("Key was an A")
                 else
-                    print("Key was NOT an A")
+                    --print("Key was NOT an A")
                 end
             end, 
             onKeyDown = function (this, button)
-                print("Up: ", button)
+                --print("Up: ", button)
             end, 
             onButtonUp = function (this, button)
-                print("Button Up: ", button)
+                --print("Button Up: ", button)
             end, 
             onButtonDown = function (this, button)
                 transform = this:getTransformComponent() 
                 if(transform) then
-                    print("Accessing our transform: ", transform.position.y) 
+                    --print("Accessing our transform: ", transform.position.y) 
                 end
-                print("Button Down: ", button)
+                --print("Button Down: ", button)
             end, 
             forLeftJoystick = function (this, x, y)
                 local deltaTime = getDeltaTime()

@@ -64,40 +64,47 @@ const std::tuple<AABB::Vector, AABB::Vector> AABB::closest_point_on_bounds_to_po
     const auto l_min = min();
 
     auto min_dist = fabs(point.x - l_min.x);
-    auto normal = Vector(1.0f, 0.0f);
+    auto normal = NORMAL_LEFT;
     auto bounds_point = Vector(l_min.x, point.y);
 
     if (fabs(l_max.x - point.x) < min_dist) {
         min_dist = fabs(l_max.x - point.x);
-        normal = Vector(-1.0f, 0.0f);
+        normal = NORMAL_RIGHT;
         bounds_point = Vector(l_max.x, point.y);
     }
     if (fabs(l_max.y - point.y) < min_dist) {
         min_dist = fabs(l_max.y - point.y);
-        normal = Vector(0.0f, -1.0f);
+        normal = NORMAL_UP;
         bounds_point = Vector(point.x, l_max.y);
     }
     if (fabs(l_min.y - point.y) < min_dist) {
         min_dist = fabs(l_min.y - point.y);
-        normal = Vector(0.0f, 1.0f);
+        normal = NORMAL_DOWN;
         bounds_point = Vector(point.x, l_min.y);
     }
 
     return std::make_tuple(bounds_point, normal);
 }
 
-const float AABB::ray_intersection_fraction(const Vector & origin, const Vector & direction) const {
+const std::tuple<float, AABB::Vector>  AABB::ray_intersection_fraction(const Vector & origin, const Vector & direction) const {
 
     const auto end = origin + direction;
 
+    auto normal = Vector{};
+    
     auto local_min = min();
     auto local_max = max();
 
+    auto current_min = float{};
+    
     auto f1 = ray_intersection_fraction_of_first_ray(
         origin,
         end,
         Vector(local_min.x, local_min.y),
         Vector(local_min.x, local_max.y));
+
+    current_min = f1;
+    normal = NORMAL_LEFT;
 
     auto f2 = ray_intersection_fraction_of_first_ray(
         origin,
@@ -105,11 +112,21 @@ const float AABB::ray_intersection_fraction(const Vector & origin, const Vector 
         Vector(local_min.x, local_max.y),
         Vector(local_max.x, local_max.y));
 
+    if (f2 < current_min) {
+        current_min = f2;
+        normal = NORMAL_DOWN;
+    }
+    
     auto f3 = ray_intersection_fraction_of_first_ray(
         origin,
         end,
         Vector(local_max.x, local_max.y),
         Vector(local_max.x, local_min.y));
+
+    if (f3 < current_min) {
+        current_min = f3;
+        normal = NORMAL_RIGHT;
+    }
 
     auto f4 = ray_intersection_fraction_of_first_ray(
         origin,
@@ -117,7 +134,13 @@ const float AABB::ray_intersection_fraction(const Vector & origin, const Vector 
         Vector(local_max.x, local_min.y),
         Vector(local_min.x, local_min.y));
 
-    return std::min({ f1,f2,f3,f4 });
+    if (f4 < current_min) {
+        current_min = f4;
+        normal = NORMAL_UP;
+    }
+    
+
+    return std::make_tuple(current_min,normal);
 
 }
 

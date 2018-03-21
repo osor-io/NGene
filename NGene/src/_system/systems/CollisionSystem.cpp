@@ -23,129 +23,6 @@ void CollisionSystem::shut_down() {
 
 }
 
-/*
-inline float calculate_swept_collision_time(
-    TransformComponent*& transform_component_a,
-    TransformComponent*& transform_component_b,
-    CollisionComponent*& collision_component_a,
-    CollisionComponent*& collision_component_b,
-    sf::Vector2f velocity_a,
-    float& normal_x, float& normal_y) {
-
-    sf::Vector2f    center_a, center_b,
-        half_size_a, half_size_b,
-        velocity_b;
-
-    if (collision_component_a->m_dynamic) {
-        center_a = transform_component_a->get_position_ref() + collision_component_a->m_offset;
-        center_b = transform_component_b->get_position_ref() + collision_component_b->m_offset;
-
-        half_size_a = collision_component_a->m_extent;
-        half_size_b = collision_component_b->m_extent;
-
-        velocity_a = transform_component_a->m_position - transform_component_a->m_previous_position;
-        velocity_b = transform_component_b->m_position - transform_component_b->m_previous_position;
-    }
-    else {
-        center_b = transform_component_a->get_position_ref() + collision_component_a->m_offset;
-        center_a = transform_component_b->get_position_ref() + collision_component_b->m_offset;
-
-        half_size_b = collision_component_a->m_extent;
-        half_size_a = collision_component_b->m_extent;
-
-        velocity_b = transform_component_a->m_position - transform_component_a->m_previous_position;
-        velocity_a = transform_component_b->m_position - transform_component_b->m_previous_position;
-    }
-
-    //@@DOING: Check why this fails and why the time is negative
-    if (fabs(center_a.x - center_b.x) < (half_size_a.x + half_size_b.x) &&
-        fabs(center_a.y - center_b.y) < (half_size_a.y + half_size_b.y)) {
-        LOG("They collide");
-    }
-
-    float distance_near_side_x, distance_near_side_y;
-    float distance_far_side_x, distance_far_side_y;
-
-    if (velocity_a.x > 0.f) {
-        distance_near_side_x = (center_b.x - half_size_b.x) - (center_a.x + half_size_a.x);
-        distance_far_side_x = (center_b.x + half_size_b.x) - (center_a.x - half_size_a.x);
-    }
-    else {
-        distance_near_side_x = (center_b.x + half_size_b.x) - (center_a.x - half_size_a.x);
-        distance_far_side_x = (center_b.x - half_size_b.x) - (center_a.x + half_size_a.x);
-    }
-
-    if (velocity_a.y > 0.f) {
-        distance_near_side_y = (center_b.y - half_size_b.y) - (center_a.y + half_size_a.y);
-        distance_far_side_y = (center_b.y + half_size_b.y) - (center_a.y - half_size_a.y);
-    }
-    else {
-        distance_near_side_y = (center_b.y + half_size_b.y) - (center_a.y - half_size_a.y);
-        distance_far_side_y = (center_b.y - half_size_b.y) - (center_a.y + half_size_a.y);
-    }
-
-    float in_time_x, in_time_y;
-    float out_time_x, out_time_y;
-
-    if (velocity_a.x == 0) {
-        in_time_x = -std::numeric_limits<float>::infinity();
-        out_time_x = std::numeric_limits<float>::infinity();
-    }
-    else {
-        in_time_x = distance_near_side_x / velocity_a.x;
-        out_time_x = distance_far_side_x / velocity_a.x;
-    }
-
-    if (velocity_a.y == 0) {
-        in_time_y = -std::numeric_limits<float>::infinity();
-        out_time_y = std::numeric_limits<float>::infinity();
-    }
-    else {
-        in_time_y = distance_near_side_y / velocity_a.y;
-        out_time_y = distance_far_side_y / velocity_a.y;
-    }
-
-    auto entry_time = std::max(in_time_x, in_time_y);
-    auto exit_time = std::min(out_time_x, out_time_y);
-
-
-    if (entry_time > exit_time || in_time_x < 0.f && in_time_y < 0.f || in_time_x > 1.f || in_time_y > 1.f) {
-
-        //There was no collision
-
-        normal_x = 0.0f;
-        normal_y = 0.0f;
-        return 1.0f;
-    }
-    else {
-        if (in_time_x > in_time_y) {
-
-            if (distance_near_side_x < 0.f) {
-                normal_x = 1.0f;
-                normal_y = 0.0f;
-            }
-            else {
-                normal_x = -1.0f;
-                normal_y = 0.0f;
-            }
-
-        }
-        else {
-            if (distance_near_side_y < 0.f) {
-                normal_x = 0.0f;
-                normal_y = 1.0f;
-            }
-            else {
-                normal_x = 0.0f;
-                normal_y = -1.0f;
-            }
-
-        }
-        return entry_time;
-    }
-}
-*/
-
 void CollisionSystem::update() {
 
     const auto& grouped_entities = ChunkManager::get().get_grouped_entities_with_components<TransformComponent, CollisionComponent>();
@@ -209,7 +86,7 @@ void CollisionSystem::update() {
                         auto minkowski_difference = box_b - box_a;
 
                         auto collided = minkowski_difference.has_origin();
-
+                        
                         if (collided) {
 
                             /*
@@ -237,13 +114,14 @@ void CollisionSystem::update() {
                             */
                             auto new_position_a = transform_component_a->m_previous_position + penetration_vector;
 
+                            
                             /*
                             Now in case that we have entered the collider (which shouldn't happen)
                             we only allow velocities that don't move us towards the penetration vector
                             to keep us from moving into it again just after solving it.
                             */
                             if (magnitude_squared(penetration_vector) > 0.0f) {
-                                auto norm = normalize(penetration_vector);
+                                auto norm = -normalize(penetration_vector);
                                 if (dot(velocity_a, norm) > 0) {
                                     auto tan = tangent(norm);
                                     velocity_a = dot(velocity_a, tan) * tan;
@@ -252,7 +130,7 @@ void CollisionSystem::update() {
                             /*
                             In the same way, but this actually happens very frequently, if we
                             are right by the collider and the penetration vector is (0,0) then
-                            we simply avoid moving in the same direction that the normal of the 
+                            we simply avoid moving in the same direction that the normal of the
                             side we are colliding into pointing inwards.
                             */
                             else {
@@ -269,7 +147,10 @@ void CollisionSystem::update() {
 
                             auto relative_motion = velocity_a - velocity_b;
 
-                            auto h = minkowski_difference.ray_intersection_fraction(sf::Vector2f(0.0f, 0.0f), relative_motion);
+                            auto h = float{};
+                            auto normal = sf::Vector2f{};
+
+                            std::tie(h, normal) = minkowski_difference.ray_intersection_fraction(sf::Vector2f(0.0f, 0.0f), relative_motion);
 
 
                             if (h < std::numeric_limits<float>::infinity()) {
@@ -284,8 +165,18 @@ void CollisionSystem::update() {
                                 auto new_position_a = transform_component_a->m_previous_position + velocity_a * h;
                                 auto new_position_b = transform_component_b->m_previous_position + velocity_b * h;
 
-                                auto norm = normalize(relative_motion);
-                                auto tan = tangent(norm);
+                                /*
+                                We use the normal we retrieved instead of the normal of
+                                the relative motion here:
+
+                                auto normal = normalize(relative_motion);
+
+                                Since in this case we want to slide the entity that is moving
+                                against the static one, to do that we need to keep the
+                                component of the velocity that is not pushing us towards
+                                the obstacle.
+                                */
+                                auto tan = tangent(normal);
                                 velocity_a = dot(velocity_a, tan) * tan;
                                 velocity_b = dot(velocity_b, tan) * tan;
 
