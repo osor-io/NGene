@@ -50,108 +50,40 @@ public:
         m_factory_map.at(m_type_map.at(name))(entity, table);
     }
 
+    bool supports_component(const std::string& name) const;
+    
 private:
     InstanceMap m_instance_map{};
 
-    /*
-    @@TODO: Refactor these make_pairs into a macro
-    */
+
+#define DEFINE_TYPE(x) std::make_pair(meta::get_name<##x##>(),std::type_index(typeid(##x##))),
 
     const TypeMap m_type_map{
 
-        std::make_pair(
-            meta::get_name<CollisionComponent>(),
-            std::type_index(typeid(CollisionComponent))),
-
-        std::make_pair(
-            meta::get_name<CameraComponent>(),
-            std::type_index(typeid(CameraComponent))),
-
-        std::make_pair(
-            meta::get_name<TiledMapComponent>(),
-            std::type_index(typeid(TiledMapComponent))),
-
-        std::make_pair(
-            meta::get_name<ExtentComponent>(),
-            std::type_index(typeid(ExtentComponent))),
-
-        std::make_pair(
-            meta::get_name<InputComponent>(),
-            std::type_index(typeid(InputComponent))),
-
-        std::make_pair(
-            meta::get_name<BehaviourComponent>(),
-            std::type_index(typeid(BehaviourComponent))),
-
-        std::make_pair(
-            meta::get_name<TransformComponent>(),
-            std::type_index(typeid(TransformComponent))),
-
-        std::make_pair(
-            meta::get_name<SpriteComponent>(),
-            std::type_index(typeid(SpriteComponent))),
-
-        std::make_pair(
-            meta::get_name<PhraseComponent>(),
-            std::type_index(typeid(PhraseComponent))),
+        DEFINE_TYPE(CollisionComponent)
+        DEFINE_TYPE(CameraComponent)
+        DEFINE_TYPE(TiledMapComponent)
+        DEFINE_TYPE(ExtentComponent)
+        DEFINE_TYPE(InputComponent)
+        DEFINE_TYPE(BehaviourComponent)
+        DEFINE_TYPE(TransformComponent)
+        DEFINE_TYPE(SpriteComponent)
+        DEFINE_TYPE(PhraseComponent)
     };
+
+#define DEFINE_FACTORY(x) std::make_pair(std::type_index(typeid(##x##)), [](Entity& entity, const sol::table& table) {entity.make_component<##x##>(entity.get_id(), table);}),
 
     const FactoryMap m_factory_map{
 
-        std::make_pair(std::type_index(typeid(
-            CollisionComponent
-            )),[](Entity& entity ,const sol::table& table) {
-                entity.make_component<CollisionComponent>(entity.get_id(), table);
-            }),
-
-        std::make_pair(std::type_index(typeid(
-            CameraComponent
-            )),[](Entity& entity ,const sol::table& table) {
-                entity.make_component<CameraComponent>(entity.get_id(), table);
-            }),
-
-        std::make_pair(std::type_index(typeid(
-            TiledMapComponent
-            )),[](Entity& entity ,const sol::table& table) {
-                entity.make_component<TiledMapComponent>(entity.get_id(), table);
-            }),
-
-        std::make_pair(std::type_index(typeid(
-            ExtentComponent
-            )),[](Entity& entity ,const sol::table& table) {
-                entity.make_component<ExtentComponent>(entity.get_id(), table);
-            }),
-
-        std::make_pair(std::type_index(typeid(
-            InputComponent
-            )),[](Entity& entity ,const sol::table& table) {
-                entity.make_component<InputComponent>(entity.get_id(), table);
-            }),
-
-        std::make_pair(std::type_index(typeid(
-            BehaviourComponent
-            )),[](Entity& entity ,const sol::table& table) {
-                entity.make_component<BehaviourComponent>(entity.get_id(), table);
-            }),
-
-        std::make_pair(std::type_index(typeid(
-            TransformComponent
-            )),[](Entity& entity ,const sol::table& table) {
-                entity.make_component<TransformComponent>(entity.get_id(), table);
-            }),
-
-        std::make_pair(std::type_index(typeid(
-            SpriteComponent
-            )),[](Entity& entity ,const sol::table& table) {
-                entity.make_component<SpriteComponent>(entity.get_id(), table);
-            }),
-
-        std::make_pair(std::type_index(typeid(
-            PhraseComponent
-            )),[](Entity& entity ,const sol::table& table) {
-                entity.make_component<PhraseComponent>(entity.get_id(), table);
-            }),
-
+        DEFINE_FACTORY(CollisionComponent)
+        DEFINE_FACTORY(CameraComponent)
+        DEFINE_FACTORY(TiledMapComponent)
+        DEFINE_FACTORY(ExtentComponent)
+        DEFINE_FACTORY(InputComponent)
+        DEFINE_FACTORY(BehaviourComponent)
+        DEFINE_FACTORY(TransformComponent)
+        DEFINE_FACTORY(SpriteComponent)
+        DEFINE_FACTORY(PhraseComponent)
     };
 
 };

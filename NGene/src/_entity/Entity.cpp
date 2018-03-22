@@ -164,7 +164,7 @@ void Entity::draw_debug_gui() {
 
         ImGui::Text("Id: %d", m_id); ImGui::SameLine(100); ImGui::Text("Type: %s", m_type.c_str());
         ImGui::Text("Name: "); ImGui::SameLine(100); ImGui::InputText("##Name", name_arr, config::max_name_length, ImGuiInputTextFlags_CallbackAlways, text_edit_callback, reinterpret_cast<void*>(this));
-        //@@TODO: Give the option to enable and disable entity
+        //@@TODO @@MAYBE: Give the option to enable and disable entity
         ImGui::Text("%s", (m_enabled ? "Enabled" : "Disabled")); ImGui::SameLine(100); ImGui::Text("%s", (m_in_relevant_chunk ? "Relevant" : "Not Relevant"));
 
         for (auto& c : m_components) {

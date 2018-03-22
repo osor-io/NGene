@@ -25,7 +25,18 @@ void TileMapSystem::shut_down() {
 void TileMapSystem::update() {
 
     for (auto& e : m_entities) {
-        //@@TODO: Do stuff with tile maps if we need to
+        /*
+        @@TODO
+        
+        Do stuff with tile maps if we need to, we could check
+        for a flag in the tile map component to see if it has been initialized
+        (this flag hasn't been added yet).
+        
+        This way we can do more initialization
+        stuff that calls to some manager or something else that doesn't make sense
+        in the constructor of the component since those shouldn't have any logic in them.
+        (Besides debug ones, construction ones, etc, etc).
+        */
     }
 
 }

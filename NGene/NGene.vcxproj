@@ -264,6 +264,7 @@ echo.</Command>
     <ClInclude Include="dep\src\detail\pugixml.hpp" />
     <ClInclude Include="dep\src\miniz.h" />
     <ClInclude Include="src\lua\LuaTypes.h" />
+    <ClInclude Include="src\maps\TiledMap.h" />
     <ClInclude Include="src\math\Vector.h" />
     <ClInclude Include="src\physics\AABB.h" />
     <ClInclude Include="src\physics\ChunkManager.h" />

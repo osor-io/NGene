@@ -89,11 +89,6 @@ void InputSystem::update() {
         }
     }
 
-    /*
-    @@TODO:
-    Read the state of the axis and call the function registered
-    for both of them.
-    */
     float x = InputManager::get().get_axis_position(sf::Joystick::Axis::X);
     float y = InputManager::get().get_axis_position(sf::Joystick::Axis::Y);
 

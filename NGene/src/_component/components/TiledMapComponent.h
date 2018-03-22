@@ -2,6 +2,7 @@
 #include "../ComponentTemplate.h"
 #include <tmxlite/Map.hpp>
 #include <SFMLOrthogonalLayer.hpp>
+#include "../maps/TiledMap.h"
 
 class TiledMapComponent : public ComponentTemplate<TiledMapComponent> {
     friend auto meta::registerMembers<TiledMapComponent>();
@@ -31,7 +32,7 @@ public:
     */
     // ====== BEG OF MEMBERS ======
     std::string m_map_filename;
-    tmx::Map m_map;
+    std::unique_ptr<TiledMap> m_map;
     bool m_map_ready{false};
     int m_main_layer{0};
     // ====== END OF MEMBERS ======

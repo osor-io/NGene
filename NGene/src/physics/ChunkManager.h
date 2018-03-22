@@ -57,12 +57,6 @@ public:
 
     const std::set<Entity*>& get_colliding_entities_of_chunk(Chunk chunk);
 
-    /*
-    @@TODO @@OPTIMIZATION
-    We can make a specific version of this function for the elements with a collision component
-    so we can return an internal member that we calculate on our "update_entity_chunks" instead
-    of calculating it on request like we are doing here
-    */
 
     /**
     Returns a vector of vectors with the entities grouped by chunks, that is, in each vector
@@ -100,6 +94,11 @@ public:
         return general;
     }
 
+    /*
+    Specific version of this function for the elements with a collision component
+    that returns an internal member that we calculate on our "update_entity_chunks" instead
+    of calculating it on request like we are doing in the function above.
+    */
     template<>
     GroupedEntities get_grouped_entities_with_components<TransformComponent, CollisionComponent>() {
         return m_collision_components_cache;

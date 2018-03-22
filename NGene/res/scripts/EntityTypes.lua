@@ -156,7 +156,7 @@ Entities = {
 
     DefaultMap = {
         TiledMapComponent = {
-            filename = "res/assets/maps/demo.tmx", 
+            filename = "res/assets/maps/demo.lua", 
             mainLayer = 0; 
         }
     },

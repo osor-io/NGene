@@ -34,3 +34,8 @@ void ComponentManager::remove_component_instance(const std::type_index& type, Co
     auto& v = m_instance_map[type];
     v.erase(std::remove(v.begin(), v.end(), component), v.end());
 }
+
+bool ComponentManager::supports_component(const std::string & name) const {
+    auto it = m_type_map.find(name);
+    return (it != m_type_map.end() && (m_factory_map.find(it->second) != m_factory_map.end()));
+}

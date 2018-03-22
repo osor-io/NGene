@@ -431,6 +431,9 @@
     <ClInclude Include="src\math\Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\maps\TiledMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="dep\include\Member.inl">

@@ -322,7 +322,6 @@ void ChunkManager::draw_debug_chunks() {
 
     const auto converted_chunk_size = m_chunk_size * RenderManager::get().get_current_zoom();
 
-    //@@TODO: get here the min and max with the default size, not the scaled one
     const auto beg = RenderManager::get().map_coords_to_pixel(sf::Vector2f(
         m_min_relevant_chunk.first * m_chunk_size,
         m_min_relevant_chunk.second * m_chunk_size));

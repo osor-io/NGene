@@ -1,7 +1,7 @@
 #include "./utils/Debug.h"
 #include "./File.h"
 
-#include "./physics/ChunkManager.h" //@@TODO: Check that its start_up/shut_down is well positioned compared to other managers
+#include "./physics/ChunkManager.h"
 #include "./debug/LoggingManager.h"
 #include "./resources/TextFileManager.h"
 #include "./resources/TextureManager.h"
@@ -27,11 +27,11 @@
 
 void start_up() {
 
+    LuaManager::get().start_up();
     ChunkManager::get().start_up();
     LoggingManager::get().start_up();
     TextFileManager::get().start_up();
     TextureManager::get().start_up();
-    LuaManager::get().start_up();
     TimeManager::get().start_up();
     WindowManager::get().start_up();
     RenderManager::get().start_up();
@@ -71,11 +71,11 @@ void shut_down() {
     RenderManager::get().shut_down();
     WindowManager::get().shut_down();
     TimeManager::get().shut_down();
-    LuaManager::get().shut_down();
     TextureManager::get().shut_down();
     TextFileManager::get().shut_down();
     LoggingManager::get().shut_down();
     ChunkManager::get().shut_down();
+    LuaManager::get().shut_down();
 }
 
 void load_default_state() {

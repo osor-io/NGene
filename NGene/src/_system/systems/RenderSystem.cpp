@@ -92,11 +92,12 @@ void RenderSystem::register_entity(Entity& entity) {
         assert(m_background_layers.size() == 0);
         assert(m_foreground_layers.size() == 0);
 
-
         m_current_map_entity = &entity;
         auto tiledmap = m_current_map_entity->get_component<TiledMapComponent>();
         if (tiledmap->m_map_ready) {
 
+            /* 
+            //@@TODO: Read the new data from LUA
             const auto& layers = tiledmap->m_map.getLayers();
 
             for (auto i = 0; i <= tiledmap->m_main_layer; ++i) {
@@ -110,6 +111,7 @@ void RenderSystem::register_entity(Entity& entity) {
                     m_foreground_layers.push_back(std::make_unique<MapLayer>(tiledmap->m_map, i));
                 }
             }
+            */
 
         } 
     }

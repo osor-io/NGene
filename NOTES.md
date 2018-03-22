@@ -26,3 +26,13 @@
  - To multithread maybe it is a good idea to have multiple copies of the world and have the renderer render the last one that is ready while other threads update the newer ones. Or just do a job system (or just use ASync) to paralelize work INSIDE the systems, dividing the tasks into equal blocks there.
  	- Naughty Dog talk about frames might be usefull for this: https://www.gdcvault.com/play/1022186/Parallelizing-the-Naughty-Dog-Engine / https://archive.org/details/GDC2015Gyrling_201508
  - Great simple article that explains how to tie behaviour of the system into a combination of components: https://www.gamedev.net/articles/programming/general-and-gameplay-programming/understanding-component-entity-systems-r3013/
+
+
+## Other Notes/Resources/Ideas
+
+ - 2D: Plattformers: http://higherorderfun.com/blog/2012/05/20/the-guide-to-implementing-2d-platformers/
+ - Implement Children Entities from the component and retrieve the position and previous position from the transform by calling
+ our own position() or previous_position() which will call our parents's until we reach a top entity.
+ 	- EntityManager should own all the entities with unique pointers but have also a list of the top ones for conveniency and for developer mode.
+ - Build a good jump! Or even a better one: https://youtu.be/hG9SzQxaCm8
+ - Why not read tracks to make the music? (THere are actually quite a few reasons not to do so but: https://github.com/cmatsuoka/libxmp )

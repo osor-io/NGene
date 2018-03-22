@@ -210,7 +210,7 @@ Entity * EntityManager::create_entity_internal(const std::string & type, const s
 
         if (key.is<std::string>()) {
             auto component_name = key.as<std::string>();
-            // @@TODO: Check if component name exists
+            assert(ComponentManager::get().supports_component(component_name));
             ComponentManager::get().add_component_to_entity(*e, component_name, value.as<sol::table>());
         }
         else {
