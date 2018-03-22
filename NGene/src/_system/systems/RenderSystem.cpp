@@ -44,7 +44,7 @@ void RenderSystem::update() {
     First we render the layers up to the main one
     */
     for (const auto& l : m_background_layers) {
-        target->draw(*l);
+        draw_layer(target, l);
     }
 
 
@@ -71,7 +71,7 @@ void RenderSystem::update() {
     Now we render the foreground layers
     */
     for (const auto& l : m_foreground_layers) {
-        target->draw(*l);
+        draw_layer(target, l);
     }
 
 }
@@ -89,31 +89,49 @@ void RenderSystem::register_entity(Entity& entity) {
         We are trying to load a map when we already have one :(
         */
         assert(m_current_map_entity == nullptr);
+        assert(m_current_map == nullptr);
         assert(m_background_layers.size() == 0);
         assert(m_foreground_layers.size() == 0);
 
         m_current_map_entity = &entity;
-        auto tiledmap = m_current_map_entity->get_component<TiledMapComponent>();
-        if (tiledmap->m_map_ready) {
+        auto tiledmap_component = m_current_map_entity->get_component<TiledMapComponent>();
+        if (tiledmap_component->m_map_ready) {
 
-            /* 
+            m_current_map = &tiledmap_component->m_map;
+
+            assert(m_current_map != nullptr);
+            assert(m_current_map->layers.size() > 0);
+            assert(tiledmap_component->m_main_layer >= 0);
+            assert(m_current_map->layers.size() > tiledmap_component->m_main_layer);
+
+
+            for (auto i = 0; i <= tiledmap_component->m_main_layer; ++i) {
+                m_background_layers.push_back(&m_current_map->layers[i]);
+            }
+
+            for (auto i = tiledmap_component->m_main_layer + 1; i < m_current_map->layers.size(); ++i) {
+                m_foreground_layers.push_back(&m_current_map->layers[i]);
+            }
+
+
+            /*
             //@@TODO: Read the new data from LUA
-            const auto& layers = tiledmap->m_map.getLayers();
+            const auto& layers = tiledmap_component->m_map.getLayers();
 
-            for (auto i = 0; i <= tiledmap->m_main_layer; ++i) {
+            for (auto i = 0; i <= tiledmap_component->m_main_layer; ++i) {
                 if (layers[i].get() && layers[i].get()->getType() == tmx::Layer::Type::Tile) {
-                    m_background_layers.push_back(std::make_unique<MapLayer>(tiledmap->m_map, i));
+                    m_background_layers.push_back(std::make_unique<MapLayer>(tiledmap_component->m_map, i));
                 }
             }
 
-            for (auto i = tiledmap->m_main_layer + 1; i < layers.size(); ++i) {
+            for (auto i = tiledmap_component->m_main_layer + 1; i < layers.size(); ++i) {
                 if (layers[i].get() && layers[i].get()->getType() == tmx::Layer::Type::Tile) {
-                    m_foreground_layers.push_back(std::make_unique<MapLayer>(tiledmap->m_map, i));
+                    m_foreground_layers.push_back(std::make_unique<MapLayer>(tiledmap_component->m_map, i));
                 }
             }
             */
 
-        } 
+        }
     }
 }
 
@@ -130,6 +148,44 @@ void RenderSystem::deregister_entity(EntityId id) {
         auto& v = m_sorted_entities[e->get_component<SpriteComponent>()->m_layer];
         v.erase(std::remove(v.begin(), v.end(), e), v.end());
 
+    }
+}
+
+void RenderSystem::draw_layer(sf::RenderTarget* target, Layer * layer) {
+
+    auto delta_time = DELTA_MILLISECONDS;
+
+    auto i = -1;
+
+    for (auto& tr : layer->tile_references) {
+        ++i;
+        if (!tr.tile) continue;
+
+        auto sprite_to_render = sf::Sprite{};
+
+        if (tr.tile->animated) {
+            
+            auto number_of_frames = tr.tile->animated_sprites->size();
+            tr.elapsed_in_frame += delta_time;
+            if (tr.elapsed_in_frame > tr.current_duration) {
+                tr.current_frame = (tr.current_frame + 1) % number_of_frames;
+                tr.elapsed_in_frame -= tr.current_duration;
+                auto& next_sprite_tuple = (*tr.tile->animated_sprites.get())[tr.current_frame];
+                tr.current_duration = std::get<1>(next_sprite_tuple);
+                sprite_to_render = std::get<0>(next_sprite_tuple);
+            }
+            else {
+                sprite_to_render = std::get<0>((*tr.tile->animated_sprites.get())[tr.current_frame]);
+            }
+
+        }
+        else {
+            sprite_to_render = tr.tile->sprite;
+        }
+
+        sprite_to_render.setPosition(m_current_map->tile_coordinates[i]);
+
+        target->draw(sprite_to_render);
     }
 }
 

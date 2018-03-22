@@ -7,6 +7,8 @@
 #include <memory>
 #include <../_component/components/TransformComponent.h>
 #include "../_component/components/TiledMapComponent.h"
+#include "../maps/TiledMap.h"
+#include "SFML/Graphics/RenderTarget.hpp"
 
 
 class RenderSystem : public System<RenderSystem> {
@@ -27,12 +29,16 @@ public:
     void deregister_entity(EntityId id) override;
 
 private:
+
+    void draw_layer(sf::RenderTarget* target, Layer * layer);
+
     Entity * m_current_map_entity{ nullptr };
     EntitiesGroup m_entities;
     LayerVectors m_sorted_entities;
 
-    std::vector<std::unique_ptr<MapLayer>> m_background_layers{};
-    std::vector<std::unique_ptr<MapLayer>> m_foreground_layers{};
+    TiledMap * m_current_map{nullptr};
+    std::vector<Layer *> m_background_layers{};
+    std::vector<Layer *> m_foreground_layers{};
 
 };
 

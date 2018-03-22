@@ -15,6 +15,13 @@ struct Tile {
     std::unique_ptr<std::vector<std::tuple<sf::Sprite, float>>> animated_sprites;
 };
 
+struct TileReference {
+    Tile* tile{ nullptr };
+    float current_duration{ 0.0f };
+    int current_frame{ 0 };
+    float elapsed_in_frame{ 0.0f };
+};
+
 struct Layer {
 
     int width;
@@ -24,16 +31,15 @@ struct Layer {
 
     std::vector<int> data;  // The indices for the tiles' id 
 
+    std::vector<TileReference> tile_references;
+
     bool has_animations{ false };
+
+    std::string name;
 
 };
 
 struct TileSet {
-
-    ~TileSet() {
-        if (texture)
-            TextureManager::get().release_required_resource(image_filename);
-    }
 
     int first_gid;
 
@@ -55,9 +61,12 @@ struct TiledMap {
     int tile_width;
     int tile_height;
 
+    std::vector<sf::Vector2f> tile_coordinates;
+
     std::vector<TileSet> tilesets{};
 
     std::vector<Layer> layers{};
 
     std::unordered_map<int, Tile> tiles{};
+
 };

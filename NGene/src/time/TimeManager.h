@@ -9,6 +9,9 @@
 
 #define DELTA_TIME TimeManager::get().get_delta_time()
 #define DELTA_SECONDS TimeManager::get().get_delta_time().asSeconds()
+#define DELTA_MILLISECONDS TimeManager::get().get_delta_time().asMilliseconds();
+#define DELTA_MICROSECONDS TimeManager::get().get_delta_time().asMicroseconds();
+
 
 using CounterType = long long;
 

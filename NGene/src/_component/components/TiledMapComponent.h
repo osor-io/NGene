@@ -32,7 +32,7 @@ public:
     */
     // ====== BEG OF MEMBERS ======
     std::string m_map_filename;
-    std::unique_ptr<TiledMap> m_map;
+    TiledMap m_map;
     bool m_map_ready{false};
     int m_main_layer{0};
     // ====== END OF MEMBERS ======

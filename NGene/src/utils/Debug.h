@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <sstream>
 
 /* Usefull to avoid any LOGs in the console in release mode
 #ifndef _DEBUG
@@ -11,10 +12,16 @@
 #ifndef _NOLOG
 
 #define ENDL std::cout << std::endl;
-#define LOG(x) std::cout << x << std::endl;
-#define LOG_NAMED(x) std::cout << #x << ": " << x << std::endl;
+
+#define LOG(x) std::cout << x << std::endl; \
+    {auto ss = std::stringstream{}; ss << x; log_to_file(ss.str().c_str());}
+
+#define LOG_NAMED(x) std::cout << #x << ": " << x << std::endl; \
+    {auto ss = std::stringstream{}; ss << #x << ": " << x; log_to_file(ss.str().c_str());}
+
 #define LOG_PTR(x) \
-  std::cout << #x << ": " << static_cast<void*>(x) << std::endl;
+  std::cout << #x << ": " << static_cast<void*>(x) << std::endl; \
+    {auto ss = std::stringstream{}; ss << #x << ": " << static_cast<void*>(x); log_to_file(ss.str().c_str());}
 
 #else
 
@@ -26,3 +33,5 @@
 #endif
 
 void press_to_continue() noexcept;
+
+void log_to_file(const char* msg);
