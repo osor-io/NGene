@@ -18,11 +18,15 @@ EntityManager::~EntityManager() {}
 
 void EntityManager::start_up() {
 
-    assert(TextFileManager::get().exists_resource("res/scripts/EntityTypes.lua"));
+    assert(TextFileManager::get().exists_resource("res/scripts/CustomTypes.lua"));
+    assert(TextFileManager::get().exists_resource("res/scripts/EngineTypes.lua"));
 
-    auto script = TextFileManager::get().get_scoped_resource("res/scripts/EntityTypes.lua");
 
-    LUA.script(*script.resource);
+    auto custom_types_script = TextFileManager::get().get_scoped_resource("res/scripts/CustomTypes.lua");
+    auto engine_types_script = TextFileManager::get().get_scoped_resource("res/scripts/EngineTypes.lua");
+
+    LUA.script(*custom_types_script.resource);
+    LUA.script(*engine_types_script.resource);
 
     Entity::expose_to_lua();
     expose_to_lua();
@@ -172,6 +176,12 @@ void EntityManager::clear_and_load_entities(const json& j) {
 
         m_unprocessed_load_entity_data = j;
     }
+}
+
+void EntityManager::reregister_entity(EntityId id){
+    auto entity = get_entity(id);
+    SystemManager::get().deregister_entity_in_systems(id);
+    SystemManager::get().register_entity_in_systems(*entity);
 }
 
 void EntityManager::expose_to_lua() {

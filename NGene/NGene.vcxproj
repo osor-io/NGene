@@ -337,6 +337,8 @@ echo.</Command>
     <None Include="dep\include\Member.inl" />
     <None Include="dep\include\Meta.inl" />
     <None Include="dep\include\tmxlite\Types.inl" />
+    <None Include="res\scripts\CustomTypes.lua" />
+    <None Include="res\scripts\EngineTypes.lua" />
     <None Include="res\scripts\EntityTypes.lua" />
     <None Include="src\test\testmain.inl" />
   </ItemGroup>

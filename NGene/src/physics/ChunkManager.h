@@ -3,6 +3,7 @@
 #include <tuple>
 #include <unordered_map>
 #include <unordered_set>
+#include <limits>
 #include <vector>
 #include "../types/def.h"
 #include <gsl\gsl>
@@ -37,12 +38,14 @@ public:
     ChunkSet get_chunks_of(EntityId id) const;
 
     ChunkSet calculate_chunks(Entity* entity) const;
-    
+
     Chunk get_chunk_from_position(float x, float y) const;
 
     bool share_chunks(EntityId a, EntityId b) const;
 
     void update_entity_chunks();
+
+    void update_single_entity(Entity* entity);
 
     void clear();
 
@@ -134,5 +137,8 @@ private:
 
     GroupedEntities m_collision_components_cache{};
 
+    sf::Vector2f camera_previous_center{ std::numeric_limits<float>::infinity(),std::numeric_limits<float>::infinity() };
+    sf::Vector2f camera_previous_size{ std::numeric_limits<float>::infinity(),std::numeric_limits<float>::infinity() };
+    bool m_camera_changed{ true };
 
 };

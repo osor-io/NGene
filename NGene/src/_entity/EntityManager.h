@@ -58,6 +58,8 @@ public:
 
     void clear_and_load_entities(const json& j);
 
+    void reregister_entity(EntityId id);
+
 private:
 
     void expose_to_lua();

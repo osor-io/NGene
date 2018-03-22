@@ -174,6 +174,7 @@ Entities = {
 
 }
 
+print("Loaded Custom Entity Types")
                         
 
                         

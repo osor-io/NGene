@@ -19,9 +19,11 @@ public:
     static void expose_to_lua();  // Go To Entity.cpp and call this
     // ====== END OF REQUIREMENTS ======
 
+    void load_map();
+
     /*
     Go to ComponentManager.h and register the name and constructor
-    of this component so it can be instantiated. 
+    of this component so it can be instantiated.
     */
 
 
@@ -33,8 +35,9 @@ public:
     // ====== BEG OF MEMBERS ======
     std::string m_map_filename;
     TiledMap m_map;
-    bool m_map_ready{false};
-    int m_main_layer{0};
+    bool m_map_ready{ false };
+    bool m_need_to_create_colliders{ false };
+    int m_main_layer{ 0 };
     // ====== END OF MEMBERS ======
 
 };

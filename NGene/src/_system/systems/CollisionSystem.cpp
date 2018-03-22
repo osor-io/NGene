@@ -42,6 +42,7 @@ void CollisionSystem::update() {
                 for (auto e : remaining_to_recheck) {
                     auto transform = e->get_component<TransformComponent>();
                     transform->m_previous_position = transform->m_position;
+                    ChunkManager::get().update_single_entity(e);
                 }
                 m_already_checked.clear();
                 remaining_to_recheck = recheck_entity_set(remaining_to_recheck, grouped_entities);

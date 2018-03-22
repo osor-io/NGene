@@ -22,6 +22,74 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
     assert(obj.valid());
     m_map_filename = obj.as<std::string>();
 
+}
+
+
+DTOR(COMPONENT_TYPE)() {
+
+    for (auto & tileset : m_map.tilesets) {
+        if (tileset.texture)
+            TextureManager::get().release_required_resource(tileset.image_filename);
+    }
+
+}
+
+
+json COMPONENT_TYPE::to_json() {
+    auto j = json{};
+
+    j["filename"] = m_map_filename;
+
+    return j;
+}
+
+void COMPONENT_TYPE::load_json(const json& j) {
+    m_map_filename = j["filename"].get<std::string>();
+    load_map();
+    m_need_to_create_colliders = false;
+}
+
+void COMPONENT_TYPE::draw_component_inspector() {
+
+    ImGui::SetNextWindowSize(ImVec2(400, 100), ImGuiCond_FirstUseEver);
+    ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
+
+    ImGui::Text("Filename: %s", m_map_filename.c_str());
+
+
+    ImGui::End();
+
+}
+
+#define REGISTER_METHOD(method) #method , &PhraseComponent::method
+
+void COMPONENT_TYPE::expose_to_lua()
+{
+
+    LUA.new_usertype<COMPONENT_TYPE>(STRINGIFY(COMPONENT_TYPE),
+
+
+        /*
+        Methods:
+        Add here all the functions we want to expose to lua with REGISTER_METHOD(methodName)
+        */
+
+        /*
+        Data Members:
+        Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
+        */
+
+        "filename", &COMPONENT_TYPE::m_map_filename,
+        "mainLayer", &COMPONENT_TYPE::m_main_layer
+
+
+        );
+
+}
+
+
+void COMPONENT_TYPE::load_map() {
+
     auto path = m_map_filename.substr(0, m_map_filename.find_last_of("\\/"));
     path += '/';
 
@@ -60,17 +128,9 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
     map.width = map_table["width"];
     map.height = map_table["height"];
 
-    LOG_NAMED(map.width);
-    LOG_NAMED(map.height);
-
     map.tile_width = map_table["tilewidth"];
     map.tile_height = map_table["tileheight"];
 
-    /*
-    @@DOING @@TODO
-    Check why the tiles are not positioned properly here and fix it! :D
-    There is an offset of one for some reason?
-    */
 
     for (auto j = 0; j < map.height; ++j) {
         for (auto i = 0; i < map.width; ++i) {
@@ -155,7 +215,7 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
 
     const sol::table& layers = map_table["layers"];
 
-    layers.for_each([&map](const sol::object& key, const sol::object& value) {
+    layers.for_each([this, &map](const sol::object& key, const sol::object& value) {
 
         auto layer_table = value.as<sol::table>();
         auto layer = Layer{};
@@ -216,87 +276,22 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
         }
         else if (type.compare("objectgroup") == 0) {
 
-            LOG(name << " has the type " << type);
 
             if (name.compare("Collisions")) {
                 //@@TODO: Read the colliders from here
-                LOG("And we can read collisions from it");
-            }
-            else {
-                LOG("But it doesn't have collisions");
+
+                m_need_to_create_colliders = true;
             }
 
         }
         else {
-            LOG(name << "has the type" << type << "which we don't know");
 
         }
     });
 
-    LOG("The map in << " << filename << " has been loaded");
+    LOG("The map in " << filename << " has been loaded");
 
     m_map = std::move(map);
 
     m_map_ready = true;
-}
-
-
-DTOR(COMPONENT_TYPE)() {
-
-    for (auto & tileset : m_map.tilesets) {
-        if (tileset.texture)
-            TextureManager::get().release_required_resource(tileset.image_filename);
-    }
-
-}
-
-
-json COMPONENT_TYPE::to_json() {
-    auto j = json{};
-
-    j["filename"] = m_map_filename;
-
-    return j;
-}
-
-void COMPONENT_TYPE::load_json(const json& j) {
-    m_map_filename = j["filename"].get<std::string>();
-}
-
-void COMPONENT_TYPE::draw_component_inspector() {
-
-    ImGui::SetNextWindowSize(ImVec2(400, 100), ImGuiCond_FirstUseEver);
-    ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
-
-    ImGui::Text("Filename: %s", m_map_filename.c_str());
-
-
-    ImGui::End();
-
-}
-
-#define REGISTER_METHOD(method) #method , &PhraseComponent::method
-
-void COMPONENT_TYPE::expose_to_lua()
-{
-
-    LUA.new_usertype<COMPONENT_TYPE>(STRINGIFY(COMPONENT_TYPE),
-
-
-        /*
-        Methods:
-        Add here all the functions we want to expose to lua with REGISTER_METHOD(methodName)
-        */
-
-        /*
-        Data Members:
-        Add here all the members we want to expose to lua with REGISTER_METHOD(methodName)
-        */
-
-        "filename", &COMPONENT_TYPE::m_map_filename,
-        "mainLayer", &COMPONENT_TYPE::m_main_layer
-
-
-        );
-
 }

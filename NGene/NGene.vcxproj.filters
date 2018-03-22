@@ -455,5 +455,7 @@
     <None Include="dep\include\tmxlite\Types.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="res\scripts\CustomTypes.lua" />
+    <None Include="res\scripts\EngineTypes.lua" />
   </ItemGroup>
 </Project>

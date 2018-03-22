@@ -63,7 +63,6 @@ void RenderSystem::update() {
                 target->draw(*sprite);
             }
         }
-
     }
 
 
@@ -112,25 +111,6 @@ void RenderSystem::register_entity(Entity& entity) {
             for (auto i = tiledmap_component->m_main_layer + 1; i < m_current_map->layers.size(); ++i) {
                 m_foreground_layers.push_back(&m_current_map->layers[i]);
             }
-
-
-            /*
-            //@@TODO: Read the new data from LUA
-            const auto& layers = tiledmap_component->m_map.getLayers();
-
-            for (auto i = 0; i <= tiledmap_component->m_main_layer; ++i) {
-                if (layers[i].get() && layers[i].get()->getType() == tmx::Layer::Type::Tile) {
-                    m_background_layers.push_back(std::make_unique<MapLayer>(tiledmap_component->m_map, i));
-                }
-            }
-
-            for (auto i = tiledmap_component->m_main_layer + 1; i < layers.size(); ++i) {
-                if (layers[i].get() && layers[i].get()->getType() == tmx::Layer::Type::Tile) {
-                    m_foreground_layers.push_back(std::make_unique<MapLayer>(tiledmap_component->m_map, i));
-                }
-            }
-            */
-
         }
     }
 }
@@ -139,6 +119,7 @@ void RenderSystem::deregister_entity(EntityId id) {
 
     if (m_current_map_entity && id == m_current_map_entity->get_id()) {
         m_current_map_entity = nullptr;
+        m_current_map = nullptr;
         m_background_layers.clear();
         m_foreground_layers.clear();
     }

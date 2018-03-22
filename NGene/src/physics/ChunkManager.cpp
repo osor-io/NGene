@@ -168,6 +168,10 @@ void ChunkManager::update_entity_chunks() {
     const auto& center = view.getCenter();
     const auto& size = view.getSize();
 
+    m_camera_changed = ((camera_previous_center != center) || (camera_previous_size != size));
+    camera_previous_center = center;
+    camera_previous_size = size;
+
     m_min_relevant_chunk = std::make_pair(
         gsl::narrow_cast<int>(std::floor((center.x - (size.x * zoom) / 2.f) / m_chunk_size) - m_chunk_threshold),
         gsl::narrow_cast<int>(std::floor((center.y - (size.y * zoom) / 2.f) / m_chunk_size) - m_chunk_threshold)
@@ -179,129 +183,131 @@ void ChunkManager::update_entity_chunks() {
     );
 
     for (auto& e : entities) {
+        update_single_entity(e.second.get());
+    }
+}
+
+void ChunkManager::update_single_entity(Entity * entity){
+
+    auto id = entity->get_id();
+    auto transform = entity->get_component<TransformComponent>();
+    if (!transform) return;
+
+    auto position = transform->get_position();
 
 
-        auto entity = e.second.get();
-        auto id = entity->get_id();
-        auto transform = entity->get_component<TransformComponent>();
-        if (!transform) continue;
+    auto extent = entity->get_component<ExtentComponent>();
 
-        auto position = transform->get_position();
+    /*
+    Add here other checks with other components if we need it to.
+    */
+    if (transform) {
+
+        auto min_chunk = Chunk{};
+        auto max_chunk = Chunk{};
+
+        if (extent) {
+            auto center = position + extent->m_offset;
+            auto extra_chunk_threshold = extent->m_extra_chunk_threshold * m_chunk_size;
+            auto min_position = center - extent->m_extent - sf::Vector2f(extra_chunk_threshold, extra_chunk_threshold);
+            auto max_position = center + extent->m_extent + sf::Vector2f(extra_chunk_threshold, extra_chunk_threshold);
 
 
-        auto extent = entity->get_component<ExtentComponent>();
+            /*
+            Here we stop checking if the entity hasn't changed
+            */
+            {
+                if (!m_camera_changed && m_location_cache[id].first == min_position && m_location_cache[id].second == max_position) {
+                    return;
+                }
+                m_location_cache[id].first = min_position;
+                m_location_cache[id].second = max_position;
+
+                for (auto& c : m_entity_map[id]) {
+                    m_chunk_map[c].erase(id);
+                    m_collision_components_cache[c].erase(entity);
+                }
+                m_entity_map[id].clear();
+            }
+
+            /*
+            We calculate the minimum and maximum chunks the entity can be in
+            by calculating the chunk of the minimum and maximum points.
+            */
+
+            min_chunk.first = gsl::narrow_cast<int>(std::floor(min_position.x / m_chunk_size));
+            min_chunk.second = gsl::narrow_cast<int>(std::floor(min_position.y / m_chunk_size));
+
+            max_chunk.first = gsl::narrow_cast<int>(std::floor(max_position.x / m_chunk_size));
+            max_chunk.second = gsl::narrow_cast<int>(std::floor(max_position.y / m_chunk_size));
+        }
+        else {
+            /*
+            Here we stop checking if the entity hasn't changed
+            */
+            {
+                if (m_location_cache[id].first == position) {
+                    return;
+                }
+                m_location_cache[id].first = position;
+
+                for (auto& c : m_entity_map[id]) {
+                    m_chunk_map[c].erase(id);
+                    m_collision_components_cache[c].erase(entity);
+                }
+                m_entity_map[id].clear();
+            }
+
+            auto chunk = std::make_pair(
+                gsl::narrow_cast<int>(std::floor(position.x / m_chunk_size)),
+                gsl::narrow_cast<int>(std::floor(position.y / m_chunk_size)));
+
+            min_chunk = max_chunk = chunk;
+        }
+
+
+        auto collision_component = entity->get_component<CollisionComponent>();
 
         /*
-        Add here other checks with other components if we need it to.
+        We default to adding the threshold unless we know the entity
+        is not dynamic.
         */
-        if (transform) {
+        if (!collision_component || collision_component->m_dynamic) {
+            min_chunk.first -= m_safe_threshold;
+            min_chunk.second -= m_safe_threshold;
 
-            auto min_chunk = Chunk{};
-            auto max_chunk = Chunk{};
-
-            if (extent) {
-                auto center = position + extent->m_offset;
-                auto extra_chunk_threshold = extent->m_extra_chunk_threshold * m_chunk_size;
-                auto min_position = center - extent->m_extent - sf::Vector2f(extra_chunk_threshold, extra_chunk_threshold);
-                auto max_position = center + extent->m_extent + sf::Vector2f(extra_chunk_threshold, extra_chunk_threshold);
-
-
-                /*
-                Here we stop checking if the entity hasn't changed
-                */
-                {
-                    if (m_location_cache[id].first == min_position && m_location_cache[id].second == max_position) {
-                        continue;
-                    }
-                    m_location_cache[id].first = min_position;
-                    m_location_cache[id].second = max_position;
-
-                    for (auto& c : m_entity_map[id]) {
-                        m_chunk_map[c].erase(id);
-                        m_collision_components_cache[c].erase(entity);
-                    }
-                    m_entity_map[id].clear();
-                }
-
-                /*
-                We calculate the minimum and maximum chunks the entity can be in
-                by calculating the chunk of the minimum and maximum points.
-                */
-
-                min_chunk.first = gsl::narrow_cast<int>(std::floor(min_position.x / m_chunk_size));
-                min_chunk.second = gsl::narrow_cast<int>(std::floor(min_position.y / m_chunk_size));
-
-                max_chunk.first = gsl::narrow_cast<int>(std::floor(max_position.x / m_chunk_size));
-                max_chunk.second = gsl::narrow_cast<int>(std::floor(max_position.y / m_chunk_size));
-            }
-            else {
-                /*
-                Here we stop checking if the entity hasn't changed
-                */
-                {
-                    if (m_location_cache[id].first == position) {
-                        continue;
-                    }
-                    m_location_cache[id].first = position;
-
-                    for (auto& c : m_entity_map[id]) {
-                        m_chunk_map[c].erase(id);
-                        m_collision_components_cache[c].erase(entity);
-                    }
-                    m_entity_map[id].clear();
-                }
-
-                auto chunk = std::make_pair(
-                    gsl::narrow_cast<int>(std::floor(position.x / m_chunk_size)),
-                    gsl::narrow_cast<int>(std::floor(position.y / m_chunk_size)));
-
-                min_chunk = max_chunk = chunk;
-            }
-
-
-            auto collision_component = entity->get_component<CollisionComponent>();
-
-            /*
-            We default to adding the threshold unless we know the entity
-            is not dynamic.
-            */
-            if (!collision_component || collision_component->m_dynamic) {
-                min_chunk.first -= m_safe_threshold;
-                min_chunk.second -= m_safe_threshold;
-
-                max_chunk.first += m_safe_threshold;
-                max_chunk.second += m_safe_threshold;
-            }
-
-
-            auto relevant = false;
-
-            /*
-            Now we instert the entity on the required maps and check if any of the
-            chunks it is in is relevant.
-            */
-
-            for (auto x = min_chunk.first; x <= max_chunk.first; ++x) {
-                for (auto y = min_chunk.second; y <= max_chunk.second; ++y) {
-
-                    auto chunk = std::make_pair(x, y);
-
-                    m_chunk_map[chunk].insert(id);
-                    m_entity_map[id].insert(chunk);
-
-                    if (!relevant) {
-                        relevant = is_chunk_in_range(chunk, m_min_relevant_chunk, m_max_relevant_chunk);
-                    }
-
-                    if (collision_component) {
-                        m_collision_components_cache[chunk].insert(entity);
-                    }
-
-                }
-            }
-
-            entity->set_in_relevant_chunk(relevant);
+            max_chunk.first += m_safe_threshold;
+            max_chunk.second += m_safe_threshold;
         }
+
+
+        auto relevant = false;
+
+        /*
+        Now we instert the entity on the required maps and check if any of the
+        chunks it is in is relevant.
+        */
+
+        for (auto x = min_chunk.first; x <= max_chunk.first; ++x) {
+            for (auto y = min_chunk.second; y <= max_chunk.second; ++y) {
+
+                auto chunk = std::make_pair(x, y);
+
+                m_chunk_map[chunk].insert(id);
+                m_entity_map[id].insert(chunk);
+
+                if (!relevant) {
+                    relevant = is_chunk_in_range(chunk, m_min_relevant_chunk, m_max_relevant_chunk);
+                }
+
+                if (collision_component) {
+                    m_collision_components_cache[chunk].insert(entity);
+                }
+
+            }
+        }
+
+        entity->set_in_relevant_chunk(relevant);
 
     }
 
