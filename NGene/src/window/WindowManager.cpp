@@ -3,18 +3,25 @@
 
 
 
-WindowManager::WindowManager()
-{
-}
+WindowManager::WindowManager() {}
 
-
-WindowManager::~WindowManager()
-{
-}
+WindowManager::~WindowManager() {}
 
 void WindowManager::start_up() {
     m_window = std::make_unique<sf::RenderWindow>(sf::VideoMode(1200, 800), "NGene");
+
+    /*
+    @@TODO @@NOTE
+    I'm still not sure about how to optimally configure the game's framerate, for the
+    time being I will leave it with just VSync enabled since just limiting the framerate
+    with the line shown below seems to cause some variable frame rates creating somewhat
+    noticeable stutter. Maybe it is caused by something else?
+
     m_window->setFramerateLimit(60);
+
+    */
+
+    m_window->setVerticalSyncEnabled(true);
 }
 
 void WindowManager::shut_down() {
@@ -34,8 +41,7 @@ void WindowManager::fill_events() {
     }
 }
 
-
-sf::RenderWindow * WindowManager::get_window_render_target(){
+sf::RenderWindow * WindowManager::get_window_render_target() {
     return m_window.get();
 }
 

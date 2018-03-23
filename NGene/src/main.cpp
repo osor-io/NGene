@@ -100,9 +100,6 @@ void load_default_state() {
     const auto map_id = EntityManager::get().request_load_entity("DefaultMap");
     const auto camera_id = EntityManager::get().request_load_entity("DefaultCamera");
     EntityManager::get().update_entities();
-
-    EntityManager::get().get_entity(map_id)->get_component<TiledMapComponent>()->load_map();
-    EntityManager::get().reregister_entity(map_id);
 }
 
 void access_entities_from_lua() {
@@ -188,8 +185,20 @@ int main() {
         auto end = TimeManager::get().query_cycle_counter();
         auto ms = TimeManager::get().cycles_to_ms(end - beg);
 
-        //@@NOTE: Use this to know the time needed to update the game (without rendering)
-        LOG_NAMED(ms);
+        /*
+        @@NOTE
+        
+        Use this to know the time needed to update the game (without rendering)
+        
+        Bear (ROAR!) in mind that using this will tank framerate since we are basically 
+        printing a number every frame and maybe writing it to a log file, which takes a ton
+        of time we don't want to spend in the middle of a frame. That said, the reading for
+        how lonk we took to tick the game is still right, it is just that the framerate will
+        be bad and keep getting worse with each printing since we are accumulating stuff to print
+        to standard output.
+
+        */
+        //LOG_NAMED(ms);
 
         render();
         post_render();

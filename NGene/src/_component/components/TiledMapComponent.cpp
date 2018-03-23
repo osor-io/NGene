@@ -22,6 +22,8 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
     assert(obj.valid());
     m_map_filename = obj.as<std::string>();
 
+
+    load_map();
 }
 
 
@@ -38,15 +40,12 @@ DTOR(COMPONENT_TYPE)() {
 json COMPONENT_TYPE::to_json() {
     auto j = json{};
 
-    j["filename"] = m_map_filename;
+    j["note"] = "We are not seralizing map information";
 
     return j;
 }
 
 void COMPONENT_TYPE::load_json(const json& j) {
-    m_map_filename = j["filename"].get<std::string>();
-    load_map();
-    m_need_to_create_colliders = false;
 }
 
 void COMPONENT_TYPE::draw_component_inspector() {
@@ -266,7 +265,7 @@ void COMPONENT_TYPE::load_map() {
             });
 
             /*
-            @@TODO @@OPTIMIZATION: If it doesn't have animations we can bake the vertices
+            @@TODO @@MAYBE @@OPTIMIZATION: If it doesn't have animations we can bake the vertices
 
             @see SFMLOrthogonalLayer.hpp
             */

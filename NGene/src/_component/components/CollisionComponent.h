@@ -19,22 +19,30 @@ public:
 
     void draw_rect();
 
-    /*
-    Go to ComponentManager.h and register the name and constructor
-    of this component so it can be instantiated.
-    */
 
 
-    /*
-    When adding a member reMember to consider registering it
-    in "expose_to_lua()" and in "meta::registerMembers" as well
-    as add it in "drawComponentInspector()" to be able to see it
-    */
     // ====== BEG OF MEMBERS ======
-
+    
     sf::Vector2f m_offset{ 0.0f,0.0f };
     sf::Vector2f m_extent{ 10.0f,10.0f };
+
+
+    /*
+    @@TODO
+    
+    We should extend this argument to an enum supporting various types of colliders
+    to support various types of collisions. Just something being static or dynamic 
+    is not enough. Think about moving plattforms or one way plattforms (where you
+    can go through them when going from bottom to top but not in reverse)
+
+    Here it is a good article outlining some of the interesting types of collisions
+    to support, I'm thinking about prioritizing Moving Plattforms and One Way Plattforms:
+
+    http://higherorderfun.com/blog/2012/05/20/the-guide-to-implementing-2d-platformers/
+    
+    */
     bool m_dynamic{ false };
+    
     // ====== END OF MEMBERS ======
 
 };

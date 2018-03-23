@@ -206,6 +206,23 @@ void EntityManager::expose_to_lua() {
 
 }
 
+
+/*
+@@TODO
+
+We have to implement a function that can be called during the process encompased by
+create_entity_internal that allows for extra entities to be created, modified
+and later registered.
+
+A use case for this is the construction of a map component, when reading all the data
+from the .lua file we want to instantiate an internal entity type with a map collider
+and set its data. We should have a function like the next one to allow us to create
+the entity, get its components (that have already been instantiated) and modify them:
+
+Entity * create_extra_internal_entity(const std::string& type);
+
+*/
+
 Entity * EntityManager::create_entity_internal(const std::string & type, const sol::table & table) {
 
     auto id = m_next_id++;
