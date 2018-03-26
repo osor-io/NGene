@@ -85,18 +85,16 @@ void load_default_state() {
     auto j = json::parse(*s.resource);
     EntityManager::get().clear_and_load_entities(j);
     */
-
+    
     //If we want to check performance with more than one entity
     for (int i = 0; i < 3; ++i) {
         const auto id = EntityManager::get().request_load_entity("DynamicObject");
         EntityManager::get().update_entities();
         auto entity = EntityManager::get().get_entity(id);
         entity->set_name("All Mighty Entity");
-        entity->get_component<TransformComponent>()->set_position(sf::Vector2f(300.f, 300.f));
+        entity->get_component<TransformComponent>()->set_position(sf::Vector2f(300.f, 100.f));
     }
-
-    const auto static_id_1 = EntityManager::get().request_load_entity("StaticObject");
-    const auto static_id_2 = EntityManager::get().request_load_entity("StaticObject");
+    
     const auto map_id = EntityManager::get().request_load_entity("DefaultMap");
     const auto camera_id = EntityManager::get().request_load_entity("DefaultCamera");
     EntityManager::get().update_entities();

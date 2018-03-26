@@ -6,11 +6,17 @@
 #include <cassert>
 #include "../resources/TextFileManager.h"
 #include "../resources/TextureManager.h"
+#include "../_entity/EntityManager.h"
+#include "./TransformComponent.h"
+#include "./ExtentComponent.h"
+#include "./CollisionComponent.h"
 
 #define COMPONENT_TYPE TiledMapComponent
 #define CTOR(x) x##::##x
 #define DTOR(x) x##::##~##x
 #define STRINGIFY(s) #s
+
+#define EXTRA_MAP_EXTENT 200.f
 
 CTOR(COMPONENT_TYPE)(EntityId id) : ComponentTemplate(id, std::type_index(typeid(COMPONENT_TYPE))) {}
 
@@ -279,9 +285,34 @@ void COMPONENT_TYPE::load_map() {
             if (name.compare("Collisions")) {
                 //@@TODO: Read the colliders from here
 
-                m_need_to_create_colliders = true;
-            }
+                const sol::table& data_table = layer_table["objects"];
 
+                data_table.for_each([](const sol::object& key, const sol::object& value) {
+                    auto collider_table = value.as<sol::table>();
+
+                    float x = collider_table["x"];
+                    float y = collider_table["y"];
+                    float width = collider_table["width"];
+                    float height = collider_table["height"];
+
+                    auto e = EntityManager::get().create_additional_engine_entity("MapCollider");
+
+                    assert(e->has_component<TransformComponent>());
+                    assert(e->has_component<ExtentComponent>());
+                    assert(e->has_component<CollisionComponent>());
+
+                    auto transform = e->get_component<TransformComponent>();
+                    auto extent = e->get_component<ExtentComponent>();
+                    auto collider = e->get_component<CollisionComponent>();
+
+                    collider->m_dynamic = false;
+                    collider->m_extent = sf::Vector2f(width / 2.f, height / 2.f);
+
+                    extent->m_extent = collider->m_extent + sf::Vector2f(EXTRA_MAP_EXTENT, EXTRA_MAP_EXTENT);
+
+                    transform->m_position = sf::Vector2f(x + collider->m_extent.x, y + collider->m_extent.y);
+                });
+            }
         }
         else {
 

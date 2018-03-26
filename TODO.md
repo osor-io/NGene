@@ -5,7 +5,6 @@ In general, smaller @@TODO tasks that are not big or relevant enough to be writt
 ## @@TODO
 
 * Extend Collision Component and System to support different types of colliders besides just static or dynamic (e.g. One-Way Colliders).
-* Implement the functionality in the Entity Manager that allows us to create & modify extra entities while constructing one. This is required for example when reading the map and wanting to instantiate an entity per map collider.
 * Also reload Entity Types when reloading states.
 * Implement Save State Light to do things like reloading a state during gameplay (ala checkpoints). WIthout reloading expensive things that will be the same like the map.
 * Think how we should organize the different colliders of the map to fill when reading the lua file of the map.
@@ -22,6 +21,4 @@ In general, smaller @@TODO tasks that are not big or relevant enough to be writt
 
 ## @@DOING
 
-* Read Tiled maps from lua into new members of the Tiled Map Component
-	* Read the colliders defined in Tiled and instantiate them into individual independent entities with colliders with their parameters.
-
+* Read Extent of "Extent Components" of the Colliders in Tiled maps.

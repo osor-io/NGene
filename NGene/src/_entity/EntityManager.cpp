@@ -82,8 +82,18 @@ void EntityManager::update_entities() {
         }
         m_entity_ids_to_remove.clear();
     }
-}
 
+    /*
+    Additional entities can be requested wether we have loaded
+    entities from json or directly with the exposed funcions.
+    */
+    for (auto entity : m_additional_entities_to_add) {
+        m_entities[entity->get_id()] = std::unique_ptr<Entity>(entity);
+        SystemManager::get().register_entity_in_systems(*entity);
+    }
+    m_additional_entities_to_add.clear();
+
+}
 
 EntityId EntityManager::request_load_entity(const std::string & type, const sol::table & table)
 {
@@ -91,6 +101,12 @@ EntityId EntityManager::request_load_entity(const std::string & type, const sol:
 
     m_entities_to_add.push_back(e);
     return e->get_id();
+}
+
+Entity * EntityManager::create_additional_engine_entity(const std::string & type) {
+    auto e = create_entity_internal(type, LUA["EngineEntities"]);
+    m_additional_entities_to_add.push_back(e);
+    return e;
 }
 
 void EntityManager::remove_entity(EntityId id) {

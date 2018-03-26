@@ -36,7 +36,6 @@ public:
     std::string m_map_filename;
     TiledMap m_map;
     bool m_map_ready{ false };
-    bool m_need_to_create_colliders{ false };
     int m_main_layer{ 0 };
     // ====== END OF MEMBERS ======
 

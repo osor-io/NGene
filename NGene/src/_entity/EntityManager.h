@@ -36,6 +36,8 @@ public:
 
     EntityId request_load_entity(const std::string & type, const sol::table & table= LUA["Entities"]);
 
+    Entity * create_additional_engine_entity(const std::string& type);
+
     void remove_entity(EntityId id);
 
     bool has_entity(EntityId id) const;
@@ -66,6 +68,7 @@ private:
 
     OwningEntitiesGroup m_entities{};
     PendingEntitiesToAdd m_entities_to_add{};
+    PendingEntitiesToAdd m_additional_entities_to_add{};
     PendingEntitiesToDelete m_entity_ids_to_remove{};
 
     EntityId m_next_id{ 0 };

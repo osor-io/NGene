@@ -3,7 +3,7 @@ Entities = {
     DynamicObject = {
         TransformComponent = {
             x = 0, 
-            y = 10
+            y = 100
         }, 
         ExtentComponent = {
             extentX = 40, 
@@ -163,8 +163,8 @@ Entities = {
 
     DefaultCamera = {
         TransformComponent = {
-            x = 0, 
-            y = 0
+            x = 500, 
+            y = 200
         }, 
         CameraComponent = {
             mainCamera = true,
