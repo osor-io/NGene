@@ -1,6 +1,11 @@
 #pragma once
 #include "../ComponentTemplate.h"
 
+enum class ColliderType {
+    TERRAIN,
+    MOVING_OBJECT,
+};
+
 class CollisionComponent : public ComponentTemplate<CollisionComponent> {
     friend auto meta::registerMembers<CollisionComponent>();
 public:
@@ -41,7 +46,7 @@ public:
     http://higherorderfun.com/blog/2012/05/20/the-guide-to-implementing-2d-platformers/
     
     */
-    bool m_dynamic{ false };
+    ColliderType m_type{ ColliderType::TERRAIN };
     
     // ====== END OF MEMBERS ======
 
@@ -57,7 +62,7 @@ inline auto meta::registerMembers<CollisionComponent>() {
     return members(
         member("extent", &CollisionComponent::m_extent),
         member("offset", &CollisionComponent::m_offset),
-        member("dynamic", &CollisionComponent::m_dynamic)
+        member("type", &CollisionComponent::m_type)
     );
 }
 

@@ -26,9 +26,9 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
         }
 
         {
-            sol::object value = table["dynamic"];
+            sol::object value = table["type"];
             assert(value.valid());
-            m_dynamic = value.as<bool>();
+            m_type = value.as<ColliderType>();
         }
 
 }
@@ -93,20 +93,28 @@ void COMPONENT_TYPE::draw_component_inspector() {
 
     ImGui::Text("Extent: "); ImGui::SameLine(100); ImGui::DragFloat2("##Extent", &(m_extent.x));
     ImGui::Text("Offset: "); ImGui::SameLine(100); ImGui::DragFloat2("##Offset", &(m_offset.x));
-    //ImGui::Checkbox("Dynamic", &m_dynamic);
-    ImGui::Text("%s", (m_dynamic ? "Dynamic" : "Static"));
+   
+    ImGui::Text("%s", ( m_type == ColliderType::TERRAIN ? "Terrain" :
+                        m_type == ColliderType::MOVING_OBJECT ? "Moving Object"  :
+                        "Unknown"));
 
     draw_rect();
 
-
     ImGui::End();
-
 }
+
+#define KEY(x) #x, ColliderType:: ## x
 
 #define REGISTER_METHOD(method) #method , &PhraseComponent::method
 
 void COMPONENT_TYPE::expose_to_lua()
 {
+
+
+    LUA.new_enum("ColliderType",
+        KEY(TERRAIN),
+        KEY(MOVING_OBJECT)
+    );
 
     LUA.new_usertype<COMPONENT_TYPE>(STRINGIFY(COMPONENT_TYPE),
 

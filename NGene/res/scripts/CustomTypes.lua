@@ -16,7 +16,7 @@ Entities = {
             extentY = 43, 
             offsetX = 0, 
             offsetY = 0,
-            dynamic = true
+            type = ColliderType.MOVING_OBJECT
         },  
         PhraseComponent = {
             phrase = "I'm saying hi from this lua Object!! :D"
@@ -114,6 +114,32 @@ Entities = {
             end
         }
     },
+
+    DummyDynamicObject = {
+        TransformComponent = {
+            x = 0, 
+            y = 100
+        }, 
+        ExtentComponent = {
+            extentX = 40, 
+            extentY = 43, 
+            offsetX = 0, 
+            offsetY = 0
+        },
+        CollisionComponent = {
+            extentX = 40, 
+            extentY = 43, 
+            offsetX = 0, 
+            offsetY = 0,
+            type = ColliderType.MOVING_OBJECT
+        },  
+        PhraseComponent = {
+            phrase = "I'm saying hi from this lua Object!! :D"
+        }, 
+        SpriteComponent = {
+            filename = "./res/assets/test.png"
+        }
+    },
     
 
     StaticObject = {
@@ -132,7 +158,7 @@ Entities = {
             extentY = 43, 
             offsetX = 0, 
             offsetY = 0,
-            dynamic = false
+            type = ColliderType.TERRAIN
         }
     }, 
 

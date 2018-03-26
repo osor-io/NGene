@@ -17,7 +17,7 @@ EngineEntities = {
 	            extentY = 0, 
 	            offsetX = 0, 
 	            offsetY = 0,
-	            dynamic = false
+	            type = ColliderType.TERRAIN
 		}
 	}
 

@@ -18,6 +18,9 @@ EntityManager::~EntityManager() {}
 
 void EntityManager::start_up() {
 
+    Entity::expose_to_lua();
+    expose_to_lua();
+
     assert(TextFileManager::get().exists_resource("res/scripts/CustomTypes.lua"));
     assert(TextFileManager::get().exists_resource("res/scripts/EngineTypes.lua"));
 
@@ -27,9 +30,6 @@ void EntityManager::start_up() {
 
     LUA.script(*custom_types_script.resource);
     LUA.script(*engine_types_script.resource);
-
-    Entity::expose_to_lua();
-    expose_to_lua();
 }
 
 void EntityManager::shut_down() {

@@ -36,23 +36,22 @@
                 },
                 "TransformComponent": {
                     "position": {
-                        "x": 416.1905822753906,
+                        "x": 534.3742065429688,
                         "y": 211.0
                     },
                     "previous_position": {
-                        "x": 416.1905822753906,
+                        "x": 534.3742065429688,
                         "y": 211.0
                     }
                 }
             },
             "enabled": true,
             "id": 0,
-            "name": "All Mighty Entity",
+            "name": "DynamicObject_0",
             "type": "DynamicObject"
         },
         {
             "Components": {
-                "BehaviourComponent": null,
                 "CollisionComponent": {
                     "extent": {
                         "x": 40.0,
@@ -74,9 +73,6 @@
                         "y": 0.0
                     }
                 },
-                "InputComponent": {
-                    "joystickThreshold": 15.0
-                },
                 "PhraseComponent": {
                     "phrase": "I'm saying hi from this lua Object!! :D"
                 },
@@ -86,69 +82,19 @@
                 },
                 "TransformComponent": {
                     "position": {
-                        "x": 577.3014526367188,
+                        "x": 376.2318115234375,
                         "y": 211.0
                     },
                     "previous_position": {
-                        "x": 577.3014526367188,
+                        "x": 376.2318115234375,
                         "y": 211.0
                     }
                 }
             },
             "enabled": true,
             "id": 1,
-            "name": "All Mighty Entity",
-            "type": "DynamicObject"
-        },
-        {
-            "Components": {
-                "BehaviourComponent": null,
-                "CollisionComponent": {
-                    "extent": {
-                        "x": 40.0,
-                        "y": 43.0
-                    },
-                    "offset": {
-                        "x": 0.0,
-                        "y": 0.0
-                    }
-                },
-                "ExtentComponent": {
-                    "extent": {
-                        "x": 40.0,
-                        "y": 43.0
-                    },
-                    "extraChunkThreshold": 0,
-                    "offset": {
-                        "x": 0.0,
-                        "y": 0.0
-                    }
-                },
-                "InputComponent": {
-                    "joystickThreshold": 15.0
-                },
-                "PhraseComponent": {
-                    "phrase": "I'm saying hi from this lua Object!! :D"
-                },
-                "SpriteComponent": {
-                    "filename": "./res/assets/test.png",
-                    "layer": 1000
-                },
-                "TransformComponent": {
-                    "position": {
-                        "x": 496.7667541503906,
-                        "y": 211.0
-                    },
-                    "previous_position": {
-                        "x": 496.7667541503906,
-                        "y": 211.0
-                    }
-                }
-            },
-            "enabled": true,
-            "id": 2,
-            "name": "All Mighty Entity",
-            "type": "DynamicObject"
+            "name": "DummyDynamicObject_1",
+            "type": "DummyDynamicObject"
         },
         {
             "Components": {
@@ -157,8 +103,8 @@
                 }
             },
             "enabled": true,
-            "id": 3,
-            "name": "DefaultMap_3",
+            "id": 2,
+            "name": "DefaultMap_2",
             "type": "DefaultMap"
         },
         {
@@ -196,15 +142,15 @@
                 }
             },
             "enabled": true,
-            "id": 4,
-            "name": "MapCollider_4",
+            "id": 3,
+            "name": "MapCollider_3",
             "type": "MapCollider"
         },
         {
             "Components": {
                 "CameraComponent": {
                     "mainCamera": true,
-                    "zoom": 0.5370000004768372
+                    "zoom": 1.0
                 },
                 "TransformComponent": {
                     "position": {
@@ -218,8 +164,8 @@
                 }
             },
             "enabled": true,
-            "id": 5,
-            "name": "DefaultCamera_5",
+            "id": 4,
+            "name": "DefaultCamera_4",
             "type": "DefaultCamera"
         }
     ]

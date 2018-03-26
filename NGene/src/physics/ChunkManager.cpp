@@ -84,7 +84,7 @@ ChunkSet ChunkManager::calculate_chunks(Entity * entity) const {
     We default to adding the threshold unless we know the entity
     is not dynamic.
     */
-    if (!collision_component || collision_component->m_dynamic) {
+    if (!collision_component || collision_component->m_type != ColliderType::MOVING_OBJECT) {
         min_chunk.first -= m_safe_threshold;
         min_chunk.second -= m_safe_threshold;
 
@@ -272,7 +272,7 @@ void ChunkManager::update_single_entity(Entity * entity){
         We default to adding the threshold unless we know the entity
         is not dynamic.
         */
-        if (!collision_component || collision_component->m_dynamic) {
+        if (!collision_component || collision_component->m_type != ColliderType::MOVING_OBJECT) {
             min_chunk.first -= m_safe_threshold;
             min_chunk.second -= m_safe_threshold;
 

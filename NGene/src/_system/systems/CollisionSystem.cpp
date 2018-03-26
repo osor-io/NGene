@@ -37,7 +37,7 @@ void CollisionSystem::update() {
         if (v.second.size() > 1) {
 
             auto remaining_to_recheck = check_entity_set(v.second);
-            
+
             for (auto i = 0; (remaining_to_recheck.size() > 0 && i < RECHECK_LIMIT); ++i) {
                 for (auto e : remaining_to_recheck) {
                     auto transform = e->get_component<TransformComponent>();
@@ -128,21 +128,45 @@ std::set<Entity*> CollisionSystem::recheck_entity_set(const std::set<Entity*>& s
     return to_recheck;
 }
 
+bool CollisionSystem::are_static_entities(Entity *& entity_a, Entity *& entity_b) {
+    auto collision_component_a = entity_a->get_component<CollisionComponent>();
+    auto collision_component_b = entity_b->get_component<CollisionComponent>();
+    return (collision_component_a->m_type == ColliderType::TERRAIN && collision_component_b->m_type == ColliderType::TERRAIN);
+}
+
+bool CollisionSystem::check_and_sort_types(Entity *& entity_a, Entity *& entity_b, ColliderType type_a, ColliderType type_b) {
+
+    auto collision_component_a = entity_a->get_component<CollisionComponent>();
+    auto collision_component_b = entity_b->get_component<CollisionComponent>();
+
+    if (collision_component_a->m_type == type_a && collision_component_b->m_type == type_b) {
+        return true;
+    }
+    else if (collision_component_a->m_type == type_b && collision_component_b->m_type == type_a) {
+        auto aux = entity_a;
+        entity_a = entity_b;
+        entity_b = aux;
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 void CollisionSystem::execute_collisions(Entity * entity_a, Entity * entity_b, std::set<Entity*>& to_recheck, bool rechecking) {
 
     auto collision_component_a = entity_a->get_component<CollisionComponent>();
     auto collision_component_b = entity_b->get_component<CollisionComponent>();
 
-    if (!collision_component_a->m_dynamic && !collision_component_b->m_dynamic) {
+    if (are_static_entities(entity_a, entity_b)) {
         return;
     }
-    else if (collision_component_a->m_dynamic && !collision_component_b->m_dynamic ||
-        !collision_component_a->m_dynamic && collision_component_b->m_dynamic) {
+    else if (check_and_sort_types(entity_a, entity_b, ColliderType::MOVING_OBJECT, ColliderType::TERRAIN)) {
 
         //Swept AABB Collision Detection for a dynamic and static entity
 
-        auto dynamic_entity = (collision_component_a->m_dynamic ? entity_a : entity_b);
-        auto static_entity = (collision_component_a->m_dynamic ? entity_b : entity_a);
+        auto dynamic_entity = entity_a;
+        auto static_entity = entity_b;
 
         auto transform_component_a = dynamic_entity->get_component<TransformComponent>();
         auto transform_component_b = static_entity->get_component<TransformComponent>();
@@ -274,7 +298,7 @@ void CollisionSystem::execute_collisions(Entity * entity_a, Entity * entity_b, s
         }
 
     }
-    else {
+    else if (check_and_sort_types(entity_a, entity_b, ColliderType::MOVING_OBJECT, ColliderType::MOVING_OBJECT)) {
 
         /*
         Simple Discrete Minkowski Difference check.

@@ -85,16 +85,19 @@ void load_default_state() {
     auto j = json::parse(*s.resource);
     EntityManager::get().clear_and_load_entities(j);
     */
-    
+
     //If we want to check performance with more than one entity
-    for (int i = 0; i < 3; ++i) {
-        const auto id = EntityManager::get().request_load_entity("DynamicObject");
+    for (int i = 0; i < 2; ++i) {
+        auto id = int{};
+        if (i == 0)
+            id = EntityManager::get().request_load_entity("DynamicObject");
+        else
+            id = EntityManager::get().request_load_entity("DummyDynamicObject");
         EntityManager::get().update_entities();
         auto entity = EntityManager::get().get_entity(id);
-        entity->set_name("All Mighty Entity");
         entity->get_component<TransformComponent>()->set_position(sf::Vector2f(300.f, 100.f));
     }
-    
+
     const auto map_id = EntityManager::get().request_load_entity("DefaultMap");
     const auto camera_id = EntityManager::get().request_load_entity("DefaultCamera");
     EntityManager::get().update_entities();
@@ -185,10 +188,10 @@ int main() {
 
         /*
         @@NOTE
-        
+
         Use this to know the time needed to update the game (without rendering)
-        
-        Bear (ROAR!) in mind that using this will tank framerate since we are basically 
+
+        Bear (ROAR!) in mind that using this will tank framerate since we are basically
         printing a number every frame and maybe writing it to a log file, which takes a ton
         of time we don't want to spend in the middle of a frame. That said, the reading for
         how lonk we took to tick the game is still right, it is just that the framerate will

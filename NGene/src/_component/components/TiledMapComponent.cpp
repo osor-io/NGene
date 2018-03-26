@@ -305,7 +305,11 @@ void COMPONENT_TYPE::load_map() {
                     auto extent = e->get_component<ExtentComponent>();
                     auto collider = e->get_component<CollisionComponent>();
 
-                    collider->m_dynamic = false;
+                    /*
+                    If the collider has some other type we should read it here
+                    and set the correct type.
+                    */
+                    collider->m_type = ColliderType::TERRAIN;
                     collider->m_extent = sf::Vector2f(width / 2.f, height / 2.f);
 
                     extent->m_extent = collider->m_extent + sf::Vector2f(EXTRA_MAP_EXTENT, EXTRA_MAP_EXTENT);
