@@ -22,7 +22,7 @@ Entities = {
             phrase = "I'm saying hi from this lua Object!! :D"
         }, 
         SpriteComponent = {
-            filename = "C:/tmp/test.png"
+            filename = "./res/assets/test.png"
         }, 
         BehaviourComponent = {
             onUpdate = function (this, deltaTime)

@@ -114,19 +114,29 @@ void ExtentComponent::draw_rect() {
     const auto transform = EntityManager::get().get_entity(m_parent_id)->get_component<TransformComponent>();
 
     if (transform) {
-        auto centeri = RenderManager::get().get_main_render_target()->mapCoordsToPixel(transform->get_position());
 
-        auto center = sf::Vector2f(centeri);
+        auto center = transform->get_position() + m_offset;
 
-        center += m_offset;
+        auto one = RenderManager::get().get_main_render_target()->mapCoordsToPixel(
+            sf::Vector2f((center.x - m_extent.x), (center.y - m_extent.y))
+        );
+        auto two = RenderManager::get().get_main_render_target()->mapCoordsToPixel(
+            sf::Vector2f((center.x + m_extent.x), (center.y - m_extent.y))
+        );
+        auto three = RenderManager::get().get_main_render_target()->mapCoordsToPixel(
+            sf::Vector2f((center.x + m_extent.x), (center.y + m_extent.y))
+        );
+        auto four = RenderManager::get().get_main_render_target()->mapCoordsToPixel(
+            sf::Vector2f((center.x - m_extent.x), (center.y + m_extent.y))
+        );
 
         auto draw_list = ImGui::GetWindowDrawList();
         draw_list->PushClipRectFullScreen();
         draw_list->AddQuad(
-            ImVec2((center.x - m_extent.x), (center.y - m_extent.y)),
-            ImVec2((center.x + m_extent.x), (center.y - m_extent.y)),
-            ImVec2((center.x + m_extent.x), (center.y + m_extent.y)),
-            ImVec2((center.x - m_extent.x), (center.y + m_extent.y)),
+            ImVec2(one.x, one.y),
+            ImVec2(two.x, two.y),
+            ImVec2(three.x, three.y),
+            ImVec2(four.x, four.y),
             ImGui::GetColorU32((ImVec4)ImColor(0, 255, 0, 150)),
             2.0f
         );
