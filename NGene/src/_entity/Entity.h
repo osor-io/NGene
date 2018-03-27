@@ -94,7 +94,7 @@ private:
     bool m_in_relevant_chunk{ true };
     std::string m_type;
     std::unordered_map<std::type_index, std::unique_ptr<Component>> m_components;
-
+    bool m_serializable{ true };
 
     void generate_show_name();
 };

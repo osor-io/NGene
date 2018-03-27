@@ -105,6 +105,7 @@ EntityId EntityManager::request_load_entity(const std::string & type, const sol:
 
 Entity * EntityManager::create_additional_engine_entity(const std::string & type) {
     auto e = create_entity_internal(type, LUA["EngineEntities"]);
+    e->m_serializable = false;
     m_additional_entities_to_add.push_back(e);
     return e;
 }
@@ -154,7 +155,8 @@ json EntityManager::serialize_entities() const {
     auto entities = std::vector<json>{};
 
     for (const auto& e : m_entities) {
-        entities.push_back(e.second->to_json());
+        if (e.second->m_serializable)
+            entities.push_back(e.second->to_json());
     }
 
     j["Entities"] = entities;
@@ -194,7 +196,7 @@ void EntityManager::clear_and_load_entities(const json& j) {
     }
 }
 
-void EntityManager::reregister_entity(EntityId id){
+void EntityManager::reregister_entity(EntityId id) {
     auto entity = get_entity(id);
     SystemManager::get().deregister_entity_in_systems(id);
     SystemManager::get().register_entity_in_systems(*entity);
