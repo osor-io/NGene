@@ -22,14 +22,23 @@ void CollisionSystem::shut_down() {
 
 }
 
-void CollisionSystem::register_entity(Entity& entity) {}
+void CollisionSystem::register_entity(Entity& entity) {
+    if (entity.has_component<CollisionComponent>() && entity.has_component<TransformComponent>()) {
+        m_entities[entity.get_id()] = &entity;
+    }
+}
 
-void CollisionSystem::deregister_entity(EntityId id) {}
+void CollisionSystem::deregister_entity(EntityId id) {
+    m_entities.erase(id);
+}
 
 void CollisionSystem::update() {
 
-    const auto& grouped_entities = ChunkManager::get().get_grouped_entities_with_components<TransformComponent, CollisionComponent>();
+    for (auto e : m_entities) {
+        reset_collision_direction_flags(e.second);
+    }
 
+    const auto& grouped_entities = ChunkManager::get().get_grouped_entities_with_components<TransformComponent, CollisionComponent>();
 
     m_already_checked.clear();
 
@@ -39,6 +48,11 @@ void CollisionSystem::update() {
             auto remaining_to_recheck = check_entity_set(v.second);
 
             for (auto i = 0; (remaining_to_recheck.size() > 0 && i < RECHECK_LIMIT); ++i) {
+
+                for (auto e : remaining_to_recheck) {
+                    reset_collision_direction_flags(e);
+                }
+
                 for (auto e : remaining_to_recheck) {
                     auto transform = e->get_component<TransformComponent>();
                     transform->m_previous_position = transform->m_position;
@@ -246,15 +260,30 @@ void CollisionSystem::execute_collisions(Entity * entity_a, Entity * entity_b, s
                 to_recheck.insert(entity_a);
                 transform_component_a->m_position = new_position_a;
             }
+
+
+            if (normal_vector == NORMAL_LEFT) {
+                collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_LEFT;
+            }
+            else if (normal_vector == NORMAL_RIGHT) {
+                collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_RIGHT;
+            }
+            else if (normal_vector == NORMAL_UP) {
+                collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_UP;
+            }
+            else if (normal_vector == NORMAL_DOWN) {
+                collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_DOWN;
+            }
+
         }
         else {
 
             auto relative_motion = velocity_a - velocity_b;
 
             auto h = float{};
-            auto normal = sf::Vector2f{};
+            auto normal_vector = sf::Vector2f{};
 
-            std::tie(h, normal) = minkowski_difference.ray_intersection_fraction(sf::Vector2f(0.0f, 0.0f), relative_motion);
+            std::tie(h, normal_vector) = minkowski_difference.ray_intersection_fraction(sf::Vector2f(0.0f, 0.0f), relative_motion);
 
 
             if (h < std::numeric_limits<float>::infinity()) {
@@ -279,7 +308,7 @@ void CollisionSystem::execute_collisions(Entity * entity_a, Entity * entity_b, s
                 component of the velocity that is not pushing us towards
                 the obstacle.
                 */
-                auto tan = tangent(normal);
+                auto tan = tangent(normal_vector);
                 velocity_a = dot(velocity_a, tan) * tan;
 
 
@@ -288,15 +317,26 @@ void CollisionSystem::execute_collisions(Entity * entity_a, Entity * entity_b, s
                     transform_component_a->m_position = new_position_a;
                     to_recheck.insert(entity_a);
                 }
+
+                if (normal_vector == NORMAL_LEFT) {
+                    collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_LEFT;
+                }
+                else if (normal_vector == NORMAL_RIGHT) {
+                    collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_RIGHT;
+                }
+                else if (normal_vector == NORMAL_UP) {
+                    collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_UP;
+                }
+                else if (normal_vector == NORMAL_DOWN) {
+                    collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_DOWN;
+                }
             }
             else {
                 /*
                 There is no collision between the two entities!
                 */
             }
-
         }
-
     }
     else if (check_and_sort_types(entity_a, entity_b, ColliderType::MOVING_OBJECT, ColliderType::MOVING_OBJECT)) {
 
@@ -340,6 +380,11 @@ void CollisionSystem::execute_collisions(Entity * entity_a, Entity * entity_b, s
     }
 
 
+}
+
+void CollisionSystem::reset_collision_direction_flags(Entity * entity) {
+    auto collision_component = entity->get_component<CollisionComponent>();
+    collision_component->m_moving_collision_direction_flags = 0u;
 }
 
 

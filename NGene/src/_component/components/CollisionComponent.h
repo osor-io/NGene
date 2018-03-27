@@ -6,6 +6,13 @@ enum class ColliderType {
     MOVING_OBJECT,
 };
 
+enum CollisionDirectionFlags {
+    COLLISION_DIRECTION_DOWN = 1,
+    COLLISION_DIRECTION_UP = (1 << 1),
+    COLLISION_DIRECTION_LEFT = (1 << 2),
+    COLLISION_DIRECTION_RIGHT = (1 << 3),
+};
+
 class CollisionComponent : public ComponentTemplate<CollisionComponent> {
     friend auto meta::registerMembers<CollisionComponent>();
 public:
@@ -27,27 +34,28 @@ public:
 
 
     // ====== BEG OF MEMBERS ======
-    
+
     sf::Vector2f m_offset{ 0.0f,0.0f };
     sf::Vector2f m_extent{ 10.0f,10.0f };
 
 
     /*
-    @@TODO
-    
-    We should extend this argument to an enum supporting various types of colliders
-    to support various types of collisions. Just something being static or dynamic 
-    is not enough. Think about moving plattforms or one way plattforms (where you
-    can go through them when going from bottom to top but not in reverse)
 
     Here it is a good article outlining some of the interesting types of collisions
     to support, I'm thinking about prioritizing Moving Plattforms and One Way Plattforms:
 
     http://higherorderfun.com/blog/2012/05/20/the-guide-to-implementing-2d-platformers/
-    
+
     */
     ColliderType m_type{ ColliderType::TERRAIN };
-    
+
+    /*
+    These are the flags set for the moving entities that containg which directions
+    have been hit in relation to Terraing-like colliders, this is especially usefull to know
+    if an entity is grounded or sliding on a wall.
+    */
+    unsigned int m_moving_collision_direction_flags{ 0u };
+
     // ====== END OF MEMBERS ======
 
 };

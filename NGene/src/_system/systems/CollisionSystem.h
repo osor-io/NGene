@@ -33,6 +33,8 @@ private:
     bool check_and_sort_types(Entity*& entity_a, Entity*& entity_b, ColliderType type_a, ColliderType type_b);
 
     void execute_collisions(Entity* entity_a, Entity* entity_b, std::set<Entity*>& to_recheck, bool rechecking = false);
+
+    void reset_collision_direction_flags(Entity* entity_a);
     
     EntitiesGroup m_entities;
     std::unordered_set<std::pair<EntityId, EntityId>, PairIntIntHash> m_already_checked{};

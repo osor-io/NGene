@@ -98,6 +98,8 @@ void COMPONENT_TYPE::draw_component_inspector() {
                         m_type == ColliderType::MOVING_OBJECT ? "Moving Object"  :
                         "Unknown"));
 
+    ImGui::Text("Collision Direction Flags: %u", m_moving_collision_direction_flags);
+
     draw_rect();
 
     ImGui::End();
