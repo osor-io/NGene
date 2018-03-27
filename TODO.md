@@ -5,6 +5,7 @@ In general, smaller @@TODO tasks that are not big or relevant enough to be writt
 ## @@TODO
 
 * Also reload Entity Types when reloading states.
+* Save directions of collisions with static (terrain-like) objects to do additional checks in the physics components that are able to tell us if we are grounded, sliding on left or right wall, etc. In general, to give us information about which static colliders we are touching.
 * Implement Save State Light to do things like reloading a state during gameplay (ala checkpoints). WIthout reloading expensive things that will be the same like the map.
 * Pool per Component Type
 * Implement data table in BehaviourComponent so we can keep state between updates
