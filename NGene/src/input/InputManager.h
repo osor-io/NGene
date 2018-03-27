@@ -17,8 +17,9 @@ public:
     static bool is_button_pressed(unsigned int button);
     static float get_axis_position(sf::Joystick::Axis axis);
 
+    void expose_to_lua();
+
 private:
 
-    void register_sfml_input();
 
 };

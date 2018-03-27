@@ -17,6 +17,14 @@ EntityManager::EntityManager() {}
 EntityManager::~EntityManager() {}
 
 void EntityManager::start_up() {
+    //set_scripts();
+}
+
+void EntityManager::shut_down() {
+    m_entities.clear();
+}
+
+void EntityManager::set_scripts() {
 
     Entity::expose_to_lua();
     expose_to_lua();
@@ -30,10 +38,7 @@ void EntityManager::start_up() {
 
     LUA.script(*custom_types_script.resource);
     LUA.script(*engine_types_script.resource);
-}
 
-void EntityManager::shut_down() {
-    m_entities.clear();
 }
 
 void EntityManager::update_entities() {
@@ -53,6 +58,12 @@ void EntityManager::update_entities() {
         m_next_id = 0;
 
         if (m_requested_load) {
+
+            if (m_requested_script_reload) {
+                LuaManager::get().reset_state();
+                m_requested_script_reload = false;
+            }
+
             m_requested_load = false;
             /*
             We create the entities depending on their type and
@@ -95,8 +106,11 @@ void EntityManager::update_entities() {
 
 }
 
-EntityId EntityManager::request_load_entity(const std::string & type, const sol::table & table)
+EntityId EntityManager::request_load_entity(const std::string & type, const sol::table & table, bool request_script_reload)
 {
+    if (!m_requested_script_reload)
+        m_requested_script_reload = request_script_reload;
+
     auto e = create_entity_internal(type, table);
 
     m_entities_to_add.push_back(e);
@@ -191,6 +205,7 @@ void EntityManager::clear_and_load_entities(const json& j) {
 
         m_requested_clear = true;
         m_requested_load = true;
+        m_requested_script_reload = true;
 
         m_unprocessed_load_entity_data = j;
     }

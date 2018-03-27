@@ -33,6 +33,8 @@ public:
 
     float cycles_to_ms(CounterType counter);
 
+    void expose_to_lua();
+
 private:
     std::unique_ptr<sf::Clock> m_frame_clock;
     sf::Time m_frame_delta_time{};

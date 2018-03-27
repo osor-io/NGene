@@ -11,14 +11,12 @@ void TimeManager::start_up() {
     m_frame_clock = std::make_unique<sf::Clock>();
     m_frame_clock->restart();
 
-    LUA.set_function("getDeltaTime", [this]() {
-        return this->get_delta_time().asSeconds();
-    });
-
     auto frequency = LARGE_INTEGER{};
 
     QueryPerformanceFrequency(&frequency);
     m_internal_frequency = frequency.QuadPart;
+
+    expose_to_lua();
 }
 
 
@@ -44,5 +42,11 @@ long long TimeManager::query_cycle_counter() {
 
 float TimeManager::cycles_to_ms(CounterType counter) {
     return (1000 * counter) / m_internal_frequency;
+}
+
+void TimeManager::expose_to_lua(){
+    LUA.set_function("getDeltaTime", [this]() {
+        return this->get_delta_time().asSeconds();
+    });
 }
 

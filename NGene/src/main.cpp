@@ -93,14 +93,10 @@ void load_default_state() {
             id = EntityManager::get().request_load_entity("DynamicObject");
         else
             id = EntityManager::get().request_load_entity("DummyDynamicObject");
-        EntityManager::get().update_entities();
-        auto entity = EntityManager::get().get_entity(id);
-        entity->get_component<TransformComponent>()->set_position(sf::Vector2f(300.f, 100.f));
     }
 
     const auto map_id = EntityManager::get().request_load_entity("DefaultMap");
     const auto camera_id = EntityManager::get().request_load_entity("DefaultCamera");
-    EntityManager::get().update_entities();
 }
 
 void access_entities_from_lua() {

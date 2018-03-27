@@ -32,9 +32,11 @@ public:
     void start_up() override;
     void shut_down() override;
 
+    void set_scripts();
+
     void update_entities();
 
-    EntityId request_load_entity(const std::string & type, const sol::table & table= LUA["Entities"]);
+    EntityId request_load_entity(const std::string & type, const sol::table & table = LUA["Entities"], bool request_script_reload = true);
 
     Entity * create_additional_engine_entity(const std::string& type);
 
@@ -75,6 +77,7 @@ private:
 
     bool m_requested_clear{ false };
     bool m_requested_load{ false };
+    bool m_requested_script_reload{ false };
 
     json m_unprocessed_load_entity_data{};
 

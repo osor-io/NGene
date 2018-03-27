@@ -12,7 +12,7 @@ InputManager::~InputManager()
 }
 
 void InputManager::start_up() {
-    register_sfml_input();
+    expose_to_lua();
 }
 
 
@@ -58,7 +58,7 @@ float InputManager::get_axis_position(sf::Joystick::Axis axis) {
 #define AXIS(x) #x, sf::Joystick::Axis:: ## x
 
 
-void InputManager::register_sfml_input() {
+void InputManager::expose_to_lua() {
 
     //@@TODO: Register Custom Enum for Lua with the buttons of the XBox Controller
 

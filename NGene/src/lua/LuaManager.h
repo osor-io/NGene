@@ -24,6 +24,9 @@ public:
     void shut_down() override;
 
     sol::state& get_state_ref();
+
+    void reset_state();
+
 private:
     std::unique_ptr<sol::state> m_state{};
 };
