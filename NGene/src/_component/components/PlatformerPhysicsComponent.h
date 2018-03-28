@@ -1,0 +1,59 @@
+#pragma once
+#include "../ComponentTemplate.h"
+#include <SFML/System/Vector2.hpp>
+
+class PlatformerPhysicsComponent : public ComponentTemplate<PlatformerPhysicsComponent> {
+    friend auto meta::registerMembers<PlatformerPhysicsComponent>();
+public:
+    PlatformerPhysicsComponent(EntityId id);
+    PlatformerPhysicsComponent(EntityId id, const sol::table& table);
+    ~PlatformerPhysicsComponent();
+
+    json to_json() override;
+    void load_json(const json& j) override;
+
+
+    // ====== BEG OF REQUIREMENTS ======
+    void draw_component_inspector() override;
+    static void expose_to_lua();  // Go To Entity.cpp and call this
+    // ====== END OF REQUIREMENTS ======
+
+
+
+
+    // ====== BEG OF MEMBERS ======
+
+    float m_max_foot_speed;
+    float m_distance_to_peak;
+    float m_jump_height;
+
+    sf::Vector2f m_our_gravity;
+    sf::Vector2f m_initial_jump_velocity;
+
+    sf::Vector2f m_current_velocity;
+
+    bool m_grounded{ false };
+
+    // ====== END OF MEMBERS ======
+
+};
+
+template<>
+inline auto meta::registerName<PlatformerPhysicsComponent>() {
+    return "PlatformerPhysicsComponent";
+}
+
+template<>
+inline auto meta::registerMembers<PlatformerPhysicsComponent>() {
+    return members(
+        member("maxFootSpeed", &PlatformerPhysicsComponent::m_max_foot_speed),
+        member("distanceToPeak", &PlatformerPhysicsComponent::m_distance_to_peak),
+        member("jumpHeight", &PlatformerPhysicsComponent::m_jump_height),
+        member("ourGravity", &PlatformerPhysicsComponent::m_our_gravity),
+        member("initialJumpVelocity", &PlatformerPhysicsComponent::m_initial_jump_velocity),
+        member("currentVelocity", &PlatformerPhysicsComponent::m_current_velocity),
+        member("grounded", &PlatformerPhysicsComponent::m_grounded)
+    );
+}
+
+

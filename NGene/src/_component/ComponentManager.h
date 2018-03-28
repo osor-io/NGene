@@ -10,6 +10,7 @@
 #include <Manager.h>
 #include "../_entity/Entity.h"
 
+#include "./components/PlatformerPhysicsComponent.h"
 #include "./components/CollisionComponent.h"
 #include "./components/CameraComponent.h"
 #include "./components/TiledMapComponent.h"
@@ -60,6 +61,7 @@ private:
 
     const TypeMap m_type_map{
 
+        DEFINE_TYPE(PlatformerPhysicsComponent)
         DEFINE_TYPE(CollisionComponent)
         DEFINE_TYPE(CameraComponent)
         DEFINE_TYPE(TiledMapComponent)
@@ -75,6 +77,7 @@ private:
 
     const FactoryMap m_factory_map{
 
+        DEFINE_FACTORY(PlatformerPhysicsComponent)
         DEFINE_FACTORY(CollisionComponent)
         DEFINE_FACTORY(CameraComponent)
         DEFINE_FACTORY(TiledMapComponent)

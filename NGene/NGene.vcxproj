@@ -206,6 +206,7 @@ echo.</Command>
     <ClCompile Include="src\_component\components\CollisionComponent.cpp" />
     <ClCompile Include="src\_component\components\ExtentComponent.cpp" />
     <ClCompile Include="src\_component\components\InputComponent.cpp" />
+    <ClCompile Include="src\_component\components\PlatformerPhysicsComponent.cpp" />
     <ClCompile Include="src\_component\components\TiledMapComponent.cpp" />
     <ClCompile Include="src\_system\systems\BehaviourSystem.cpp" />
     <ClCompile Include="dep\src\ImGuizmo.cpp" />
@@ -222,6 +223,7 @@ echo.</Command>
     <ClCompile Include="src\_system\systems\CameraSystem.cpp" />
     <ClCompile Include="src\_system\systems\CollisionSystem.cpp" />
     <ClCompile Include="src\_system\systems\InputSystem.cpp" />
+    <ClCompile Include="src\_system\systems\PhysicsSystem.cpp" />
     <ClCompile Include="src\_system\systems\RenderSystem.cpp" />
     <ClCompile Include="src\utils\Debug.cpp" />
     <ClCompile Include="src\math\OtherMath.cpp" />
@@ -277,6 +279,7 @@ echo.</Command>
     <ClInclude Include="src\_component\components\CollisionComponent.h" />
     <ClInclude Include="src\_component\components\ExtentComponent.h" />
     <ClInclude Include="src\_component\components\InputComponent.h" />
+    <ClInclude Include="src\_component\components\PlatformerPhysicsComponent.h" />
     <ClInclude Include="src\_component\components\TiledMapComponent.h" />
     <ClInclude Include="src\_system\systems\BehaviourSystem.h" />
     <ClInclude Include="dep\include\ImGuizmo.h" />
@@ -296,6 +299,7 @@ echo.</Command>
     <ClInclude Include="src\_system\systems\CameraSystem.h" />
     <ClInclude Include="src\_system\systems\CollisionSystem.h" />
     <ClInclude Include="src\_system\systems\InputSystem.h" />
+    <ClInclude Include="src\_system\systems\PhysicsSystem.h" />
     <ClInclude Include="src\_system\systems\RenderSystem.h" />
     <ClInclude Include="src\utils\Debug.h" />
     <ClInclude Include="src\math\OtherMath.h" />

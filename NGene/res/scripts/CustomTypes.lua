@@ -17,7 +17,12 @@ Entities = {
             offsetX = 0, 
             offsetY = 0,
             type = ColliderType.MOVING_OBJECT
-        },  
+        },
+        PlatformerPhysicsComponent = {
+            maxFootSpeed = 32.0,
+            distanceToPeak = 64.0,
+            jumpHeight = 64.0
+        },
         PhraseComponent = {
             phrase = "I'm saying hi from this lua Object!! :D"
         }, 

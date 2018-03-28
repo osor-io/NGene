@@ -283,7 +283,6 @@ void COMPONENT_TYPE::load_map() {
 
 
             if (name.compare("Collisions")) {
-                //@@TODO: Read the colliders from here
 
                 const sol::table& data_table = layer_table["objects"];
 

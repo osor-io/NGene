@@ -20,6 +20,7 @@
 #include "./_system/systems/InputSystem.h"
 #include "./_system/systems/BehaviourSystem.h"
 #include "./_system/systems/CameraSystem.h"
+#include "./_system/systems/PhysicsSystem.h"
 #include "./_system/systems/CollisionSystem.h"
 #include "./_system/systems/TransformSystem.h"
 #include "./_system/systems/RenderSystem.h"
@@ -46,6 +47,7 @@ void start_up() {
     InputSystem::get().start_up();
     BehaviourSystem::get().start_up();
     CameraSystem::get().start_up();
+    PhysicsSystem::get().start_up();
     CollisionSystem::get().start_up();
     TransformSystem::get().start_up();
     RenderSystem::get().start_up();
@@ -57,6 +59,7 @@ void shut_down() {
     RenderSystem::get().shut_down();
     TransformSystem::get().shut_down();
     CollisionSystem::get().shut_down();
+    PhysicsSystem::get().shut_down();
     CameraSystem::get().shut_down();
     BehaviourSystem::get().shut_down();
     InputSystem::get().shut_down();
@@ -143,6 +146,7 @@ inline void tick() {
     InputSystem::get().update();
     BehaviourSystem::get().update();
     CameraSystem::get().update();
+    PhysicsSystem::get().update();
     CollisionSystem::get().update();
 
     TransformSystem::get().update();
