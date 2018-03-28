@@ -36,3 +36,4 @@
  	- EntityManager should own all the entities with unique pointers but have also a list of the top ones for conveniency and for developer mode.
  - Build a good jump! Or even a better one: https://youtu.be/hG9SzQxaCm8
  - Why not read tracks to make the music? (THere are actually quite a few reasons not to do so but: https://github.com/cmatsuoka/libxmp )
+
