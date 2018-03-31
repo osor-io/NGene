@@ -44,8 +44,6 @@ void PhysicsSystem::update() {
 
         platformer_component->m_grounded = (collision_component->m_moving_collision_direction_flags & CollisionDirectionFlags::COLLISION_DIRECTION_DOWN != 0u);
 
-
-
         {
             //Calculate initial jump velocity and gravity
 
@@ -61,19 +59,22 @@ void PhysicsSystem::update() {
 
         }
 
-        platformer_component->m_current_velocity += platformer_component->m_our_gravity * delta_time;
-        auto applied_velocity = platformer_component->m_current_velocity;
-        applied_velocity.y *= -1;
-
         if (platformer_component->m_grounded) {
 
-            platformer_component->m_current_velocity = sf::Vector2f(0.f, 0.f);
+            platformer_component->m_current_velocity.y = 0.f;
 
             /*
             We allow the entity to jump and we don't push it downwards since
             it is going to collide with terrain anyway. This way we avoid an
             extra collision check each frame we are grounded.
             */
+
+            if (platformer_component->m_requested_jump) {
+                platformer_component->m_current_velocity += platformer_component->m_initial_jump_velocity;
+                platformer_component->m_requested_jump = false;
+                platformer_component->m_grounded = false;
+            }
+
         }
         else {
 
@@ -81,10 +82,13 @@ void PhysicsSystem::update() {
             If we are not grounded then we have to apply downwards gravity
             */
 
-            transform_component->m_position = transform_component->m_position + applied_velocity * delta_time;
+            platformer_component->m_current_velocity += platformer_component->m_our_gravity * delta_time;
 
         }
 
+        auto applied_velocity = platformer_component->m_current_velocity;
+        applied_velocity.y *= -1;
+        transform_component->m_position = transform_component->m_position + applied_velocity * delta_time;
 
     }
 

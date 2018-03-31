@@ -2,6 +2,13 @@
 #include "../ComponentTemplate.h"
 #include <SFML/System/Vector2.hpp>
 
+
+enum INPUT_MOVEMENT_DIRECTION {
+    INPUT_MOVEMENT_RIGHT,
+    INPUT_MOVEMENT_LEFT,
+    INPUT_MOVEMENT_NONE
+};
+
 class PlatformerPhysicsComponent : public ComponentTemplate<PlatformerPhysicsComponent> {
     friend auto meta::registerMembers<PlatformerPhysicsComponent>();
 public:
@@ -18,7 +25,8 @@ public:
     static void expose_to_lua();  // Go To Entity.cpp and call this
     // ====== END OF REQUIREMENTS ======
 
-
+    void move(INPUT_MOVEMENT_DIRECTION direction);
+    void jump();
 
 
     // ====== BEG OF MEMBERS ======
@@ -33,6 +41,8 @@ public:
     sf::Vector2f m_current_velocity;
 
     bool m_grounded{ false };
+
+    bool m_requested_jump{ false };
 
     // ====== END OF MEMBERS ======
 

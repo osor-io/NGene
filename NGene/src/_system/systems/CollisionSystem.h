@@ -34,7 +34,11 @@ private:
 
     void execute_collisions(Entity* entity_a, Entity* entity_b, std::set<Entity*>& to_recheck, bool rechecking = false);
 
+    void execute_update_collision_direction_flags(Entity* entity_a, Entity* entity_b);
+
     void reset_collision_direction_flags(Entity* entity_a);
+
+    void set_collision_direction_flags(CollisionComponent* collision_component, sf::Vector2f normal_vector);
     
     EntitiesGroup m_entities;
     std::unordered_set<std::pair<EntityId, EntityId>, PairIntIntHash> m_already_checked{};

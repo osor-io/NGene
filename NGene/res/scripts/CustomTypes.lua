@@ -2,8 +2,8 @@
 Entities = {
     DynamicObject = {
         TransformComponent = {
-            x = 0, 
-            y = 100
+            x = 300, 
+            y = 0
         }, 
         ExtentComponent = {
             extentX = 40, 
@@ -19,9 +19,9 @@ Entities = {
             type = ColliderType.MOVING_OBJECT
         },
         PlatformerPhysicsComponent = {
-            maxFootSpeed = 32.0,
-            distanceToPeak = 64.0,
-            jumpHeight = 64.0
+            maxFootSpeed = 320.0,
+            distanceToPeak = 128.0,
+            jumpHeight = 128.0
         },
         PhraseComponent = {
             phrase = "I'm saying hi from this lua Object!! :D"
@@ -31,56 +31,27 @@ Entities = {
         }, 
         BehaviourComponent = {
             onUpdate = function (this, deltaTime)
-                transform = this:getTransformComponent()
-                local x = getAxisPosition(Axis.X)
-                local y = getAxisPosition(Axis.Y)
-                if(transform) then
-                    --[[
-                    transform.position.x = transform.position.x + (10.0 * deltaTime) 
-                    transform.position.y = transform.position.y + (10.0 * deltaTime) 
-                    --]]
-
+                movement = this:getPlatformerPhysicsComponent()
+                if(movement) then
                     if (isKeyPressed(Key.A)) then
-                        transform.position.x = transform.position.x - (200.0 * deltaTime) 
+                        movement:move(MovementDirection.Left)
                     elseif (isKeyPressed(Key.D)) then
-                        transform.position.x = transform.position.x + (200.0 * deltaTime)
+                        movement:move(MovementDirection.Right)
+                    else
+                        movement:move(MovementDirection.None)
                     end
 
-                    if (isKeyPressed(Key.W)) then
-                        transform.position.y = transform.position.y - (200.0 * deltaTime)
-                    elseif (isKeyPressed(Key.S)) then
-                        transform.position.y = transform.position.y + (200.0 * deltaTime)
-                    end
-
-                     if (isKeyPressed(Key.J)) then
-                        transform.position.x = transform.position.x - (20000.0 * deltaTime) 
-                    elseif (isKeyPressed(Key.L)) then
-                        transform.position.x = transform.position.x + (20000.0 * deltaTime)
-                    end
-
-                    if (isKeyPressed(Key.I)) then
-                        transform.position.y = transform.position.y - (20000.0 * deltaTime)
-                    elseif (isKeyPressed(Key.K)) then
-                        transform.position.y = transform.position.y + (20000.0 * deltaTime)
+                    if (isKeyPressed(Key.Space)) then
+                        movement:jump()
                     end
 
                 else 
-                    print("We got no transform")
+                    print("We got no Platformer Physics Component")
                 end
-                --[[
-                            print("X:", getAxisPosition(Axis.X))
-                            print("Y:", getAxisPosition(Axis.Y))
-                            print("Z:", getAxisPosition(Axis.Z))
-                            print("R:", getAxisPosition(Axis.R))
-                            print("U:", getAxisPosition(Axis.U))
-                            print("V:", getAxisPosition(Axis.V))
-                            print("PovX:", getAxisPosition(Axis.PovX))
-                            print("PovY:", getAxisPosition(Axis.PovY))
-                            --]]
             end
         }, 
         InputComponent = {
-            onKeyUp = function (this, button)
+            onKeyUp = function (this, key)
                 --print("Down: ", button)
                 if(button == Key.A) then
                     --print("Key was an A")
@@ -88,8 +59,15 @@ Entities = {
                     --print("Key was NOT an A")
                 end
             end, 
-            onKeyDown = function (this, button)
-                --print("Up: ", button)
+            onKeyDown = function (this, key)
+                --[[
+                if(key == Key.Space) then
+                    movement = this:getPlatformerPhysicsComponent()
+                    if(movement) then
+                        movement:jump()
+                    end
+                end
+                --]]
             end, 
             onButtonUp = function (this, button)
                 --print("Button Up: ", button)
@@ -122,7 +100,7 @@ Entities = {
 
     DummyDynamicObject = {
         TransformComponent = {
-            x = 0, 
+            x = 300, 
             y = 100
         }, 
         ExtentComponent = {

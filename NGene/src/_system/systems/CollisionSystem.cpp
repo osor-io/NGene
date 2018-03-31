@@ -169,9 +169,6 @@ bool CollisionSystem::check_and_sort_types(Entity *& entity_a, Entity *& entity_
 
 void CollisionSystem::execute_collisions(Entity * entity_a, Entity * entity_b, std::set<Entity*>& to_recheck, bool rechecking) {
 
-    auto collision_component_a = entity_a->get_component<CollisionComponent>();
-    auto collision_component_b = entity_b->get_component<CollisionComponent>();
-
     if (are_static_entities(entity_a, entity_b)) {
         return;
     }
@@ -179,14 +176,11 @@ void CollisionSystem::execute_collisions(Entity * entity_a, Entity * entity_b, s
 
         //Swept AABB Collision Detection for a dynamic and static entity
 
-        auto dynamic_entity = entity_a;
-        auto static_entity = entity_b;
+        auto transform_component_a = entity_a->get_component<TransformComponent>();
+        auto transform_component_b = entity_b->get_component<TransformComponent>();
 
-        auto transform_component_a = dynamic_entity->get_component<TransformComponent>();
-        auto transform_component_b = static_entity->get_component<TransformComponent>();
-
-        collision_component_a = dynamic_entity->get_component<CollisionComponent>();
-        collision_component_b = static_entity->get_component<CollisionComponent>();
+        auto collision_component_a = entity_a->get_component<CollisionComponent>();
+        auto collision_component_b = entity_b->get_component<CollisionComponent>();
 
         auto velocity_a = transform_component_a->m_position - transform_component_a->m_previous_position;
         auto velocity_b = transform_component_b->m_position - transform_component_b->m_previous_position;
@@ -262,19 +256,6 @@ void CollisionSystem::execute_collisions(Entity * entity_a, Entity * entity_b, s
             }
 
 
-            if (normal_vector == NORMAL_LEFT) {
-                collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_LEFT;
-            }
-            else if (normal_vector == NORMAL_RIGHT) {
-                collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_RIGHT;
-            }
-            else if (normal_vector == NORMAL_UP) {
-                collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_UP;
-            }
-            else if (normal_vector == NORMAL_DOWN) {
-                collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_DOWN;
-            }
-
         }
         else {
 
@@ -318,18 +299,6 @@ void CollisionSystem::execute_collisions(Entity * entity_a, Entity * entity_b, s
                     to_recheck.insert(entity_a);
                 }
 
-                if (normal_vector == NORMAL_LEFT) {
-                    collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_LEFT;
-                }
-                else if (normal_vector == NORMAL_RIGHT) {
-                    collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_RIGHT;
-                }
-                else if (normal_vector == NORMAL_UP) {
-                    collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_UP;
-                }
-                else if (normal_vector == NORMAL_DOWN) {
-                    collision_component_a->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_DOWN;
-                }
             }
             else {
                 /*
@@ -358,6 +327,9 @@ void CollisionSystem::execute_collisions(Entity * entity_a, Entity * entity_b, s
         auto transform_component_a = entity_a->get_component<TransformComponent>();
         auto transform_component_b = entity_b->get_component<TransformComponent>();
 
+        auto collision_component_a = entity_a->get_component<CollisionComponent>();
+        auto collision_component_b = entity_b->get_component<CollisionComponent>();
+
         auto box_a = AABB(transform_component_a->m_position + collision_component_a->m_offset,
             collision_component_a->m_extent);
 
@@ -379,7 +351,38 @@ void CollisionSystem::execute_collisions(Entity * entity_a, Entity * entity_b, s
         }
     }
 
+    execute_update_collision_direction_flags(entity_a, entity_b);
 
+}
+
+void CollisionSystem::execute_update_collision_direction_flags(Entity * entity_a, Entity * entity_b) {
+
+    auto transform_component_a = entity_a->get_component<TransformComponent>();
+    auto transform_component_b = entity_b->get_component<TransformComponent>();
+
+    auto collision_component_a = entity_a->get_component<CollisionComponent>();
+    auto collision_component_b = entity_b->get_component<CollisionComponent>();
+
+    auto box_a = AABB(transform_component_a->m_position + collision_component_a->m_offset,
+        collision_component_a->m_extent);
+
+    auto box_b = AABB(transform_component_b->m_position + collision_component_b->m_offset,
+        collision_component_b->m_extent);
+
+    auto minkowski_difference = box_b - box_a;
+
+    auto collided = minkowski_difference.has_origin();
+
+    if (collided) {
+
+        auto penetration_vector = sf::Vector2f{};
+        auto normal_vector = sf::Vector2f{};
+
+        std::tie(penetration_vector, normal_vector) = minkowski_difference.closest_point_on_bounds_to_point(sf::Vector2f(0.0f, 0.0f));
+
+        set_collision_direction_flags(collision_component_a, normal_vector);
+        set_collision_direction_flags(collision_component_b, -normal_vector);
+    }
 }
 
 void CollisionSystem::reset_collision_direction_flags(Entity * entity) {
@@ -387,4 +390,20 @@ void CollisionSystem::reset_collision_direction_flags(Entity * entity) {
     collision_component->m_moving_collision_direction_flags = 0u;
 }
 
+
+void CollisionSystem::set_collision_direction_flags(CollisionComponent* collision_component, sf::Vector2f normal_vector) {
+
+    if (normal_vector == NORMAL_LEFT) {
+        collision_component->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_LEFT;
+    }
+    else if (normal_vector == NORMAL_RIGHT) {
+        collision_component->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_RIGHT;
+    }
+    else if (normal_vector == NORMAL_UP) {
+        collision_component->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_UP;
+    }
+    else if (normal_vector == NORMAL_DOWN) {
+        collision_component->m_moving_collision_direction_flags |= CollisionDirectionFlags::COLLISION_DIRECTION_DOWN;
+    }
+}
 

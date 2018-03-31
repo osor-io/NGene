@@ -15,12 +15,12 @@ TransformComponent::TransformComponent(EntityId id) : ComponentTemplate(id, std:
 
 TransformComponent::TransformComponent(EntityId id, const sol::table& table) : ComponentTemplate(id, std::type_index(typeid(TransformComponent))) {
 
-
     sol::object value_x = table["x"];
     sol::object value_y = table["y"];
     assert(value_x.valid() && value_y.valid());
 
     m_position = sf::Vector2f(value_x.as<float>(), value_y.as<float>());
+    m_previous_position = m_position;
 
 }
 
