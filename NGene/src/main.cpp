@@ -176,6 +176,7 @@ int main() {
     start_up();
     load_default_state();
 
+    TimeManager::get().end_of_frame();
 
     while (WindowManager::get().is_window_open()) {
 

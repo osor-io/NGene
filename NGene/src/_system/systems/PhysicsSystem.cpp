@@ -45,19 +45,39 @@ void PhysicsSystem::update() {
         platformer_component->m_grounded = (collision_component->m_moving_collision_direction_flags & CollisionDirectionFlags::COLLISION_DIRECTION_DOWN != 0u);
 
         {
-            //Calculate initial jump velocity and gravity
+            /*
+            @@TODO
 
-            platformer_component->m_initial_jump_velocity.y = 
+            We should refactor this code that calculates the initial variables
+            so we only execute it once when we need it. Here we are calculating
+            the same values every frame.
+            */
+
+            platformer_component->m_initial_jump_velocity.y =
                 (2.f * platformer_component->m_jump_height * platformer_component->m_max_foot_speed)
                 /
-                (platformer_component->m_distance_to_peak);
+                (platformer_component->m_horizontal_distance_to_peak);
 
             platformer_component->m_our_gravity.y =
                 (-2.f * platformer_component->m_jump_height * platformer_component->m_max_foot_speed * platformer_component->m_max_foot_speed)
                 /
-                (platformer_component->m_distance_to_peak * platformer_component->m_distance_to_peak);
+                (platformer_component->m_horizontal_distance_to_peak * platformer_component->m_horizontal_distance_to_peak);
+
+            auto scaled_gravity = (platformer_component->m_our_gravity.y * platformer_component->m_downwards_gravity_scale);
+
+            /*
+            We are limiting the falling velocity to the velocity that then entity
+            has when jumping and landing from an in-place jump where the initial Y
+            position is the same as the final Y position.
+            */
+            platformer_component->m_max_velocity.y = abs(
+                scaled_gravity
+                *
+                sqrt(-platformer_component->m_jump_height / (scaled_gravity / 2.f)));
 
         }
+
+        auto acceleration = sf::Vector2f(0.0f, 0.0f);
 
         if (platformer_component->m_grounded) {
 
@@ -82,13 +102,48 @@ void PhysicsSystem::update() {
             If we are not grounded then we have to apply downwards gravity
             */
 
-            platformer_component->m_current_velocity += platformer_component->m_our_gravity * delta_time;
+            if (platformer_component->m_current_velocity.y > 0.f) {
+                // Going up
+                acceleration += platformer_component->m_our_gravity;
+            }
+            else {
+                // Going Down
+                acceleration += platformer_component->m_our_gravity * platformer_component->m_downwards_gravity_scale;
+            }
 
         }
 
+        /*
+        @@NOTE
+
+        Using Verlet Integration to calculate new velocity and position.
+        This seems to be good enough for our purposes, that is, better than
+        Euler integration (which is inconsistent with variable delta times)
+        but not as expensive as Runge-Kutta methods while being
+        quite good still.
+
+        @see: https://en.wikipedia.org/wiki/Euler_method
+        @see: https://en.wikipedia.org/wiki/Verlet_integration
+        @see: https://gafferongames.com/post/integration_basics/
+
+        */
+
+        platformer_component->m_current_velocity += acceleration * delta_time;
+
+        platformer_component->m_current_velocity.y =
+            (abs(platformer_component->m_current_velocity.y) < platformer_component->m_max_velocity.y ?
+                platformer_component->m_current_velocity.y :
+                (platformer_component->m_current_velocity.y > 0 ?
+                    platformer_component->m_max_velocity.y :
+                    -platformer_component->m_max_velocity.y));
+
         auto applied_velocity = platformer_component->m_current_velocity;
         applied_velocity.y *= -1;
-        transform_component->m_position = transform_component->m_position + applied_velocity * delta_time;
+        transform_component->m_position +=
+            (applied_velocity * delta_time)
+            +
+            ((acceleration * delta_time * delta_time) / 2.f);
+
 
     }
 

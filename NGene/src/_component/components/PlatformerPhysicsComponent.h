@@ -32,11 +32,13 @@ public:
     // ====== BEG OF MEMBERS ======
 
     float m_max_foot_speed;
-    float m_distance_to_peak;
+    float m_horizontal_distance_to_peak;
     float m_jump_height;
+    float m_downwards_gravity_scale;
 
     sf::Vector2f m_our_gravity;
     sf::Vector2f m_initial_jump_velocity;
+    sf::Vector2f m_max_velocity;
 
     sf::Vector2f m_current_velocity;
 
@@ -57,10 +59,12 @@ template<>
 inline auto meta::registerMembers<PlatformerPhysicsComponent>() {
     return members(
         member("maxFootSpeed", &PlatformerPhysicsComponent::m_max_foot_speed),
-        member("distanceToPeak", &PlatformerPhysicsComponent::m_distance_to_peak),
+        member("distanceToPeak", &PlatformerPhysicsComponent::m_horizontal_distance_to_peak),
         member("jumpHeight", &PlatformerPhysicsComponent::m_jump_height),
+        member("downwardsGravityScale", &PlatformerPhysicsComponent::m_downwards_gravity_scale),
         member("ourGravity", &PlatformerPhysicsComponent::m_our_gravity),
         member("initialJumpVelocity", &PlatformerPhysicsComponent::m_initial_jump_velocity),
+        member("maxVelocity", &PlatformerPhysicsComponent::m_max_velocity),
         member("currentVelocity", &PlatformerPhysicsComponent::m_current_velocity),
         member("grounded", &PlatformerPhysicsComponent::m_grounded)
     );

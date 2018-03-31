@@ -20,13 +20,19 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
         {
             sol::object value = table["distanceToPeak"];
             assert(value.valid());
-            m_distance_to_peak = value.as<float>();
+            m_horizontal_distance_to_peak = value.as<float>();
         }
 
         {
             sol::object value = table["jumpHeight"];
             assert(value.valid());
             m_jump_height = value.as<float>();
+        }
+
+        {
+            sol::object value = table["downwardsGravityScale"];
+            assert(value.valid());
+            m_downwards_gravity_scale = value.as<float>();
         }
 
 }
@@ -40,16 +46,18 @@ json COMPONENT_TYPE::to_json() {
     auto j = json{};
 
     j["maxFootSpeed"] = m_max_foot_speed;
-    j["distanceToPeak"] = m_distance_to_peak;
+    j["distanceToPeak"] = m_horizontal_distance_to_peak;
     j["jumpHeight"] = m_jump_height;
+    j["downwardsGravityScale"] = m_downwards_gravity_scale;
 
     return j;
 }
 
 void COMPONENT_TYPE::load_json(const json& j) {
     m_max_foot_speed = j["maxFootSpeed"];
-    m_distance_to_peak = j["distanceToPeak"];
+    m_horizontal_distance_to_peak = j["distanceToPeak"];
     m_jump_height = j["jumpHeight"];
+    m_downwards_gravity_scale = j["downwardsGravityScale"];
 }
 
 void COMPONENT_TYPE::draw_component_inspector() {
@@ -57,14 +65,20 @@ void COMPONENT_TYPE::draw_component_inspector() {
     ImGui::SetNextWindowSize(ImVec2(400, 100), ImGuiCond_FirstUseEver);
     ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
 
-    ImGui::Text("Max Foot Speed: "); ImGui::SameLine(200); ImGui::InputFloat("##MaxFootSpeed", &m_max_foot_speed);
-    ImGui::Text("Distance To Peak: "); ImGui::SameLine(200); ImGui::InputFloat("##DistanceToPeak", &m_distance_to_peak);
-    ImGui::Text("Jump Height: "); ImGui::SameLine(200); ImGui::InputFloat("##JumpHeight", &m_jump_height);
+    ImGui::Text("Max Foot Speed: "); ImGui::SameLine(230); ImGui::InputFloat("##MaxFootSpeed", &m_max_foot_speed);
+    ImGui::Text("Distance To Peak: "); ImGui::SameLine(230); ImGui::InputFloat("##DistanceToPeak", &m_horizontal_distance_to_peak);
+    ImGui::Text("Jump Height: "); ImGui::SameLine(230); ImGui::InputFloat("##JumpHeight", &m_jump_height);
+    ImGui::Text("Downwards Gravity Scale: "); ImGui::SameLine(230); ImGui::InputFloat("##DownwardsGravityScale", &m_downwards_gravity_scale);
 
     ImGui::Text("State: %s", m_grounded ? "Grounded" : "Not Grounded");
     ImGui::Text("Current Velocity: (%f, %f)", m_current_velocity.x, m_current_velocity.y);
     ImGui::Text("Current Gravity: (%f, %f)", m_our_gravity.x, m_our_gravity.y);
+    ImGui::Text("Current Downwards Gravity: (%f, %f)",
+        m_our_gravity.x * m_downwards_gravity_scale,
+        m_our_gravity.y * m_downwards_gravity_scale);
     ImGui::Text("Current Jump Initial Velocity: (%f, %f)", m_initial_jump_velocity.x, m_initial_jump_velocity.y);
+    ImGui::Text("Current Max Velocity: (%f, %f)", m_max_velocity.x, m_max_velocity.y);
+
 
     ImGui::End();
 }
@@ -86,7 +100,8 @@ void COMPONENT_TYPE::expose_to_lua()
         "jump", &COMPONENT_TYPE::jump,
 
         "maxFootSpeed", &COMPONENT_TYPE::m_max_foot_speed,
-        "distanceToPeak", &COMPONENT_TYPE::m_distance_to_peak,
+        "distanceToPeak", &COMPONENT_TYPE::m_horizontal_distance_to_peak,
+        "downwardsGravityScale", &COMPONENT_TYPE::m_downwards_gravity_scale,
 
         "ourGravity", sol::readonly(&COMPONENT_TYPE::m_our_gravity),
         "initialJumpVelocity", sol::readonly(&COMPONENT_TYPE::m_initial_jump_velocity)
@@ -95,7 +110,7 @@ void COMPONENT_TYPE::expose_to_lua()
 }
 
 void PlatformerPhysicsComponent::move(INPUT_MOVEMENT_DIRECTION direction) {
-    
+
     if (direction == INPUT_MOVEMENT_LEFT) {
         m_current_velocity.x = -m_max_foot_speed;
     }
@@ -107,7 +122,7 @@ void PlatformerPhysicsComponent::move(INPUT_MOVEMENT_DIRECTION direction) {
     }
 }
 
-void PlatformerPhysicsComponent::jump(){
+void PlatformerPhysicsComponent::jump() {
 
     /*
     @@NOTE

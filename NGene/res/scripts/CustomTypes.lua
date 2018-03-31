@@ -21,7 +21,8 @@ Entities = {
         PlatformerPhysicsComponent = {
             maxFootSpeed = 320.0,
             distanceToPeak = 128.0,
-            jumpHeight = 128.0
+            jumpHeight = 128.0,
+            downwardsGravityScale = 2.5
         },
         PhraseComponent = {
             phrase = "I'm saying hi from this lua Object!! :D"
