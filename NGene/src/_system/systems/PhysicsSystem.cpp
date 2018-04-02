@@ -5,9 +5,7 @@
 #include <../_component/components/TransformComponent.h>
 #include <../_component/components/CollisionComponent.h>
 
-
 PhysicsSystem::PhysicsSystem() {}
-
 
 PhysicsSystem::~PhysicsSystem() {}
 
@@ -22,8 +20,6 @@ void PhysicsSystem::start_up() {
 void PhysicsSystem::shut_down() {
 
 }
-
-
 
 void PhysicsSystem::update() {
 
@@ -44,14 +40,9 @@ void PhysicsSystem::update() {
 
         platformer_component->m_grounded = (collision_component->m_moving_collision_direction_flags & CollisionDirectionFlags::COLLISION_DIRECTION_DOWN != 0u);
 
-        {
-            /*
-            @@TODO
+        if (platformer_component->m_need_recalculation) {
 
-            We should refactor this code that calculates the initial variables
-            so we only execute it once when we need it. Here we are calculating
-            the same values every frame.
-            */
+            platformer_component->m_need_recalculation = false;
 
             platformer_component->m_initial_jump_velocity.y =
                 (2.f * platformer_component->m_jump_height * platformer_component->m_max_foot_speed)
@@ -148,7 +139,6 @@ void PhysicsSystem::update() {
     }
 
 }
-
 
 void PhysicsSystem::register_entity(Entity& entity) {
     if (entity.has_component<PlatformerPhysicsComponent>() && entity.has_component<TransformComponent>() && entity.has_component<CollisionComponent>()) {

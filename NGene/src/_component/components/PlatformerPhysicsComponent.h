@@ -29,7 +29,21 @@ public:
     void jump();
 
 
+
+
+    float get_max_foot_speed() const { return m_max_foot_speed; }
+    float get_horizontal_distance_to_peak() const { return m_horizontal_distance_to_peak; }
+    float get_jump_height() const { return m_jump_height; }
+    float get_downwards_gravity_scale() const { return m_downwards_gravity_scale; }
+
+    void set_max_foot_speed(float value) { m_max_foot_speed = value; m_need_recalculation = true; }
+    void set_horizontal_distance_to_peak(float value) { m_horizontal_distance_to_peak = value; m_need_recalculation = true; }
+    void set_jump_height(float value) { m_jump_height = value; m_need_recalculation = true; }
+    void set_downwards_gravity_scale(float value) { m_downwards_gravity_scale = value; m_need_recalculation = true; }
+
     // ====== BEG OF MEMBERS ======
+
+    bool m_need_recalculation{ true };
 
     float m_max_foot_speed;
     float m_horizontal_distance_to_peak;
