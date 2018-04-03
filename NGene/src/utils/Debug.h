@@ -16,6 +16,9 @@
 #define LOG(x) std::cout << x << std::endl; \
     {auto ss = std::stringstream{}; ss << x; log_to_file(ss.str().c_str());}
 
+#define LOG_ERROR(x) std::cerr << "ERROR: " << x << std::endl; \
+    {auto ss = std::stringstream{}; ss << "ERROR: " << x; log_to_file(ss.str().c_str());}
+
 #define LOG_NAMED(x) std::cout << #x << ": " << x << std::endl; \
     {auto ss = std::stringstream{}; ss << #x << ": " << x; log_to_file(ss.str().c_str());}
 
@@ -27,6 +30,7 @@
 
 #define ENDL
 #define LOG(x)
+#define LOG_ERROR(x)
 #define LOG_NAMED(x)
 #define LOG_PTR(x)
 

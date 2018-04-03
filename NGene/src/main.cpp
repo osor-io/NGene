@@ -172,7 +172,26 @@ inline void post_render() {
 }
 
 
+#include "./render/sprites/Spritesheet.h"
+
+int test() {
+    auto spritesheet = Spritesheet("./res/assets/spritesheet_test.png", Spritesheet::SpritesheetMorphology::SQUARE);
+
+    press_to_continue();
+    return 0;
+}
+
+
+
 int main() {
+
+
+    /*
+    @@DEBUG @@TODO @@REMOVE
+    Use this to test individual things
+    */
+    //return test();
+
     start_up();
     load_default_state();
 

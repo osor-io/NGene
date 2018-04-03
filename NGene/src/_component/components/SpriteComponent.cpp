@@ -101,15 +101,12 @@ void SpriteComponent::draw_component_inspector() {
     if (auto texture = m_sprite.getTexture()) {
         ImGui::Text("Texture with size (%d, %d)", texture->getSize().x, texture->getSize().y);
         ImGui::Text("Layer: %u", m_layer);
-        auto original_scale = m_sprite.getScale();
-        auto original_position = m_sprite.getPosition();
-        m_sprite.setScale(
+        auto temp_sprite = m_sprite;
+        temp_sprite.setScale(
             (ImGui::GetWindowSize().x - config::sprite_padding) / static_cast<float>(texture->getSize().x),
             (ImGui::GetWindowSize().x - config::sprite_padding) / static_cast<float>(texture->getSize().x));
-        m_sprite.setPosition(sf::Vector2f(0.f, 0.f));
-        ImGui::Image(m_sprite);
-        m_sprite.setScale(original_scale);
-        m_sprite.setPosition(original_position);
+        temp_sprite.setPosition(sf::Vector2f(0.f, 0.f));
+        ImGui::Image(temp_sprite);
     }
     else {
         ImGui::Text("Texture for the sprite not available");
