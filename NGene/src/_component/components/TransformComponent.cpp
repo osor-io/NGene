@@ -9,6 +9,14 @@
 #include <ImGuizmo.h>
 #include "../render/RenderManager.h"
 
+
+namespace config {
+
+    const sf::Vector2f min_position(-2048.0f, -2048.0f);
+    const sf::Vector2f max_position(2048.0f, 2048.0f);
+
+}
+
 TransformComponent::TransformComponent(EntityId id) : ComponentTemplate(id, std::type_index(typeid(TransformComponent))) {
 }
 

@@ -1,6 +1,33 @@
+/**
+
+The general documentation for the components will be in
+the Component.h and CompomentTemplate.h respectively. Here you
+can find the documentation of the general members that every component
+should have such as the serialization methods (to and from Json),
+the ones used to expose the component to LUA scripts or draw its inspector
+for the developer mode.
+
+@see ComponentTemplate.h
+@see Component.h
+
+*/
+
 #pragma once
 #include "../ComponentTemplate.h"
 
+/**
+
+Component used as an example to copy and paste this and its
+implementation file to easily create a new component that is fully
+integrated with the rest of the engine and functional.
+
+IMPORTANT: We need to update this documentation when we create a new
+component as well as document the relevant members that the new component
+will have.
+
+@see ExampleComponent.cpp
+
+*/
 class ExampleComponent : public ComponentTemplate<ExampleComponent> {
     friend auto meta::registerMembers<ExampleComponent>();
 public:
@@ -31,7 +58,15 @@ public:
     as add it in "drawComponentInspector()" to be able to see it
     */
     // ====== BEG OF MEMBERS ======
+    
+    /**
+    
+    This is an example of the documentation of a possible member that one
+    component might have.
+    
+    */
     int m_member;
+
     // ====== END OF MEMBERS ======
 
 };

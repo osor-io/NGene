@@ -5,6 +5,18 @@
 #include "../../resources/TextureManager.h"
 #include "../../config/Config.h"
 
+namespace config {
+
+    /**
+
+    This represents the padding used in the inspector when showing
+    the sprite in developer mode. This is not relevant for gameplay
+
+    */
+    const float sprite_padding = 20.0f;
+}
+
+
 SpriteComponent::SpriteComponent(EntityId id) : ComponentTemplate(id, std::type_index(typeid(SpriteComponent))) {
     LOGF("NOT THISSSS");
 }

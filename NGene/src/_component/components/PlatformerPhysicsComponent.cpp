@@ -121,7 +121,7 @@ void COMPONENT_TYPE::expose_to_lua()
         );
 }
 
-void PlatformerPhysicsComponent::move(INPUT_MOVEMENT_DIRECTION direction) {
+void PlatformerPhysicsComponent::move(InputMovementDirection direction) {
 
     if (direction == INPUT_MOVEMENT_LEFT) {
         m_current_velocity.x = -m_max_foot_speed;

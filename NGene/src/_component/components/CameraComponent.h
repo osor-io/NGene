@@ -1,6 +1,28 @@
+/**
+
+The general documentation for the components will be in
+the Component.h and CompomentTemplate.h respectively. Here you
+can find the documentation of the general members that every component
+should have such as the serialization methods (to and from Json),
+the ones used to expose the component to LUA scripts or draw its inspector
+for the developer mode.
+
+@see ComponentTemplate.h
+@see Component.h
+
+*/
+
 #pragma once
 #include "../ComponentTemplate.h"
 
+/**
+
+Component used to represent a camera in the engine. it marks that
+the current entity must work as a camera and sets some of the
+parameters that are relevant for it such as wether it is the main
+camera or not or if we are using any sort of zoom.
+
+*/
 class CameraComponent : public ComponentTemplate<CameraComponent> {
     friend auto meta::registerMembers<CameraComponent>();
 public:
@@ -11,25 +33,38 @@ public:
     json to_json() override;
     void load_json(const json& j) override;
 
+
+
+
+
     // ====== BEG OF REQUIREMENTS ======
     void draw_component_inspector() override;
-    static void expose_to_lua();  // Go To Entity.cpp and call this
+    static void expose_to_lua();  
     // ====== END OF REQUIREMENTS ======
 
-    /*
-    Go to ComponentManager.h and register the name and constructor
-    of this component so it can be instantiated. 
-    */
 
 
-    /*
-    When adding a member reMember to consider registering it
-    in "expose_to_lua()" and in "meta::registerMembers" as well
-    as add it in "drawComponentInspector()" to be able to see it
-    */
+    
     // ====== BEG OF MEMBERS ======
+
+    /**
+    
+    Marks wether this is the main camera during gameplay or not.
+    That is, this is the main thing we must render as it is seeing
+    the main image that is considered "the game"
+    
+    */
     bool m_main_camera{false};
+
+    /**
+    
+    This is the zoom value of this camera, it is used to basically
+    see things closer of from further away. I know, I'm explaining
+    the concept of zoom. We all know what this means :)
+    
+    */
     float m_zoom{ 1.0f };
+
     // ====== END OF MEMBERS ======
 
 };
