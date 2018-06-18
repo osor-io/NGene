@@ -19,6 +19,17 @@ namespace config {
     constexpr auto max_name_length = 32;
 }
 
+/**
+
+Represents an entity in the engine. Each one is made by a set of component that define
+what it is. The combination of the components and the parameters these have will define
+how each entity behaves.
+
+It contains metainformation to make it easier to work with it, that is, instantiate the
+entity from an entity type in LUA, and ID and name to identify it, wether we can serialize
+it or not, etc.
+
+*/
 class Entity {
     friend auto meta::registerMembers<Entity>();
     friend class EntityManager;
