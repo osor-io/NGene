@@ -38,7 +38,7 @@ void PhysicsSystem::update() {
         auto transform_component = entity->get_component<TransformComponent>();
         auto collision_component = entity->get_component<CollisionComponent>();
 
-        platformer_component->m_grounded = (collision_component->m_moving_collision_direction_flags & CollisionDirectionFlags::COLLISION_DIRECTION_DOWN != 0u);
+        platformer_component->m_grounded = ((collision_component->m_moving_collision_direction_flags & CollisionDirectionFlags::COLLISION_DIRECTION_DOWN) != 0u);
 
         if (platformer_component->m_need_recalculation) {
 

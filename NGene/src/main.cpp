@@ -81,62 +81,6 @@ void shut_down() {
     LuaManager::get().shut_down();
 }
 
-void load_default_state() {
-
-    /*
-    auto s = TextFileManager::get().get_scoped_resource("res/states/default_state.json");
-    auto j = json::parse(*s.resource);
-    EntityManager::get().clear_and_load_entities(j);
-    */
-
-    //If we want to check performance with more than one entity
-    for (int i = 0; i < 2; ++i) {
-        auto id = int{};
-        if (i == 0)
-            id = EntityManager::get().request_load_entity("DynamicObject");
-        else
-            id = EntityManager::get().request_load_entity("DummyDynamicObject");
-    }
-
-    const auto map_id = EntityManager::get().request_load_entity("DefaultMap");
-    const auto camera_id = EntityManager::get().request_load_entity("DefaultCamera");
-}
-
-void access_entities_from_lua() {
-    LUA.script(R"(
-            print("Do we have an entity with the id 0? ", hasEntity(0))
-            print("Getting Entity 0")
-            local entity = getEntity(0);
-            print("Entity returned: ", entity)
-            if(entity) then
-                print("The entity ", entity.type , " with the id " , entity.id , " existed, lets see if it has a phrase component")
-                entity.enabled = false
-                print("Is our entity enabled? ", entity.enabled)
-                entity.enabled = true
-                print("Is it now? ", entity.enabled)
-                local phrase = entity:getPhraseComponent()
-                if(phrase) then
-                    print("It does! So let's hear what it has to say")
-                    print("Our phrase is: ", phrase.phrase)
-                else
-                    print("It doesn't, so it'll just shut up")
-                end
-                local transform = entity:getTransformComponent()
-                if(transform) then
-                    print("Oh, it also has a position!")
-                    local position = transform.position
-                    print("Position x: ", position.x)
-                    print("Position y: ", position.y)
-                else
-                    print("No Transform Available")
-                end
-            end
-            print("\n")
-        )");
-}
-
-#include "./_component/components/TransformComponent.h"
-#include "./_component/components/SpriteComponent.h"
 
 inline void tick() {
 
@@ -152,6 +96,7 @@ inline void tick() {
     TransformSystem::get().update();
 }
 
+
 inline void render() {
 
     WindowManager::get().fill_events();
@@ -166,6 +111,7 @@ inline void render() {
     RenderManager::get().end_frame();
 
 }
+
 
 inline void post_render() {
     EntityManager::get().update_entities();
@@ -187,6 +133,33 @@ int test() {
     return 0;
 }
 
+
+/*
+@@TODO: We should expose "request_load_entity" to LUA so we can
+load the first state directly from a LUA file. We could potentially also
+do it with saved serialized states. But the name of those files have to
+also be somewhere so. It should be in a script and not in an engine file.
+*/
+void load_default_state() {
+
+	/*
+	auto s = TextFileManager::get().get_scoped_resource("res/states/default_state.json");
+	auto j = json::parse(*s.resource);
+	EntityManager::get().clear_and_load_entities(j);
+	*/
+
+	//If we want to check performance with more than one entity
+	for (int i = 0; i < 2; ++i) {
+		auto id = int{};
+		if (i == 0)
+			id = EntityManager::get().request_load_entity("DynamicObject");
+		else
+			id = EntityManager::get().request_load_entity("DummyDynamicObject");
+	}
+
+	const auto map_id = EntityManager::get().request_load_entity("DefaultMap");
+	const auto camera_id = EntityManager::get().request_load_entity("DefaultCamera");
+}
 
 
 int main() {

@@ -124,7 +124,6 @@ Entities = {
             filename = "./res/assets/test.png"
         }
     },
-    
 
     StaticObject = {
         TransformComponent = {
