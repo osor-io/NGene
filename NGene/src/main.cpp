@@ -134,21 +134,18 @@ int test() {
 }
 
 
-/*
-@@TODO: We should expose "request_load_entity" to LUA so we can
-load the first state directly from a LUA file. We could potentially also
-do it with saved serialized states. But the name of those files have to
-also be somewhere so. It should be in a script and not in an engine file.
-*/
 void load_default_state() {
+	 
+//#define LOAD_STATE_PROGRAMMATICALLY
+//#define LOAD_STATE_FROM_JSON
 
-	/*
-	auto s = TextFileManager::get().get_scoped_resource("res/states/default_state.json");
-	auto j = json::parse(*s.resource);
-	EntityManager::get().clear_and_load_entities(j);
-	*/
+#if defined(LOAD_STATE_PROGRAMMATICALLY) && defined(LOAD_STATE_FROM_JSON)
+#error We are trying to load the default state both from code and from JSON
+#endif
 
-	//If we want to check performance with more than one entity
+#ifdef LOAD_STATE_PROGRAMMATICALLY
+
+	LOG("Default state will be loaded programatically");
 	for (int i = 0; i < 2; ++i) {
 		auto id = int{};
 		if (i == 0)
@@ -156,9 +153,31 @@ void load_default_state() {
 		else
 			id = EntityManager::get().request_load_entity("DummyDynamicObject");
 	}
-
 	const auto map_id = EntityManager::get().request_load_entity("DefaultMap");
 	const auto camera_id = EntityManager::get().request_load_entity("DefaultCamera");
+	return;
+
+#elif defined LOAD_STATE_FROM_JSON
+
+	auto path = "res/states/DefaultState.json";
+	LOG("Default state will be loaded from the JSON file: " << path);
+	assert(TextFileManager::get().exists_resource(path));
+	auto s = TextFileManager::get().get_scoped_resource(path);
+	auto j = json::parse(*s.resource);
+	EntityManager::get().clear_and_load_entities(j);
+	return;
+
+#else
+
+	auto path = "res/scripts/LoadDefaultState.lua";
+	LOG("Default state will be loaded from the LUA Script: " << path);
+	assert(TextFileManager::get().exists_resource(path));
+	auto default_state_script = TextFileManager::get().get_scoped_resource(path);
+	LUA.script(*default_state_script.resource);
+	return;
+
+#endif
+
 }
 
 

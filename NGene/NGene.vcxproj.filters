@@ -490,5 +490,6 @@
     </None>
     <None Include="res\scripts\CustomTypes.lua" />
     <None Include="res\scripts\EngineTypes.lua" />
+    <None Include="res\scripts\LoadDefaultState.lua" />
   </ItemGroup>
 </Project>

@@ -237,12 +237,16 @@ void EntityManager::expose_to_lua() {
         std::terminate();
     });
 
+	LUA.set_function("requestLoadEntity", [this](const std::string& type_name) -> EntityId {
+		return request_load_entity(type_name);
+	});
+
 }
 
 Entity * EntityManager::create_entity_internal(const std::string & type, const sol::table & table) {
 
     auto id = m_next_id++;
-
+	
     auto ss = std::stringstream{};
     ss << type << "_" << id;
 

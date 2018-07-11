@@ -145,21 +145,13 @@ Entities = {
         }
     }, 
 
-    OtraCosa = {
+	
+	--I believe in miracles.
+	--Where you from?
+    --[[You]]TestingThing = {
+	--You Testing Think yeah
         PhraseComponent = {
             phrase = "I'm saying hi from this lua Object!! :D"
-        }, 
-        SpriteComponent = {
-            filename = "file.png"
-        }
-    }, 
-
-    YOtraMas = {
-        PhraseComponent = {
-            phrase = "I'm saying hi from this lua Object!! :D"
-        }, 
-        SpriteComponent = {
-            filename = "file.png"
         }
     },
 
