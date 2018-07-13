@@ -75,7 +75,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>C:\dep\sfml\include;$(IncludePath)</IncludePath>
+    <IncludePath>W:\dep\sfml\include;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <EnableCppCoreCheck>true</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>true</EnableExperimentalCppCoreCheck>
@@ -83,7 +83,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>C:\dep\sfml\include;$(IncludePath)</IncludePath>
+    <IncludePath>W:\dep\sfml\include;$(IncludePath)</IncludePath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <EnableCppCoreCheck>true</EnableCppCoreCheck>
     <EnableExperimentalCppCoreCheck>true</EnableExperimentalCppCoreCheck>
@@ -110,11 +110,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;C:\dep\sfml\include;$(ProjectDir)src\utils;C:\dep\GSL\include;C:\dep\LuaJIT\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;W:\dep\sfml\include;$(ProjectDir)src\utils;W:\dep\GSL\include;W:\dep\LuaJIT\include</AdditionalIncludeDirectories>
       <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\dep\LuaJIT\lib;C:\dep\sfml\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>W:\dep\LuaJIT\lib;W:\dep\sfml\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>echo.
@@ -129,12 +129,12 @@ echo.</Command>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;C:\dep\sfml\include;$(ProjectDir)src\utils;C:\dep\GSL\include;$(ProjectDir)src\utils;C:\dep\LuaJIT\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;W:\dep\sfml\include;$(ProjectDir)src\utils;W:\dep\GSL\include;$(ProjectDir)src\utils;W:\dep\LuaJIT\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\dep\LuaJIT\lib;C:\dep\sfml\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>W:\dep\LuaJIT\lib;W:\dep\sfml\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>lua51.lib;sfml-system-s-d.lib;sfml-window-s-d.lib;sfml-network-s-d.lib;sfml-graphics-s-d.lib;sfml-audio-s-d.lib;opengl32.lib;freetype.lib;jpeg.lib;ogg.lib;winmm.lib;gdi32.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
@@ -152,12 +152,12 @@ echo.</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;C:\dep\sfml\include;$(ProjectDir)src\utils;C:\dep\GSL\include;C:\dep\LuaJIT\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;W:\dep\sfml\include;$(ProjectDir)src\utils;W:\dep\GSL\include;W:\dep\LuaJIT\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\dep\LuaJIT\lib;C:\dep\sfml\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>W:\dep\LuaJIT\lib;W:\dep\sfml\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>echo.
@@ -174,7 +174,7 @@ echo.</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;C:\dep\sfml\include;$(ProjectDir)src\utils;C:\dep\GSL\include;$(ProjectDir)src\utils;C:\dep\LuaJIT\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;W:\dep\sfml\include;$(ProjectDir)src\utils;W:\dep\GSL\include;$(ProjectDir)src\utils;W:\dep\LuaJIT\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SFML_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -182,7 +182,7 @@ echo.</Command>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\dep\LuaJIT\lib;C:\dep\sfml\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>W:\dep\LuaJIT\lib;W:\dep\sfml\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>lua51.lib;sfml-system-s.lib;sfml-window-s.lib;sfml-network-s.lib;sfml-graphics-s.lib;sfml-audio-s.lib;opengl32.lib;freetype.lib;jpeg.lib;ogg.lib;winmm.lib;gdi32.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
