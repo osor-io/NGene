@@ -143,6 +143,7 @@ void DeveloperModeManager::draw_entity_component_editor() {
 
 }
 
+
 void DeveloperModeManager::set_debug_open(bool open) {
     m_debug_open = open;
 }
@@ -228,24 +229,10 @@ void DeveloperModeManager::draw_gui() {
             ImGui::EndMenu();
         }
 
-        /*Put here overlay things*/
-        if (m_show_chunks) ChunkManager::get().draw_debug_chunks();
-        if (m_show_chunk_configuration) ChunkManager::get().draw_debug_chunk_configuration();
-        if (m_show_collisions) {
 
-            if (ComponentManager::get().has_components<ExtentComponent>()) {
+		// Chunk configuration
+		if (m_show_chunk_configuration) ChunkManager::get().draw_debug_chunk_configuration();
 
-                for (auto & extent : ComponentManager::get().get_components<ExtentComponent>()) {
-                    reinterpret_cast<ExtentComponent*>(extent)->draw_rect();
-                }
-            }
-
-            if (ComponentManager::get().has_components<CollisionComponent>()) {
-                for (auto & collision : ComponentManager::get().get_components<CollisionComponent>()) {
-                    reinterpret_cast<CollisionComponent*>(collision)->draw_rect();
-                }
-            }
-        }
         
         ImGui::EndMainMenuBar();
 
@@ -257,4 +244,31 @@ void DeveloperModeManager::draw_gui() {
 
         ImGui::PopFont();
     }
+}
+
+
+/*
+@@NOTE @@IMPORTANT: This shouldn't use any ImGUI functionality.
+*/
+void DeveloperModeManager::draw_debug_overlay()
+{
+
+	/*Put here OVERLAY things*/
+	if (m_show_chunks) ChunkManager::get().draw_debug_chunks();
+	if (m_show_collisions) {
+
+		if (ComponentManager::get().has_components<ExtentComponent>()) {
+
+			for (auto & extent : ComponentManager::get().get_components<ExtentComponent>()) {
+				reinterpret_cast<ExtentComponent*>(extent)->draw_rect();
+			}
+		}
+
+		if (ComponentManager::get().has_components<CollisionComponent>()) {
+			for (auto & collision : ComponentManager::get().get_components<CollisionComponent>()) {
+				reinterpret_cast<CollisionComponent*>(collision)->draw_rect();
+			}
+		}
+	}
+
 }

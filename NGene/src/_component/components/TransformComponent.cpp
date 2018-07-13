@@ -23,17 +23,17 @@ TransformComponent::TransformComponent(EntityId id) : ComponentTemplate(id, std:
 
 TransformComponent::TransformComponent(EntityId id, const sol::table& table) : ComponentTemplate(id, std::type_index(typeid(TransformComponent))) {
 
-    sol::object value_x = table["x"];
-    sol::object value_y = table["y"];
-    assert(value_x.valid() && value_y.valid());
+	sol::object value_x = table["x"];
+	sol::object value_y = table["y"];
+	assert(value_x.valid() && value_y.valid());
 
-    m_position = sf::Vector2f(value_x.as<float>(), value_y.as<float>());
-    m_previous_position = m_position;
+	m_position = sf::Vector2f(value_x.as<float>(), value_y.as<float>());
+	m_previous_position = m_position;
 
 }
 
-
 TransformComponent::~TransformComponent() {}
+
 
 void TransformComponent::draw_component_inspector() {
 
@@ -42,6 +42,11 @@ void TransformComponent::draw_component_inspector() {
     ImGui::Text("Position: "); ImGui::SameLine(100); ImGui::DragFloat2("##Position", &(m_position.x), 1.0f, config::min_position.x, config::max_position.x);
 
     if (ImGui::IsWindowFocused()) {
+
+		/*
+		@@TODO: Render this dot without using ImGUI and only with SFML stuff to the main render texture
+		*/
+
         auto draw_list = ImGui::GetWindowDrawList();
 
         auto render_centre = RenderManager::get().get_main_render_target()->mapCoordsToPixel(m_position);

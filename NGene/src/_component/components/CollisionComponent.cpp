@@ -138,6 +138,9 @@ void COMPONENT_TYPE::expose_to_lua()
 
 }
 
+/*
+@@TODO: Recode this to use SFML rendering into the main render target for the game
+*/
 void CollisionComponent::draw_rect() {
     const auto transform = EntityManager::get().get_entity(m_parent_id)->get_component<TransformComponent>();
 

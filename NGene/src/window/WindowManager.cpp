@@ -11,13 +11,18 @@ void WindowManager::start_up() {
 
 
 	sf::ContextSettings settings;
-	settings.depthBits = config::opengl::depthBits;
-	settings.stencilBits = config::opengl::stencilBits;
-	settings.antialiasingLevel = config::opengl::antialiasingLevel;
-	settings.majorVersion = config::opengl::majorVersion;
-	settings.minorVersion = config::opengl::minorVersion;
+	settings.depthBits = config::opengl::depth_bits;
+	settings.stencilBits = config::opengl::stencil_bits;
+	settings.antialiasingLevel = config::opengl::antialiasing_level;
+	settings.majorVersion = config::opengl::major_version;
+	settings.minorVersion = config::opengl::minor_version;
 
-	m_window = std::make_unique<sf::RenderWindow>(sf::VideoMode(1200, 800), "NGene", sf::Style::Default, settings);
+	auto style = sf::Style::Titlebar | sf::Style::Close;
+
+	auto external_resolution_width = config::resolutions::internal_resolution_width * config::resolutions::external_resolution_multiplier;
+	auto external_resolution_height = config::resolutions::internal_resolution_height * config::resolutions::external_resolution_multiplier;
+
+	m_window = std::make_unique<sf::RenderWindow>(sf::VideoMode(external_resolution_width, external_resolution_height), "NGene", style, settings);
 
 	/*
 	@@TODO @@NOTE @@MAYBE

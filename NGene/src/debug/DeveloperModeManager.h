@@ -22,6 +22,8 @@ public:
     void draw_corner_overlay_debug_info();
     void draw_entity_component_editor();
 
+	void draw_debug_overlay();
+	
     void draw_gui();
 
     void set_debug_open(bool);

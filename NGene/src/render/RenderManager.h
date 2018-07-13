@@ -33,7 +33,9 @@ public:
 private:
 
     sf::Color m_clear_color{ sf::Color::Black };
-    sf::RenderWindow* m_main_target;
+    
+	sf::RenderWindow* m_window_target;
+	std::unique_ptr<sf::RenderTexture> m_main_target;
 
     sf::Vector2f m_current_center{ 0.0f,0.0f };
     float m_current_zoom{ 1.0f };
