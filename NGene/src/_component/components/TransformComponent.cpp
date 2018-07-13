@@ -41,6 +41,8 @@ void TransformComponent::draw_component_inspector() {
     ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
     ImGui::Text("Position: "); ImGui::SameLine(100); ImGui::DragFloat2("##Position", &(m_position.x), 1.0f, config::min_position.x, config::max_position.x);
 
+#if 0
+
     if (ImGui::IsWindowFocused()) {
 
 		/*
@@ -60,6 +62,8 @@ void TransformComponent::draw_component_inspector() {
         draw_list->AddCircleFilled(im_centre, 8.0f, color_center);
         draw_list->PopClipRect();
     }
+
+#endif
 
   
     ImGui::End();

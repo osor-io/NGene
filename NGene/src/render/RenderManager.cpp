@@ -10,14 +10,22 @@ RenderManager::~RenderManager() {}
 
 
 void RenderManager::start_up() {
+
 	/*
 	We first initialize the window and the debug GUI.
 	*/
 	m_window_target = WindowManager::get().get_window_render_target();
+
+	/*
+	We create the lower resolution render target
+	*/
 	m_main_target = std::make_unique<sf::RenderTexture>();
 	m_main_target->create(config::resolutions::internal_resolution_width, config::resolutions::internal_resolution_height);
 	m_main_target->setSmooth(false);
 	m_main_target->setRepeated(false);
+
+	m_current_texture_scale.x = config::resolutions::external_resolution_multiplier;
+	m_current_texture_scale.y = config::resolutions::external_resolution_multiplier;
 
 	if (!m_main_target) {
 		std::cerr <<
@@ -77,7 +85,7 @@ void RenderManager::end_frame() {
 	First we render the overlayed debug info that should be over the real game
 	and not in the final window.
 	*/
-	//DeveloperModeManager::get().draw_debug_overlay();
+	DeveloperModeManager::get().draw_debug_overlay();
 
 	/*
 	We get the main low-res target ready to be rendered
@@ -88,8 +96,7 @@ void RenderManager::end_frame() {
 	We make a sprite with the texture and render it to the main window
 	*/
 	sf::Sprite main_target_sprite(m_main_target->getTexture());
-	main_target_sprite.scale(config::resolutions::external_resolution_multiplier,
-		config::resolutions::external_resolution_multiplier);
+	main_target_sprite.scale(m_current_texture_scale);
 	m_window_target->draw(main_target_sprite);
 
 
@@ -117,33 +124,13 @@ void RenderManager::end_frame() {
 }
 
 
-/*
-
-@@NOTE: This can still be used regardless of the fact that we might render to
-a texture first and then draw that texture in some other way into the screen. This will
-print stuff on top of the game but with the low internal resolution.
-
-*/
-sf::Vector2i RenderManager::map_coords_to_pixel(sf::Vector2f position, bool scaled) {
-
-	if (scaled) {
-		return m_main_target->mapCoordsToPixel(position);
-	}
-	else {
-		auto view = m_main_target->getView();
-		auto previous_size = view.getSize();
-
-		auto size = m_main_target->getDefaultView().getSize();
-		view.setSize(size);
-		m_main_target->setView(view);
-
-		auto ret = m_main_target->mapCoordsToPixel(position);
-
-		view.setSize(previous_size);
-		m_main_target->setView(view);
-
-		return ret;
-	}
-
-	return sf::Vector2i();
+sf::Vector2f RenderManager::map_pixel_to_coords(sf::Vector2i position)
+{
+	auto window_coords = m_window_target->mapPixelToCoords(position);
+	auto center = m_main_target->getView().getCenter();
+	auto size = m_main_target->getView().getSize();
+	return sf::Vector2f(
+		(window_coords.x / m_current_texture_scale.x) + center.x - (size.x / 2),
+		(window_coords.y / m_current_texture_scale.y) + center.y - (size.y / 2)
+	);
 }

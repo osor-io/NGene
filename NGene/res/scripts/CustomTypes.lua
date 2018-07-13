@@ -2,26 +2,26 @@
 Entities = {
     DynamicObject = {
         TransformComponent = {
-            x = 300, 
-            y = 0
+            x = 50, 
+            y = 18
         }, 
         ExtentComponent = {
-            extentX = 40, 
-            extentY = 43, 
+            extentX = 6, 
+            extentY = 8, 
             offsetX = 0, 
             offsetY = 0
         },
         CollisionComponent = {
-            extentX = 40, 
-            extentY = 43, 
+            extentX = 3, 
+            extentY = 4, 
             offsetX = 0, 
             offsetY = 0,
             type = ColliderType.MOVING_OBJECT
         },
         PlatformerPhysicsComponent = {
-            maxFootSpeed = 320.0,
-            distanceToPeak = 128.0,
-            jumpHeight = 128.0,
+            maxFootSpeed = 64.0,
+            distanceToPeak = 25.0,
+            jumpHeight = 40.0,
             downwardsGravityScale = 2.5
         },
         PhraseComponent = {
@@ -101,18 +101,18 @@ Entities = {
 
     DummyDynamicObject = {
         TransformComponent = {
-            x = 300, 
-            y = 100
+            x = 71, 
+            y = 18
         }, 
         ExtentComponent = {
-            extentX = 40, 
-            extentY = 43, 
+            extentX = 6, 
+            extentY = 8, 
             offsetX = 0, 
             offsetY = 0
         },
         CollisionComponent = {
-            extentX = 40, 
-            extentY = 43, 
+            extentX = 3, 
+            extentY = 4, 
             offsetX = 0, 
             offsetY = 0,
             type = ColliderType.MOVING_OBJECT
@@ -157,15 +157,15 @@ Entities = {
 
     DefaultMap = {
         TiledMapComponent = {
-            filename = "res/assets/maps/demo.lua", 
+            filename = "res/assets/maps/CandyTest.lua", 
             mainLayer = 0; 
         }
     },
 
     DefaultCamera = {
         TransformComponent = {
-            x = 500, 
-            y = 200
+            x = 70, 
+            y = 4
         }, 
         CameraComponent = {
             mainCamera = true,

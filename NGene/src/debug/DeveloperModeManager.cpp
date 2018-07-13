@@ -103,11 +103,11 @@ void DeveloperModeManager::draw_corner_overlay_debug_info() {
     {
         auto mouse_pos = ImGui::GetIO().MousePos;
 
-        auto real_mouse_pos = RenderManager::get().get_main_render_target()->mapPixelToCoords(sf::Vector2i(mouse_pos.x, mouse_pos.y));
+        auto in_game_mouse_pos = RenderManager::get().map_pixel_to_coords(sf::Vector2i(mouse_pos.x, mouse_pos.y));
 
         auto chunk = ChunkManager::get().get_chunk_from_position(mouse_pos.x, mouse_pos.y);
 
-        ImGui::Text("Mouse Position: (%6.1f,%6.1f)", real_mouse_pos.x, real_mouse_pos.y);
+        ImGui::Text("Mouse Position: (%6.1f,%6.1f)", in_game_mouse_pos.x, in_game_mouse_pos.y);
         ImGui::Text("Chunk: (%3d,%3d)", chunk.first, chunk.second);
         ImGui::Text("Frames Per Second: (%.1f)", (1.f / TimeManager::get().get_delta_time().asSeconds()));
         ImGui::Text("Frame Time: (%d) ms", (TimeManager::get().get_delta_time().asMilliseconds()));

@@ -112,7 +112,7 @@ private:
     /**
     The length of the side of each square chunk
     */
-    ChunkLengthType m_chunk_size{ 64 };
+    ChunkLengthType m_chunk_size{ 16 };
 
     /**
     Number of chunks outside the visible screen that we still consider relevant

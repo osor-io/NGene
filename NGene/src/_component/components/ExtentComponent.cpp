@@ -110,9 +110,7 @@ void COMPONENT_TYPE::expose_to_lua()
 
 }
 
-/*
-@@TODO: Recode this to use SFML rendering into the main render target for the game
-*/
+
 void ExtentComponent::draw_rect() {
 	const auto transform = EntityManager::get().get_entity(m_parent_id)->get_component<TransformComponent>();
 
@@ -120,29 +118,14 @@ void ExtentComponent::draw_rect() {
 
 		auto center = transform->get_position() + m_offset;
 
-		auto one = RenderManager::get().get_main_render_target()->mapCoordsToPixel(
-			sf::Vector2f((center.x - m_extent.x), (center.y - m_extent.y))
-		);
-		auto two = RenderManager::get().get_main_render_target()->mapCoordsToPixel(
-			sf::Vector2f((center.x + m_extent.x), (center.y - m_extent.y))
-		);
-		auto three = RenderManager::get().get_main_render_target()->mapCoordsToPixel(
-			sf::Vector2f((center.x + m_extent.x), (center.y + m_extent.y))
-		);
-		auto four = RenderManager::get().get_main_render_target()->mapCoordsToPixel(
-			sf::Vector2f((center.x - m_extent.x), (center.y + m_extent.y))
-		);
+		sf::RectangleShape rectangle;
+		rectangle.setPosition(sf::Vector2f((center.x - m_extent.x), (center.y - m_extent.y)));
+		rectangle.setSize(sf::Vector2f((m_extent.x * 2.f), (m_extent.y * 2.f)));
+		auto color = sf::Color(0, 255, 0, 70);
+		rectangle.setOutlineColor(color);
+		rectangle.setOutlineThickness(1.f);
+		rectangle.setFillColor(sf::Color::Transparent);
+		RenderManager::get().get_main_render_target()->draw(rectangle);
 
-		auto draw_list = ImGui::GetWindowDrawList();
-		draw_list->PushClipRectFullScreen();
-		draw_list->AddQuad(
-			ImVec2(one.x, one.y),
-			ImVec2(two.x, two.y),
-			ImVec2(three.x, three.y),
-			ImVec2(four.x, four.y),
-			ImGui::GetColorU32((ImVec4)ImColor(0, 255, 0, 150)),
-			2.0f
-		);
-		draw_list->PopClipRect();
 	}
 }
