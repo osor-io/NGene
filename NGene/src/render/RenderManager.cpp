@@ -3,6 +3,8 @@
 #include "../time/TimeManager.h"
 #include "../window/WindowManager.h"
 
+#include <SFML/OpenGL.hpp>
+
 RenderManager::RenderManager() {}
 
 
@@ -34,7 +36,7 @@ void RenderManager::start_up() {
 		std::terminate();
 	}
 
-	ImGui::SFML::Init(*m_main_target);
+	ImGui::SFML::Init(*m_window_target);
 }
 
 
@@ -92,12 +94,65 @@ void RenderManager::end_frame() {
 	*/
 	m_main_target->display();
 
-	/*
-	We make a sprite with the texture and render it to the main window
-	*/
-	sf::Sprite main_target_sprite(m_main_target->getTexture());
-	main_target_sprite.scale(m_current_texture_scale);
-	m_window_target->draw(main_target_sprite);
+
+	if (m_simulating_crt) {
+
+		/*
+
+		@@TODO @@DOING: Rendering main target texture with OpenGL. We have to look into what
+		are the places where some of this code should be. For example, I believe the glViewport should be 
+		on initialization and on resize of the window.
+
+		Also, the RenderTextures are always flipped: https://stackoverflow.com/questions/22424124/sfml-rendertexture-flipped-output
+
+		The next step is to actually do the crt shaped mesh and try to paste the texture in it, then we'll start to look into the shaders
+		for low res and high res.
+
+		A nice shape for the CRT mesh could be this one that I did:
+		
+			z=(-(sqrt(x^2+y^2))^7)/7 
+
+			See it here: https://academo.org/demos/3d-surface-plotter/?expression=(-(sqrt(x%5E2%2By%5E2))%5E7)%2F7&xRange=-1%2C1&yRange=-1.333333%2C1.333333&resolution=100
+			And here to implement the faster version of the formula by wolfram alpha: http://www.wolframalpha.com/input/?i=(-sqrt(x%5E2+%2B++y%5E2)%5E7)%2F7
+
+		*/
+
+		m_window_target->setActive(true);
+		m_window_target->pushGLStates();
+		glViewport(0, 0, m_window_target->getSize().x, m_window_target->getSize().y);
+		{
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			glPushMatrix();
+
+			sf::Texture::bind(&m_main_target.get()->getTexture());
+
+			glBegin(GL_QUADS);
+
+			auto size = 1.f;
+
+			glTexCoord2f(0, 1); glVertex3f(-size, -size, 0.f);
+			glTexCoord2f(0, 0); glVertex3f(-size, size, 0.f);
+			glTexCoord2f(1, 0); glVertex3f(size, size, 0.f);
+			glTexCoord2f(1, 1); glVertex3f(size, -size, 0.f);
+			
+			glEnd();
+			glPopMatrix();
+		}
+		m_window_target->popGLStates();
+	}
+	else {
+		/*
+		We make a sprite with the texture and render it to the main window
+		*/
+		sf::Sprite main_target_sprite(m_main_target->getTexture());
+		main_target_sprite.scale(m_current_texture_scale);
+
+		m_window_target->pushGLStates();
+		m_window_target->draw(main_target_sprite);
+		m_window_target->popGLStates();
+	}
 
 
 	/*
@@ -113,8 +168,9 @@ void RenderManager::end_frame() {
 	/*
 	Now we render overlayed things such as the debug GUI
 	*/
+	m_window_target->pushGLStates();
 	ImGui::SFML::Render(*m_window_target);
-
+	m_window_target->popGLStates();
 
 	/*
 	And finally we display the image

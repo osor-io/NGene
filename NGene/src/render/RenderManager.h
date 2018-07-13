@@ -25,10 +25,15 @@ public:
 	sf::Vector2f get_current_center() const;
 	float get_current_zoom() const;
 
+	bool get_simulating_crt() const { return m_simulating_crt; }
+	void set_simulating_crt(bool simulating_crt) { m_simulating_crt = simulating_crt; }
+
+
 	void begin_frame();
 	void end_frame();
 
 	sf::Vector2f map_pixel_to_coords(sf::Vector2i position);
+
 
 private:
 
@@ -42,5 +47,6 @@ private:
 	sf::Vector2f m_current_center{ 0.0f,0.0f };
 	float m_current_zoom{ 1.0f };
 
+	bool m_simulating_crt = false;
 
 };

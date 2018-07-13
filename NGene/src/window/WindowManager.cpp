@@ -42,6 +42,9 @@ void WindowManager::shut_down() {
 	m_window.reset();
 }
 
+
+#include <SFML/OpenGL.hpp>
+
 void WindowManager::fill_events() {
 	auto event = sf::Event{};
 	m_frame_events.clear();
@@ -51,6 +54,9 @@ void WindowManager::fill_events() {
 		if (event.type == sf::Event::Closed) {
 			m_window->close();
 			return;
+		}
+		else if (event.type == sf::Event::Resized) {
+			glViewport(0, 0, event.size.width, event.size.height);
 		}
 	}
 }

@@ -32,7 +32,8 @@ int test_opengl() {
 	settings.antialiasingLevel = 4;
 	settings.majorVersion = 3;
 	settings.minorVersion = 0;
-	sf::Window window(sf::VideoMode(800, 600), "OpenGL Test", sf::Style::Default, settings);
+	sf::RenderWindow window(sf::VideoMode(800, 600), "OpenGL Test", sf::Style::Default, settings);
+
 	window.setVerticalSyncEnabled(true);
 
 	// activate the window
@@ -60,10 +61,21 @@ int test_opengl() {
 			}
 		}
 
-		// clear the buffers
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// draw...
+		glViewport(0, 0, window.getSize().x, window.getSize().y);
+		{
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			glPushMatrix();
+			glBegin(GL_QUADS);
+			auto size = 1.f;
+			glVertex2f(-size / 2.0f, -size / 2.0f);
+			glVertex2f(size / 2.0f, -size / 2.0f);
+			glVertex2f(size / 2.0f, size / 2.0f);
+			glVertex2f(-size / 2.0f, size / 2.0f);
+			glEnd();
+			glPopMatrix();
+		}
 
 		// end the current frame (internally swaps the front and back buffers)
 		window.display();
