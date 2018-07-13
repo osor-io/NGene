@@ -8,7 +8,16 @@ WindowManager::WindowManager() {}
 WindowManager::~WindowManager() {}
 
 void WindowManager::start_up() {
-	m_window = std::make_unique<sf::RenderWindow>(sf::VideoMode(1200, 800), "NGene");
+
+
+	sf::ContextSettings settings;
+	settings.depthBits = config::opengl::depthBits;
+	settings.stencilBits = config::opengl::stencilBits;
+	settings.antialiasingLevel = config::opengl::antialiasingLevel;
+	settings.majorVersion = config::opengl::majorVersion;
+	settings.minorVersion = config::opengl::minorVersion;
+
+	m_window = std::make_unique<sf::RenderWindow>(sf::VideoMode(1200, 800), "NGene", sf::Style::Default, settings);
 
 	/*
 	@@TODO @@NOTE @@MAYBE

@@ -118,22 +118,6 @@ inline void post_render() {
 }
 
 
-#include "./render/sprites/Spritesheet.h"
-
-int test() {
-    auto spritesheet = Spritesheet("./res/assets/spritesheet_test.png", Spritesheet::SpritesheetMorphology::SQUARE);
-
-    LOG_NAMED(spritesheet.get_sprites().size());
-    LOG_NAMED(spritesheet.get_rows());
-    LOG_NAMED(spritesheet.get_cols());
-    LOG_NAMED(spritesheet.get_sprite_width());
-    LOG_NAMED(spritesheet.get_sprite_height());
-
-    press_to_continue();
-    return 0;
-}
-
-
 void load_default_state() {
 	 
 //#define LOAD_STATE_PROGRAMMATICALLY
@@ -180,6 +164,8 @@ void load_default_state() {
 
 }
 
+
+#include "./test/testmain.inl"
 
 int main() {
 

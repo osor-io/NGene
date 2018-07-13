@@ -7,227 +7,88 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
-
-#include <sol.hpp> // http://sol2.readthedocs.io/en/latest/tutorial/getting-started.html
+#include <SFML/OpenGL.hpp>
 
 #include <meta.h>
 
 #include <Debug.h>
-#include "./utils/OtherUtils.h"
 
-struct ExampleStruct {
-    friend auto meta::registerMembers<ExampleStruct>();
 
-    int someInt{ 0 };
-    float someFloat{ 3.0f };
-};
+int test_opengl();
+int test_spritesheets();
 
-template<>
-inline auto meta::registerName<ExampleStruct>() {
-    return "ExampleStruct";
+
+int test() {
+	return test_opengl();
 }
 
-template<>
-inline auto meta::registerMembers<ExampleStruct>() {
-    return members(
-        member("someInt", &ExampleStruct::someInt),
-        member("someFloat", &ExampleStruct::someFloat)
-    );
-}
-
-int testDependencies() {
-    { // Testing lua
-        std::cout << " ====== " << "TESTING LUA" << " ====== " << std::endl;
-        sol::state lua;
-        lua.open_libraries(sol::lib::base);
-
-        lua.script("print('Yeah, this is being printed from LUA!!!')");
-        std::cout << std::endl;
-    }
+int test_opengl() {
 
 
-    { // Testing SFML + ImGUI + MetaStuff
+	// create the window
+	sf::ContextSettings settings;
+	settings.depthBits = 24;
+	settings.stencilBits = 8;
+	settings.antialiasingLevel = 4;
+	settings.majorVersion = 3;
+	settings.minorVersion = 0;
+	sf::Window window(sf::VideoMode(800, 600), "OpenGL Test", sf::Style::Default, settings);
+	window.setVerticalSyncEnabled(true);
 
-      /**
-      @@NOTE: GUI can be extended with ImGUI to do some pretty neat things:
+	// activate the window
+	window.setActive(true);
 
-      Resources:
+	// load resources, initialize the OpenGL states, ...
 
-      - https://eliasdaler.github.io/using-imgui-with-sfml-pt1/
-      - https://eliasdaler.github.io/using-imgui-with-sfml-pt2/
-      */
+	// run the main loop
+	bool running = true;
+	while (running)
+	{
+		// handle events
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+			{
+				// end the program
+				running = false;
+			}
+			else if (event.type == sf::Event::Resized)
+			{
+				// adjust the viewport when the window is resized
+				glViewport(0, 0, event.size.width, event.size.height);
+			}
+		}
 
-        ExampleStruct aux{};
-        std::cout << " ====== " << "TESTING SFML, ImGUI and MetaStuff" << " ====== " << std::endl;
+		// clear the buffers
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        std::cout << "The initial values for the ExampleClass are:" << std::endl;
-        meta::doForAllMembers<ExampleStruct>([&aux](auto& member) {
-            using MemberT = meta::get_member_type<decltype(member)>;
-            auto name = member.get_name();
-            std::cout << name << ": " << member.get(aux) << std::endl;
-        });
-        std::cout << "Change the values in the debug window and close the main window" << std::endl;
-        std::cout << std::endl;
+		// draw...
 
-        sf::RenderWindow window(sf::VideoMode(640, 480), "Furrula");
-        window.setFramerateLimit(60);
-        ImGui::SFML::Init(window);
+		// end the current frame (internally swaps the front and back buffers)
+		window.display();
+	}
 
+	// release resources...
 
-        sf::Clock deltaClock;
-        while (window.isOpen()) {
-            sf::Event event;
-            while (window.pollEvent(event)) {
-                ImGui::SFML::ProcessEvent(event);
+	return 0;
 
-                if (event.type == sf::Event::Closed) {
-                    window.close();
-                }
-            }
-
-            ImGui::SFML::Update(window, deltaClock.restart());
-
-            ImGui::Begin(meta::get_name<ExampleStruct>());
-            meta::doForAllMembers<ExampleStruct>([&aux](auto& member) {
-                using MemberT = meta::get_member_type<decltype(member)>;
-                auto name = member.get_name();
-
-                if (std::is_same<MemberT, int>::value) {
-                    ImGui::InputInt(name, (int*)&member.get(aux));
-                }
-                else if (std::is_same<MemberT, float>::value) {
-                    ImGui::InputFloat(name, (float*)&member.get(aux));
-                }
-
-
-            });
-            ImGui::End();
-
-            window.clear(sf::Color::White);
-
-            ImGui::SFML::Render(window);
-            window.display();
-        }
-
-        std::cout << "The final values for the ExampleClass are:" << std::endl;
-        meta::doForAllMembers<ExampleStruct>([&aux](auto& member) {
-            using MemberT = meta::get_member_type<decltype(member)>;
-            auto name = member.get_name();
-            std::cout << name << ": " << member.get(aux) << std::endl;
-        });
-        std::cout << std::endl;
-
-        ImGui::SFML::Shutdown();
-    }
-
-    return 0;
+	return 0;
 }
 
 
-#include "./_entity/Entity.h"
-#include "./_component/components/PhraseComponent.h"
-#include "./_component/components/SpriteComponent.h"
-#include "./_entity/EntityManager.h"
-#include "./lua/LuaManager.h"
 
-int testECS() {
+#include "../render/sprites/Spritesheet.h"
+int test_spritesheets() {
+	auto spritesheet = Spritesheet("./res/assets/spritesheet_test.png", Spritesheet::SpritesheetMorphology::SQUARE);
 
+	LOG_NAMED(spritesheet.get_sprites().size());
+	LOG_NAMED(spritesheet.get_rows());
+	LOG_NAMED(spritesheet.get_cols());
+	LOG_NAMED(spritesheet.get_sprite_width());
+	LOG_NAMED(spritesheet.get_sprite_height());
 
-    {
-        auto arr = new std::array<bool*, 1048893>();
-
-        for (auto elem : *arr) {
-            elem = new bool;
-        }
-
-        for (auto elem : *arr) {
-            delete elem;
-        }
-    }
-    std::cout << std::endl << std::endl;
-
-    return 0;
+	press_to_continue();
+	return 0;
 }
 
-
-void test() {
-
-    {
-        LUA.script(R"(
-            Entities = {
-                Cosa = {
-                    SimplePhraseComponent = {
-                        Phrase = "I'm saying hi from this lua Object!! :D"
-                    },
-                    SimpleGraphicsComponent = {
-                        Filename = "file.png"
-                    }
-                },
-                OtraCosa = {
-                    SimplePhraseComponent = {
-                        Phrase = "I'm saying hi from this lua Object!! :D"
-                    },
-                    SimpleGraphicsComponent = {
-                        Filename = "file.png"
-                    }
-                },
-                YOtraMas = {
-                    SimplePhraseComponent = {
-                        Phrase = "I'm saying hi from this lua Object!! :D"
-                    },
-                    SimpleGraphicsComponent = {
-                        Filename = "file.png"
-                    }
-                }
-            }
-        )");
-
-        auto e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().request_load_entity(LUA["Entities"], "OtraCosa");
-        e = EntityManager::get().request_load_entity(LUA["Entities"], "YOtraMas");
-        e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().request_load_entity(LUA["Entities"], "YOtraMas");
-        e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
-        e = EntityManager::get().request_load_entity(LUA["Entities"], "Cosa");
-
-        for (const auto& id : EntityManager::get().get_entity_keys()) {
-            LOG_NAMED(id);
-        }
-
-    }
-
-
-    LUA.script(R"(
-            print("Do we have an entity with the id 0? ", hasEntity(0))
-            print("Do we have an entity with the id 1? ", hasEntity(1))
-
-            print("Loading Entity 0, we expect this one to exist")
-            local entity = getEntity(0);
-            print("Entity returned: ", entity)
-            if(entity) then
-                print("The entity existed, lets see if it has a phrase component")
-                local phrase = entity:getSimplePhraseComponent()
-                if(phrase) then
-                    print("It does! So let's hear what it has to say")
-                    print("Our phrase is: ", phrase.phrase)
-                else
-                    print("It doesn't, so it'll just shut up")
-                end
-            end
-
-            print("Loading Entity 1, we expect this one to return nullptr/nil")
-            entity = getEntity(1);
-            print("Entity returned: ", entity)
-            if(entity) then
-                local phrase = entity:getSimplePhraseComponent()
-                if(phrase) then
-                    print("Our phrase is: ", phrase.phrase)
-                end
-            end
-
-        )");
-}

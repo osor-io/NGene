@@ -6,6 +6,19 @@
 #include <SFML/System/Clock.hpp>
 #include <memory>
 
+
+namespace config {
+
+	namespace opengl {
+		constexpr auto depthBits = 24;			// Bits of depth buffer
+		constexpr auto stencilBits = 8;			// Bits of stencil buffer
+		constexpr auto antialiasingLevel = 4;	// MSAA samples
+		constexpr auto majorVersion = 3;		// Version of OpenGL (3 should be widely supported)
+		constexpr auto minorVersion = 0;
+	}
+	
+}
+
 class WindowManager : public Manager<WindowManager> {
     friend class CRSP<WindowManager>;
 public:
