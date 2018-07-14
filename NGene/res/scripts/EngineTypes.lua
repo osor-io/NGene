@@ -7,7 +7,7 @@ EngineEntities = {
             y = 0
         },
         ExtentComponent = {
-            extentX = 400, 
+            extentX = 400,  
             extentY = 400, 
             offsetX = 0, 
             offsetY = 0

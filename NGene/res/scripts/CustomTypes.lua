@@ -158,7 +158,7 @@ Entities = {
     DefaultMap = {
         TiledMapComponent = {
             filename = "res/assets/maps/CandyTest.lua", 
-            mainLayer = 0; 
+            mainLayer = 1
         }
     },
 

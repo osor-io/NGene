@@ -107,7 +107,7 @@ void RenderSystem::register_entity(Entity& entity) {
             for (auto i = 0; i <= tiledmap_component->m_main_layer; ++i) {
                 m_background_layers.push_back(&m_current_map->layers[i]);
             }
-
+			
             for (auto i = tiledmap_component->m_main_layer + 1; i < m_current_map->layers.size(); ++i) {
                 m_foreground_layers.push_back(&m_current_map->layers[i]);
             }
