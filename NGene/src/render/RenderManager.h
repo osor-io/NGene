@@ -28,7 +28,6 @@ public:
 	bool get_simulating_crt() const { return m_simulating_crt; }
 	void set_simulating_crt(bool simulating_crt) { m_simulating_crt = simulating_crt; }
 
-
 	void begin_frame();
 	void end_frame();
 

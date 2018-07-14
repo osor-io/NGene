@@ -19,6 +19,13 @@ void RenderManager::start_up() {
 	m_window_target = WindowManager::get().get_window_render_target();
 
 	/*
+	We set up the opengl context
+	*/
+	m_window_target->setActive(true);
+	glViewport(0, 0, m_window_target->getSize().x, m_window_target->getSize().y);
+
+
+	/*
 	We create the lower resolution render target
 	*/
 	m_main_target = std::make_unique<sf::RenderTexture>();
@@ -81,6 +88,7 @@ void RenderManager::begin_frame() {
 	m_window_target->clear(m_clear_color);
 }
 
+
 void RenderManager::end_frame() {
 
 	/*
@@ -100,7 +108,7 @@ void RenderManager::end_frame() {
 		/*
 
 		@@TODO @@DOING: Rendering main target texture with OpenGL. We have to look into what
-		are the places where some of this code should be. For example, I believe the glViewport should be 
+		are the places where some of this code should be. For example, I believe the glViewport should be
 		on initialization and on resize of the window.
 
 		Also, the RenderTextures are always flipped: https://stackoverflow.com/questions/22424124/sfml-rendertexture-flipped-output
@@ -109,8 +117,8 @@ void RenderManager::end_frame() {
 		for low res and high res.
 
 		A nice shape for the CRT mesh could be this one that I did:
-		
-			z=(-(sqrt(x^2+y^2))^7)/7 
+
+			z=(-(sqrt(x^2+y^2))^7)/7
 
 			See it here: https://academo.org/demos/3d-surface-plotter/?expression=(-(sqrt(x%5E2%2By%5E2))%5E7)%2F7&xRange=-1%2C1&yRange=-1.333333%2C1.333333&resolution=100
 			And here to implement the faster version of the formula by wolfram alpha: http://www.wolframalpha.com/input/?i=(-sqrt(x%5E2+%2B++y%5E2)%5E7)%2F7
@@ -119,7 +127,6 @@ void RenderManager::end_frame() {
 
 		m_window_target->setActive(true);
 		m_window_target->pushGLStates();
-		glViewport(0, 0, m_window_target->getSize().x, m_window_target->getSize().y);
 		{
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glMatrixMode(GL_MODELVIEW);
@@ -136,7 +143,7 @@ void RenderManager::end_frame() {
 			glTexCoord2f(0, 0); glVertex3f(-size, size, 0.f);
 			glTexCoord2f(1, 0); glVertex3f(size, size, 0.f);
 			glTexCoord2f(1, 1); glVertex3f(size, -size, 0.f);
-			
+
 			glEnd();
 			glPopMatrix();
 		}

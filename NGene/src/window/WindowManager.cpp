@@ -56,6 +56,7 @@ void WindowManager::fill_events() {
 			return;
 		}
 		else if (event.type == sf::Event::Resized) {
+			m_window->setActive(true);
 			glViewport(0, 0, event.size.width, event.size.height);
 		}
 	}
