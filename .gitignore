@@ -285,3 +285,6 @@ __pycache__/
 *.btm.cs
 *.odx.cs
 *.xsd.cs
+
+# ImGui generated files
+*imgui.ini
