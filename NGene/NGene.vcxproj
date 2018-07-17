@@ -203,6 +203,7 @@ echo.</Command>
     <ClCompile Include="dep\src\Property.cpp" />
     <ClCompile Include="dep\src\TileLayer.cpp" />
     <ClCompile Include="dep\src\Tileset.cpp" />
+    <ClCompile Include="src\render\shader\Shader.cpp" />
     <ClCompile Include="src\os\OSManager.cpp" />
     <ClCompile Include="src\os\OSStatic.cpp" />
     <ClCompile Include="src\render\sprites\Spritesheet.cpp" />
@@ -273,6 +274,7 @@ echo.</Command>
     <ClInclude Include="dep\src\detail\pugiconfig.hpp" />
     <ClInclude Include="dep\src\detail\pugixml.hpp" />
     <ClInclude Include="dep\src\miniz.h" />
+    <ClInclude Include="src\render\shader\Shader.h" />
     <ClInclude Include="src\os\OSManager.h" />
     <ClInclude Include="src\os\OSStatic.h" />
     <ClInclude Include="src\render\sprites\Spritesheet.h" />
