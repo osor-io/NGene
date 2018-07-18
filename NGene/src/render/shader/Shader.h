@@ -52,6 +52,8 @@ private:
 
 	ShaderSources m_sources;
 
+	bool m_valid_program{false};
+
 	GLuint m_id;
 };
 

@@ -497,5 +497,6 @@
     <None Include="res\scripts\CustomTypes.lua" />
     <None Include="res\scripts\EngineTypes.lua" />
     <None Include="res\scripts\LoadDefaultState.lua" />
+    <None Include="res\shaders\test.shader" />
   </ItemGroup>
 </Project>

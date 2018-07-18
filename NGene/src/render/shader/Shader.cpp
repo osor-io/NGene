@@ -119,11 +119,13 @@ void Shader::create_program_with_sources() {
 		if (has_geometry_shader)
 			glDeleteShader(geometry_shader_id);
 	}
+
+	m_valid_program = true;
 }
 
 
 Shader::~Shader() {
-
+	glDeleteProgram(m_id);
 }
 
 Shader::ShaderSources Shader::get_sources_from_text(const std::string& all_sources) {
@@ -170,8 +172,12 @@ Shader::ShaderSources Shader::get_sources_from_text(const std::string& all_sourc
 
 
 void Shader::bind() const {
-
+	if (m_valid_program) {
+		glUseProgram(m_id);
+	}
 }
 
 void Shader::unbind() const {
+	glUseProgram(0);
 }
+

@@ -358,6 +358,7 @@ echo.</Command>
     <None Include="res\scripts\EngineTypes.lua" />
     <None Include="res\scripts\EntityTypes.lua" />
     <None Include="res\scripts\LoadDefaultState.lua" />
+    <None Include="res\shaders\test.shader" />
     <None Include="src\test\testmain.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
