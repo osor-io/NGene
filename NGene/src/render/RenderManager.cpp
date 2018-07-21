@@ -7,9 +7,7 @@
 
 RenderManager::RenderManager() {}
 
-
 RenderManager::~RenderManager() {}
-
 
 void RenderManager::start_up() {
 
@@ -46,7 +44,6 @@ void RenderManager::start_up() {
 	ImGui::SFML::Init(*m_window_target);
 }
 
-
 void RenderManager::shut_down() {
 
 	/*
@@ -56,7 +53,6 @@ void RenderManager::shut_down() {
 	ImGui::SFML::Shutdown();
 
 }
-
 
 sf::RenderTarget* RenderManager::get_main_render_target() {
 	return m_main_target.get();

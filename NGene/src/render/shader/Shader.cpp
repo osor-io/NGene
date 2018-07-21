@@ -1,5 +1,7 @@
 #include "Shader.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include <iostream>
 #include <sstream>
 #include <assert.h>
@@ -7,45 +9,45 @@
 #include "../utils/Debug.h"
 #include "../resources/TextFileManager.h"
 
+#define DETACH_SHADERS false
 
-Shader::Shader(const char* filename) {
+Shader::Shader(const char* filename) : m_filename(filename) {
 
 	auto source_text_resource = TextFileManager::get().get_scoped_resource(filename);
 
 	m_sources = get_sources_from_text(*source_text_resource.resource);
 
-	if (!m_sources.is_valid()) {
+	if (!m_sources.are_valid()) {
 		LOG_ERROR("The shader in " << source_text_resource.m_filename << " is not valid");
 		return;
 	}
 	else {
-		create_program_with_sources();
+		create_program_with_sources(m_sources);
 	}
 }
 
 Shader::Shader(
 	const std::string& vertex_code,
 	const std::string& geometry_code,
-	const std::string& fragment_code) {
+	const std::string& fragment_code) : m_filename("Filename is not available, shaders loaded as strings") {
 
 	m_sources.vertex = vertex_code;
 	m_sources.geometry = geometry_code;
 	m_sources.fragment = fragment_code;
 
-	if (!m_sources.is_valid()) {
+	if (!m_sources.are_valid()) {
 		LOG_ERROR("The shader provided directly in source strings is not valid");
 		return;
 	}
 	else {
-		create_program_with_sources();
+		create_program_with_sources(m_sources);
 	}
 
 }
 
-void Shader::create_program_with_sources() {
+void Shader::create_program_with_sources(const ShaderSources& sources) {
 
-
-	auto has_geometry_shader = !m_sources.geometry.empty();
+	auto has_geometry_shader = !sources.geometry.empty();
 
 	auto vertex_shader_id = GLuint{};
 	auto geometry_shader_id = GLuint{};
@@ -54,10 +56,11 @@ void Shader::create_program_with_sources() {
 	auto result = int{};
 	char error_log_buffer[512];
 
+	// Lambda to check how the compilation of the shader went
 	auto check_shader = [&error_log_buffer](unsigned int id) -> bool {
 		auto result = int{};
 		glGetShaderiv(id, GL_COMPILE_STATUS, &result);
-		if (!result) {
+		if (result == GL_FALSE) {
 			glGetShaderInfoLog(id, 512, nullptr, error_log_buffer);
 			LOG_ERROR("We couldn't compile the shader with id " << id << "\n\t"
 				"The error provided is: " << error_log_buffer);
@@ -65,6 +68,7 @@ void Shader::create_program_with_sources() {
 		return result;
 	};
 
+	// Lambda to compile a shader
 	auto compile_shader = [&check_shader](const GLchar* source, GLenum shader_type) -> GLuint {
 		auto id = glCreateShader(shader_type);
 		glShaderSource(id, 1, &source, nullptr);
@@ -77,11 +81,11 @@ void Shader::create_program_with_sources() {
 
 	// Compile Shaders
 	{
-		vertex_shader_id = compile_shader(m_sources.vertex.c_str(), GL_VERTEX_SHADER);
-		fragment_shader_id = compile_shader(m_sources.fragment.c_str(), GL_FRAGMENT_SHADER);
+		vertex_shader_id = compile_shader(sources.vertex.c_str(), GL_VERTEX_SHADER);
+		fragment_shader_id = compile_shader(sources.fragment.c_str(), GL_FRAGMENT_SHADER);
 
 		if (has_geometry_shader)
-			geometry_shader_id = compile_shader(m_sources.geometry.c_str(), GL_GEOMETRY_SHADER);
+			geometry_shader_id = compile_shader(sources.geometry.c_str(), GL_GEOMETRY_SHADER);
 	}
 
 
@@ -95,28 +99,31 @@ void Shader::create_program_with_sources() {
 		if (has_geometry_shader)
 			glAttachShader(m_id, geometry_shader_id);
 
-		glBindFragDataLocation(m_id, 0, "outColor");
 
 		// Link the program
-		glLinkProgram(m_id);
-		
-		// Check for errors
-		glGetProgramiv(m_id, GL_LINK_STATUS, &result);
-		if (!result) {
-			glGetProgramInfoLog(m_id, 512, nullptr, error_log_buffer);
-			LOG_ERROR("We couldn't link the program with id " << m_id << "\n\t"
-				"The error provided is: " << error_log_buffer);
+		{
+			glLinkProgram(m_id);
+
+			// Check for errors
+			glGetProgramiv(m_id, GL_LINK_STATUS, &result);
+			if (result == GL_FALSE) {
+				glGetProgramInfoLog(m_id, 512, nullptr, error_log_buffer);
+				LOG_ERROR("We couldn't link the program with id " << m_id << "\n\t"
+					"The error provided is: " << error_log_buffer);
+			}
 		}
 
 		// Validate the program
-		glValidateProgram(m_id);
+		{
+			glValidateProgram(m_id);
 
-		// And check for errors for that
-		glGetProgramiv(m_id, GL_VALIDATE_STATUS, &result);
-		if (!result) {
-			glGetProgramInfoLog(m_id, 512, nullptr, error_log_buffer);
-			LOG_ERROR("We couldn't validate the program with id " << m_id << "\n\t"
-				"The error provided is: " << error_log_buffer);
+			// And check for errors for that
+			glGetProgramiv(m_id, GL_VALIDATE_STATUS, &result);
+			if (result == GL_FALSE) {
+				glGetProgramInfoLog(m_id, 512, nullptr, error_log_buffer);
+				LOG_ERROR("We couldn't validate the program with id " << m_id << "\n\t"
+					"The error provided is: " << error_log_buffer);
+			}
 		}
 
 		//
@@ -126,18 +133,23 @@ void Shader::create_program_with_sources() {
 		// better debugging. The cost of not doing it minimal and it seems like
 		// a lot of engines choose not do it.
 		//
-#if 0
-		glDetachShader(m_id, vertex_shader_id);
-		glDetachShader(m_id, fragment_shader_id);
-		if (has_geometry_shader)
-			glDetachShader(m_id, geometry_shader_id);
+#if DETACH_SHADERS
+		{
+			glDetachShader(m_id, vertex_shader_id);
+			glDetachShader(m_id, fragment_shader_id);
+			if (has_geometry_shader)
+				glDetachShader(m_id, geometry_shader_id);
+		}
 #endif
 
 		// Delete the shaders
-		glDeleteShader(vertex_shader_id);
-		glDeleteShader(fragment_shader_id);
-		if (has_geometry_shader)
-			glDeleteShader(geometry_shader_id);
+		{
+			glDeleteShader(vertex_shader_id);
+			glDeleteShader(fragment_shader_id);
+			if (has_geometry_shader)
+				glDeleteShader(geometry_shader_id);
+		}
+
 	}
 
 	m_valid_program = true;
@@ -203,9 +215,50 @@ void Shader::bind() const {
 	if (m_valid_program) {
 		glUseProgram(m_id);
 	}
+#ifdef _DEBUG
+	else {
+		LOG_ERROR("Trying to link an invalid shader program: " << m_filename);
+	}
+#endif
 }
 
 void Shader::unbind() const {
 	glUseProgram(0);
 }
+
+
+GLint Shader::get_uniform_location(const GLchar* name) {
+	return glGetUniformLocation(m_id, name);
+}
+
+
+#pragma region Uniform Setters
+
+
+void Shader::setUniform1i(const GLchar* name, int value) {
+	glUniform1i(get_uniform_location(name), value);
+}
+
+void Shader::setUniform1f(const GLchar* name, float value) {
+	glUniform1f(get_uniform_location(name), value);
+}
+
+void Shader::setUniform2f(const GLchar* name, const glm::vec2& value) {
+	glUniform2f(get_uniform_location(name), value.x, value.y);
+}
+
+void Shader::setUniform3f(const GLchar* name, const glm::vec3& value) {
+	glUniform3f(get_uniform_location(name), value.x, value.y, value.z);
+}
+
+void Shader::setUniform4f(const GLchar* name, const glm::vec4& value) {
+	glUniform4f(get_uniform_location(name), value.x, value.y, value.z, value.w);
+}
+
+void Shader::setUniformMat4(const GLchar* name, const glm::mat4 value) {
+	glUniformMatrix4fv(get_uniform_location(name), 1 ,GL_FALSE, glm::value_ptr(value));
+}
+
+
+#pragma endregion
 

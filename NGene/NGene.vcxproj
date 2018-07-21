@@ -110,7 +110,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;W:\dep\sfml\include;$(ProjectDir)src\utils;W:\dep\glew\include;W:\dep\GSL\include;W:\dep\LuaJIT\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;W:\dep\sfml\include;$(ProjectDir)src\utils;W:\dep\glew\include;W:\dep\glm;W:\dep\GSL\include;W:\dep\LuaJIT\include</AdditionalIncludeDirectories>
       <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
     <Link>
@@ -129,7 +129,7 @@ echo.</Command>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;W:\dep\sfml\include;$(ProjectDir)src\utils;W:\dep\glew\include;W:\dep\GSL\include;$(ProjectDir)src\utils;W:\dep\LuaJIT\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;W:\dep\sfml\include;$(ProjectDir)src\utils;W:\dep\glew\include;W:\dep\glm;W:\dep\GSL\include;$(ProjectDir)src\utils;W:\dep\LuaJIT\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;SFML_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
     </ClCompile>
@@ -152,7 +152,7 @@ echo.</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;W:\dep\sfml\include;$(ProjectDir)src\utils;W:\dep\glew\include;W:\dep\GSL\include;W:\dep\LuaJIT\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;W:\dep\sfml\include;$(ProjectDir)src\utils;W:\dep\glew\include;W:\dep\glm;W:\dep\GSL\include;W:\dep\LuaJIT\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -174,7 +174,7 @@ echo.</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;W:\dep\sfml\include;$(ProjectDir)src\utils;W:\dep\glew\include;W:\dep\GSL\include;$(ProjectDir)src\utils;W:\dep\LuaJIT\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)dep\include;W:\dep\sfml\include;$(ProjectDir)src\utils;W:\dep\glew\include;W:\dep\glm;W:\dep\GSL\include;$(ProjectDir)src\utils;W:\dep\LuaJIT\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;SFML_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -203,6 +203,9 @@ echo.</Command>
     <ClCompile Include="dep\src\Property.cpp" />
     <ClCompile Include="dep\src\TileLayer.cpp" />
     <ClCompile Include="dep\src\Tileset.cpp" />
+    <ClCompile Include="src\render\buffers\ArrayBuffer.cpp" />
+    <ClCompile Include="src\render\buffers\ElementBuffer.cpp" />
+    <ClCompile Include="src\render\buffers\VertexArray.cpp" />
     <ClCompile Include="src\render\shader\Shader.cpp" />
     <ClCompile Include="src\os\OSManager.cpp" />
     <ClCompile Include="src\os\OSStatic.cpp" />
@@ -274,6 +277,10 @@ echo.</Command>
     <ClInclude Include="dep\src\detail\pugiconfig.hpp" />
     <ClInclude Include="dep\src\detail\pugixml.hpp" />
     <ClInclude Include="dep\src\miniz.h" />
+    <ClInclude Include="src\render\buffers\ArrayBuffer.h" />
+    <ClInclude Include="src\render\buffers\BufferCommon.h" />
+    <ClInclude Include="src\render\buffers\ElementBuffer.h" />
+    <ClInclude Include="src\render\buffers\VertexArray.h" />
     <ClInclude Include="src\render\shader\Shader.h" />
     <ClInclude Include="src\os\OSManager.h" />
     <ClInclude Include="src\os\OSStatic.h" />

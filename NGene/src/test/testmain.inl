@@ -11,9 +11,18 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/OpenGL.hpp>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+
 #include <meta.h>
 
 #include <Debug.h>
+
+#include "../render/buffers/ArrayBuffer.h"
+#include "../render/buffers/ElementBuffer.h"
+#include "../render/buffers/VertexArray.h"
+
 
 int test_modern_opengl_crt_shape();
 int test_legacy_opengl_crt_shape();
@@ -28,13 +37,14 @@ int test() {
 #include "../render/shader/Shader.h"
 int test_modern_opengl_crt_shape() {
 
+
 	// create the window
 	sf::ContextSettings settings;
 	settings.depthBits = 24;
 	settings.stencilBits = 8;
 	settings.antialiasingLevel = 8;
-	settings.majorVersion = 3;
-	settings.minorVersion = 1;
+	settings.majorVersion = 4;
+	settings.minorVersion = 0;
 
 	bool exit = false;
 
@@ -42,7 +52,7 @@ int test_modern_opengl_crt_shape() {
 	{
 
 		// Create the main window
-		sf::RenderWindow window(sf::VideoMode(256 * 4, 224 * 4), "CRT Shape", sf::Style::Default, settings);
+		sf::RenderWindow window(sf::VideoMode(960, 540), "Modern OpenGL Test", sf::Style::Default, settings);
 		window.setVerticalSyncEnabled(true);
 		ImGui::SFML::Init(window);
 
@@ -55,43 +65,80 @@ int test_modern_opengl_crt_shape() {
 		// Make the window the active window for OpenGL calls
 		window.setActive(true);
 
-		// After we have a valid context we can init glew
-		glewExperimental = GL_TRUE;
+		// Enable Z-buffer read and write
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
+		glClearDepth(1.f);
+
 		glewInit();
 
-		// Create the shader
-		auto shader = Shader("res/shaders/test.shader");
+		// Set Clear Color
+		glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+
 
 		//
-		// Set up the things we are going to draw
+		// Set up things to render HERE
 		//
 
-		// Create Vertex Array Object
-		GLuint vao;
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
-
-		// Create a Vertex Buffer Object and copy the vertex data to it
-		GLuint vbo;
-		glGenBuffers(1, &vbo);
-
-		float vertices[] = {
-			0.0f, 0.5f,
-			0.5f, -0.5f,
-			-0.5f, -0.5f
+		GLfloat vertices[] =
+		{
+			0, 0, 0,
+			0, 3, 0,
+			8, 3, 0,
+			8, 0, 0
 		};
 
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		GLushort indices[] =
+		{
+			0, 1, 2,
+			2, 3, 0
+		};
 
+		GLfloat colorsA[] =
+		{
+			1, 0, 1, 1,
+			1, 0, 1, 1,
+			1, 0, 1, 1,
+			1, 0, 1, 1
+		};
 
-		// Specify the layout of the vertex data
-		GLint pos_attrib = glGetAttribLocation(shader.get_program_id(), "position");
-		glEnableVertexAttribArray(pos_attrib);
-		glVertexAttribPointer(pos_attrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		GLfloat colorsB[] =
+		{
+			0.2f, 0.3f, 0.8f, 1,
+			0.2f, 0.3f, 0.8f, 1,
+			0.2f, 0.3f, 0.8f, 1,
+			0.2f, 0.3f, 0.8f, 1
+		};
 
-		// Get the location of the color uniform
-		GLint uni_color = glGetUniformLocation(shader.get_program_id(), "triangleColor");
+		VertexArray sprite1, sprite2;
+		ElementBuffer ibo(indices, 6, BufferUsage::STATIC_DRAW);
+
+		sprite1.addBuffer(std::make_unique<ArrayBuffer>(vertices, 4 * 3, 3, BufferUsage::STATIC_DRAW),
+			0);
+		sprite1.addBuffer(std::make_unique<ArrayBuffer>(colorsA, 4 * 4, 4, BufferUsage::STATIC_DRAW),
+			1);
+
+		sprite2.addBuffer(std::make_unique<ArrayBuffer>(vertices, 4 * 3, 3, BufferUsage::STATIC_DRAW),
+			0);
+		sprite2.addBuffer(std::make_unique<ArrayBuffer>(colorsB, 4 * 4, 4, BufferUsage::STATIC_DRAW),
+			1);
+
+		auto ortho = glm::ortho(0.0f, 16.0f, 0.0f, 9.0f, -1.0f, 1.0f);
+
+		
+
+		Shader shader("res/shaders/test.shader");
+		shader.bind();
+		
+		shader.setUniformMat4("pr_matrix", ortho);
+		shader.setUniformMat4("ml_matrix", glm::translate(glm::mat4(), glm::vec3(4, 3, 0)));
+
+		shader.setUniform2f("light_pos", glm::vec2(4.0f, 1.5f));
+		shader.setUniform4f("colour", glm::vec4(0.2f, 0.3f, 0.8f, 1.0f));
+
+		shader.unbind();
+
+		
 
 
 		// Make the window no longer the active window for OpenGL calls
@@ -104,6 +151,7 @@ int test_modern_opengl_crt_shape() {
 		// Start game loop
 		while (window.isOpen())
 		{
+
 			// Process events
 			sf::Event event;
 			while (window.pollEvent(event))
@@ -124,11 +172,14 @@ int test_modern_opengl_crt_shape() {
 					window.close();
 				}
 
+
 				// Adjust the viewport when the window is resized
 				if (event.type == sf::Event::Resized)
 				{
 					// Make the window the active window for OpenGL calls
 					window.setActive(true);
+
+					glViewport(0, 0, event.size.width, event.size.height);
 
 					// Make the window no longer the active window for OpenGL calls
 					window.setActive(false);
@@ -138,39 +189,51 @@ int test_modern_opengl_crt_shape() {
 			// Make the window the active window for OpenGL calls
 			window.setActive(true);
 
-			// Clear the color buffer
-			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
 
+			// Check for errors (it's IMPORTANT that the window is active)
+			GLenum error = glGetError();
+			if (error != GL_NO_ERROR) {
+				LOG_ERROR("OpenGL Error (" << error << "): " << glewGetErrorString(error));
+			}
+
+			// Clear the depth buffer
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			//
-			// Draw here
+			// DRAW HERE
 			//
 			{
-				glBindBuffer(GL_ARRAY_BUFFER, vbo);
 				shader.bind();
-				glDrawArrays(GL_TRIANGLES, 0, 3);
+
+				auto mouse_pos = sf::Mouse::getPosition(window);
+				shader.setUniform2f("light_pos", glm::vec2((float)(mouse_pos.x * 16.0f / 960.0f), (float)(9.0f - mouse_pos.y * 9.0f / 540.0f)));
+
+				sprite1.bind();
+				ibo.bind();
+				shader.setUniformMat4("ml_matrix", glm::translate(glm::mat4(), glm::vec3(4, 3, 0)));
+				glDrawElements(GL_TRIANGLES, ibo.get_component_count(), GL_UNSIGNED_SHORT, 0);
+				ibo.unbind();
+				sprite1.unbind();
+
+				sprite2.bind();
+				ibo.bind();
+				shader.setUniformMat4("ml_matrix", glm::translate(glm::mat4(), glm::vec3(0, 0, 0)));
+				glDrawElements(GL_TRIANGLES, ibo.get_component_count(), GL_UNSIGNED_SHORT, 0);
+				ibo.unbind();
+				sprite2.unbind();
+
 				shader.unbind();
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 			}
 
 
-			glUseProgram(0);
-			glBindVertexArray(0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			window.resetGLStates();
-
 			auto delta_time = frame_clock.restart();
 			ImGui::SFML::Update(window, delta_time);
+			ImGui::Begin("Parameters");
 
-			ImGui::Begin("Hello");
-			ImGui::Text("Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum ");
-			ImGui::Text("Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum ");
-			ImGui::Text("Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum ");
-			ImGui::Text("Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum ");
-			ImGui::Text("Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum ");
-			ImGui::Text("Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum ");
 			ImGui::End();
+
+
 
 			window.pushGLStates();
 			ImGui::SFML::Render(window);
@@ -185,6 +248,7 @@ int test_modern_opengl_crt_shape() {
 
 
 	return EXIT_SUCCESS;
+
 
 }
 
