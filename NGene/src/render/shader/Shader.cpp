@@ -95,6 +95,8 @@ void Shader::create_program_with_sources() {
 		if (has_geometry_shader)
 			glAttachShader(m_id, geometry_shader_id);
 
+		glBindFragDataLocation(m_id, 0, "outColor");
+
 		// Link the program
 		glLinkProgram(m_id);
 		
@@ -117,11 +119,19 @@ void Shader::create_program_with_sources() {
 				"The error provided is: " << error_log_buffer);
 		}
 
+		//
 		// Detach the shaders
+		//
+		// This could be ignored and not done at all, for some purposes like
+		// better debugging. The cost of not doing it minimal and it seems like
+		// a lot of engines choose not do it.
+		//
+#if 0
 		glDetachShader(m_id, vertex_shader_id);
 		glDetachShader(m_id, fragment_shader_id);
 		if (has_geometry_shader)
 			glDetachShader(m_id, geometry_shader_id);
+#endif
 
 		// Delete the shaders
 		glDeleteShader(vertex_shader_id);

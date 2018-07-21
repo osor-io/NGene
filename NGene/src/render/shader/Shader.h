@@ -20,6 +20,8 @@ public:
 	Shader(const char* filename);
 	Shader(const std::string& vertex_code, const std::string& geometry_code, const std::string& fragment_code);
 
+	GLuint get_program_id() { return m_id; }
+
 	void bind() const;
 	void unbind() const;
 

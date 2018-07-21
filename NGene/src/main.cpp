@@ -169,12 +169,11 @@ void load_default_state() {
 
 int main() {
 
-
     /*
     @@DEBUG @@TODO @@REMOVE
     Use this to test individual things
     */
-    return test();
+    //return test();
 
     start_up();
     load_default_state();

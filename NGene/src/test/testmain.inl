@@ -15,16 +15,182 @@
 
 #include <Debug.h>
 
-
-int test_crt_shape();
+int test_modern_opengl_crt_shape();
+int test_legacy_opengl_crt_shape();
 int test_spritesheets();
 
 
 int test() {
-	return test_crt_shape();
+	return test_modern_opengl_crt_shape();
 }
 
-int test_crt_shape() {
+
+#include "../render/shader/Shader.h"
+int test_modern_opengl_crt_shape() {
+
+	// create the window
+	sf::ContextSettings settings;
+	settings.depthBits = 24;
+	settings.stencilBits = 8;
+	settings.antialiasingLevel = 8;
+	settings.majorVersion = 3;
+	settings.minorVersion = 1;
+
+	bool exit = false;
+
+	while (!exit)
+	{
+
+		// Create the main window
+		sf::RenderWindow window(sf::VideoMode(256 * 4, 224 * 4), "CRT Shape", sf::Style::Default, settings);
+		window.setVerticalSyncEnabled(true);
+		ImGui::SFML::Init(window);
+
+		// Load a texture to apply to our 3D cube
+		sf::Texture texture;
+		if (!texture.loadFromFile("res/assets/testNES.png"))
+			return EXIT_FAILURE;
+		texture.setSmooth(false);
+
+		// Make the window the active window for OpenGL calls
+		window.setActive(true);
+
+		// After we have a valid context we can init glew
+		glewExperimental = GL_TRUE;
+		glewInit();
+
+		// Create the shader
+		auto shader = Shader("res/shaders/test.shader");
+
+		//
+		// Set up the things we are going to draw
+		//
+
+		// Create Vertex Array Object
+		GLuint vao;
+		glGenVertexArrays(1, &vao);
+		glBindVertexArray(vao);
+
+		// Create a Vertex Buffer Object and copy the vertex data to it
+		GLuint vbo;
+		glGenBuffers(1, &vbo);
+
+		float vertices[] = {
+			0.0f, 0.5f,
+			0.5f, -0.5f,
+			-0.5f, -0.5f
+		};
+
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+
+		// Specify the layout of the vertex data
+		GLint pos_attrib = glGetAttribLocation(shader.get_program_id(), "position");
+		glEnableVertexAttribArray(pos_attrib);
+		glVertexAttribPointer(pos_attrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		// Get the location of the color uniform
+		GLint uni_color = glGetUniformLocation(shader.get_program_id(), "triangleColor");
+
+
+		// Make the window no longer the active window for OpenGL calls
+		window.setActive(false);
+
+		// Create a clock for measuring the time elapsed
+		sf::Clock clock;
+		sf::Clock frame_clock;
+
+		// Start game loop
+		while (window.isOpen())
+		{
+			// Process events
+			sf::Event event;
+			while (window.pollEvent(event))
+			{
+				ImGui::SFML::ProcessEvent(event);
+
+				// Close window: exit
+				if (event.type == sf::Event::Closed)
+				{
+					exit = true;
+					window.close();
+				}
+
+				// Escape key: exit
+				if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+				{
+					exit = true;
+					window.close();
+				}
+
+				// Adjust the viewport when the window is resized
+				if (event.type == sf::Event::Resized)
+				{
+					// Make the window the active window for OpenGL calls
+					window.setActive(true);
+
+					// Make the window no longer the active window for OpenGL calls
+					window.setActive(false);
+				}
+			}
+
+			// Make the window the active window for OpenGL calls
+			window.setActive(true);
+
+			// Clear the color buffer
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+
+			//
+			// Draw here
+			//
+			{
+				glBindBuffer(GL_ARRAY_BUFFER, vbo);
+				shader.bind();
+				glDrawArrays(GL_TRIANGLES, 0, 3);
+				shader.unbind();
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+			}
+
+
+			glUseProgram(0);
+			glBindVertexArray(0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			window.resetGLStates();
+
+			auto delta_time = frame_clock.restart();
+			ImGui::SFML::Update(window, delta_time);
+
+			ImGui::Begin("Hello");
+			ImGui::Text("Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum ");
+			ImGui::Text("Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum ");
+			ImGui::Text("Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum ");
+			ImGui::Text("Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum ");
+			ImGui::Text("Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum ");
+			ImGui::Text("Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum ");
+			ImGui::End();
+
+			window.pushGLStates();
+			ImGui::SFML::Render(window);
+			window.popGLStates();
+
+			// Finally, display the rendered frame on screen
+			window.display();
+		}
+
+		ImGui::SFML::Shutdown();
+	}
+
+
+	return EXIT_SUCCESS;
+
+}
+
+
+
+int test_legacy_opengl_crt_shape() {
 
 	// create the window
 	sf::ContextSettings settings;
@@ -35,8 +201,6 @@ int test_crt_shape() {
 	settings.minorVersion = 0;
 
 	bool exit = false;
-	bool sRgb = false;
-
 
 	while (!exit)
 	{
@@ -240,7 +404,7 @@ int test_crt_shape() {
 			ImGui::SFML::Update(window, delta_time);
 			ImGui::Begin("CRT Parameters");
 
-			
+
 			if (
 				ImGui::InputInt("colums", &columns) ||
 				ImGui::InputInt("rows", &rows) ||
@@ -249,7 +413,7 @@ int test_crt_shape() {
 				) {
 				generate_tesselated_quad();
 			}
-			
+
 
 			ImGui::End();
 

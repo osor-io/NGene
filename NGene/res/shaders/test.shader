@@ -1,18 +1,19 @@
 #shader vertex
-#version 140
+#version 130
 
-in vec4 position;
+attribute vec2 position;
 
 void main() {
-	gl_Position = position;
+	gl_Position = vec4(position, 0.0, 1.0);
 }
 
 
-#shader fragment
-#version 140
 
-out vec4 color;
+#shader fragment
+#version 130
+
+uniform vec3 triangleColor;
 
 void main() {
-	color = vec4(1.0, 0.0, 0.0, 1.0);
+	gl_FragColor = vec4(triangleColor, 1.0);
 }
