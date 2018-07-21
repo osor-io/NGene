@@ -1,10 +1,18 @@
 #shader vertex
+#version 140
+
+in vec4 position;
+
 void main() {
-	gl_Position = vec4(0.5f, 0.5f, 0.5f, 0.5f);
+	gl_Position = position;
 }
 
 
 #shader fragment
+#version 140
+
+out vec4 color;
+
 void main() {
-	gl_FragColor = vec4(1.0f, 1.0f, 0.0f, 1.0);
+	color = vec4(1.0, 0.0, 0.0, 1.0);
 }

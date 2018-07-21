@@ -13,7 +13,7 @@ Shader::Shader(const char* filename) {
 	auto source_text_resource = TextFileManager::get().get_scoped_resource(filename);
 
 	m_sources = get_sources_from_text(*source_text_resource.resource);
-	
+
 	if (!m_sources.is_valid()) {
 		LOG_ERROR("The shader in " << source_text_resource.m_filename << " is not valid");
 		return;
@@ -66,7 +66,7 @@ void Shader::create_program_with_sources() {
 	};
 
 	auto compile_shader = [&check_shader](const GLchar* source, GLenum shader_type) -> GLuint {
-		auto id = glCreateShader(GL_VERTEX_SHADER);
+		auto id = glCreateShader(shader_type);
 		glShaderSource(id, 1, &source, nullptr);
 		glCompileShader(id);
 		if (!check_shader(id)) {
@@ -95,15 +95,25 @@ void Shader::create_program_with_sources() {
 		if (has_geometry_shader)
 			glAttachShader(m_id, geometry_shader_id);
 
-		// Link and Validate the program
+		// Link the program
 		glLinkProgram(m_id);
+		
+		// Check for errors
+		glGetProgramiv(m_id, GL_LINK_STATUS, &result);
+		if (!result) {
+			glGetProgramInfoLog(m_id, 512, nullptr, error_log_buffer);
+			LOG_ERROR("We couldn't link the program with id " << m_id << "\n\t"
+				"The error provided is: " << error_log_buffer);
+		}
+
+		// Validate the program
 		glValidateProgram(m_id);
 
-		// Check for errors
-		glGetShaderiv(m_id, GL_LINK_STATUS, &result);
+		// And check for errors for that
+		glGetProgramiv(m_id, GL_VALIDATE_STATUS, &result);
 		if (!result) {
-			glGetShaderInfoLog(m_id, 512, nullptr, error_log_buffer);
-			LOG_ERROR("We couldn't link the program with id " << m_id << "\n\t"
+			glGetProgramInfoLog(m_id, 512, nullptr, error_log_buffer);
+			LOG_ERROR("We couldn't validate the program with id " << m_id << "\n\t"
 				"The error provided is: " << error_log_buffer);
 		}
 
@@ -134,7 +144,14 @@ Shader::ShaderSources Shader::get_sources_from_text(const std::string& all_sourc
 
 	auto input_stream = std::istringstream(all_sources);
 	auto line = std::string{};
+
 	std::stringstream source_streams[ShaderType::COUNT];
+
+	/*
+	for (auto i = 0; i < ShaderType::COUNT; ++i) {
+		source_streams[i] = std::stringstream(std::ios_base::app | std::ios_base::out | std::ios_base::in);
+	}
+	*/
 
 	if (input_stream.good()) {
 		while (std::getline(input_stream, line)) {
@@ -154,7 +171,8 @@ Shader::ShaderSources Shader::get_sources_from_text(const std::string& all_sourc
 			}
 			else {
 				assert(type != ShaderType::NONE);
-				source_streams[type] << line;
+
+				source_streams[(int)type] << line << '\n';
 			}
 		}
 	}
