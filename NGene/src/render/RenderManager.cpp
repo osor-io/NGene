@@ -3,6 +3,7 @@
 #include "../time/TimeManager.h"
 #include "../window/WindowManager.h"
 
+#include <GL/glew.h>
 #include <SFML/OpenGL.hpp>
 
 RenderManager::RenderManager() {}
@@ -21,6 +22,11 @@ void RenderManager::start_up() {
 	*/
 	m_window_target->setActive(true);
 	glViewport(0, 0, m_window_target->getSize().x, m_window_target->getSize().y);
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glClearDepth(1.f);
+	glewInit();
+	glClearColor(0.1f, 0.1f, 0.1f, 1.f);
 
 
 	/*

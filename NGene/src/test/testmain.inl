@@ -24,17 +24,172 @@
 #include "../render/buffers/VertexArray.h"
 
 
+int test_modern_opengl_crt_simulation();
 int test_modern_opengl_crt_shape();
 int test_legacy_opengl_crt_shape();
 int test_spritesheets();
 
 
 int test() {
-	return test_modern_opengl_crt_shape();
+	return test_modern_opengl_crt_simulation();
+}
+
+
+
+#include "../render/crt/CRTRenderer.h"
+
+int test_modern_opengl_crt_simulation() {
+
+
+	// Settings for the window
+	sf::ContextSettings settings;
+	settings.depthBits = 24;
+	settings.stencilBits = 8;
+	settings.antialiasingLevel = 8;
+	settings.majorVersion = 4;
+	settings.minorVersion = 6;
+
+	bool exit = false;
+
+	while (!exit)
+	{
+
+		// Create the main window
+
+		sf::RenderWindow window(sf::VideoMode(256 * 4, 224 * 4), "Modern OpenGL Test", sf::Style::Default, settings);
+		window.setVerticalSyncEnabled(true);
+		ImGui::SFML::Init(window);
+
+		// Load a texture to apply to our 3D cube
+		sf::Texture texture;
+		if (!texture.loadFromFile("res/assets/testNES.png"))
+			return EXIT_FAILURE;
+		texture.setSmooth(false);
+
+		// Make the window the active window for OpenGL calls
+		window.setActive(true);
+
+		// Enable Z-buffer read and write
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
+		glClearDepth(1.f);
+
+		glewInit();
+
+		// Set Clear Color
+		glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+
+
+		//
+		// Set up things to render HERE
+		//
+		CRTRenderer crt_renderer(window);
+
+
+		window.setActive(true);
+
+		GLenum error = glGetError();
+		if (error != GL_NO_ERROR) {
+			LOG_ERROR("OpenGL Error while initializing CRT renderer (" << error << "): " << glewGetErrorString(error));
+		}
+		
+
+		// Make the window no longer the active window for OpenGL calls
+		window.setActive(false);
+
+		// Create a clock for measuring the time elapsed
+		sf::Clock clock;
+		sf::Clock frame_clock;
+
+		// Start game loop
+		while (window.isOpen())
+		{
+
+			// Process events
+			sf::Event event;
+			while (window.pollEvent(event))
+			{
+				ImGui::SFML::ProcessEvent(event);
+
+				// Close window: exit
+				if (event.type == sf::Event::Closed)
+				{
+					exit = true;
+					window.close();
+				}
+
+				// Escape key: exit
+				if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+				{
+					exit = true;
+					window.close();
+				}
+
+
+				// Adjust the viewport when the window is resized
+				if (event.type == sf::Event::Resized)
+				{
+					// Make the window the active window for OpenGL calls
+					window.setActive(true);
+
+					glViewport(0, 0, event.size.width, event.size.height);
+
+					// Make the window no longer the active window for OpenGL calls
+					window.setActive(false);
+				}
+			}
+
+			// Make the window the active window for OpenGL calls
+			window.setActive(true);
+
+
+			// Check for errors (it's IMPORTANT that the window is active)
+#if 1
+			GLenum error = glGetError();
+			if (error != GL_NO_ERROR) {
+				LOG_ERROR("OpenGL Error in render loop (" << error << "): " << glewGetErrorString(error));
+			}
+#endif
+
+			// Clear the depth buffer
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			//
+			// DRAW HERE
+			//
+			{
+				crt_renderer.draw(texture);
+			}
+
+
+			auto delta_time = frame_clock.restart();
+			ImGui::SFML::Update(window, delta_time);
+			ImGui::Begin("Parameters");
+
+			ImGui::End();
+
+
+
+			window.pushGLStates();
+			ImGui::SFML::Render(window);
+			window.popGLStates();
+
+			// Finally, display the rendered frame on screen
+			window.display();
+		}
+
+		ImGui::SFML::Shutdown();
+	}
+
+
+	//press_to_continue();
+
+	return EXIT_SUCCESS;
 }
 
 
 #include "../render/shader/Shader.h"
+
 int test_modern_opengl_crt_shape() {
 
 
@@ -125,11 +280,11 @@ int test_modern_opengl_crt_shape() {
 
 		auto ortho = glm::ortho(0.0f, 16.0f, 0.0f, 9.0f, -1.0f, 1.0f);
 
-		
+
 
 		Shader shader("res/shaders/test.shader");
 		shader.bind();
-		
+
 		shader.setUniformMat4("pr_matrix", ortho);
 		shader.setUniformMat4("ml_matrix", glm::translate(glm::mat4(), glm::vec3(4, 3, 0)));
 
@@ -138,7 +293,7 @@ int test_modern_opengl_crt_shape() {
 
 		shader.unbind();
 
-		
+
 
 
 		// Make the window no longer the active window for OpenGL calls
@@ -251,7 +406,6 @@ int test_modern_opengl_crt_shape() {
 
 
 }
-
 
 
 int test_legacy_opengl_crt_shape() {

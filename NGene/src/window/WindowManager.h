@@ -13,8 +13,8 @@ namespace config {
 		constexpr auto depth_bits = 24;			// Bits of depth buffer
 		constexpr auto stencil_bits = 8;			// Bits of stencil buffer
 		constexpr auto antialiasing_level = 4;	// MSAA samples
-		constexpr auto major_version = 3;		// Version of OpenGL (3 should be widely supported)
-		constexpr auto minor_version = 0;
+		constexpr auto major_version = 4;		// Version of OpenGL (3 should be widely supported)
+		constexpr auto minor_version = 6;
 	}
 
 	namespace resolutions{

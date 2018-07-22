@@ -206,6 +206,7 @@ echo.</Command>
     <ClCompile Include="src\render\buffers\ArrayBuffer.cpp" />
     <ClCompile Include="src\render\buffers\ElementBuffer.cpp" />
     <ClCompile Include="src\render\buffers\VertexArray.cpp" />
+    <ClCompile Include="src\render\crt\CRTRenderer.cpp" />
     <ClCompile Include="src\render\shader\Shader.cpp" />
     <ClCompile Include="src\os\OSManager.cpp" />
     <ClCompile Include="src\os\OSStatic.cpp" />
@@ -281,6 +282,7 @@ echo.</Command>
     <ClInclude Include="src\render\buffers\BufferCommon.h" />
     <ClInclude Include="src\render\buffers\ElementBuffer.h" />
     <ClInclude Include="src\render\buffers\VertexArray.h" />
+    <ClInclude Include="src\render\crt\CRTRenderer.h" />
     <ClInclude Include="src\render\shader\Shader.h" />
     <ClInclude Include="src\os\OSManager.h" />
     <ClInclude Include="src\os\OSStatic.h" />

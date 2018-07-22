@@ -7,6 +7,9 @@
 
 #include <glm/glm.hpp>
 
+#include <SFML/Graphics/Texture.hpp>
+
+
 /**
 
 Represents an OpenGL shader class.
@@ -78,6 +81,8 @@ public:
 	void setUniform4f(const GLchar* name, const glm::vec4& value);
 
 	void setUniformMat4(const GLchar* name, const glm::mat4 value);
+
+	void setUniformTexture(const GLchar* name, const sf::Texture& texture, GLuint unit);
 
 #pragma endregion
 

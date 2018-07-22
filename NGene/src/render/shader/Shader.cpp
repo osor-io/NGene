@@ -259,6 +259,13 @@ void Shader::setUniformMat4(const GLchar* name, const glm::mat4 value) {
 	glUniformMatrix4fv(get_uniform_location(name), 1 ,GL_FALSE, glm::value_ptr(value));
 }
 
+void Shader::setUniformTexture(const GLchar* name, const sf::Texture& texture, GLuint unit) {
+	glActiveTexture(GL_TEXTURE0 + unit);
+	sf::Texture::bind(&texture); // Could be replaced by: glBindTexture(GL_TEXTURE_2D, texture.getNativeHandle());
+	glUniform1i(get_uniform_location(name), unit);
+}
+
+
 
 #pragma endregion
 
