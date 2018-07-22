@@ -1,30 +1,20 @@
 #shader vertex
 #version 330 core
 
-layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 uv;
-layout(location = 2) in vec4 normal;
 
-uniform mat4 mvp_matrix = mat4(1.0);
+out vec2 uv;
 
-out DATA
-{
-	vec4 position;
-	vec2 uv;
-	vec4 normal;
-} vs_out;
+// Fullscreen trick to only have to render a triangle.
+void main() {
 
-void main()
-{
-	gl_Position = mvp_matrix * position;
-	vs_out.position = mvp_matrix * position;
-	vs_out.normal = normal;
-	vs_out.normal.z = 0.0f;
-	vs_out.uv.x = uv.x;
-	vs_out.uv.y = uv.y;
+
+	uv.x = (gl_VertexID == 2) ? 2.0 : 0.0;
+	uv.y = (gl_VertexID == 1) ? 2.0 : 0.0;
+
+	gl_Position = vec4(uv*vec2(2.0, -2.0) + vec2(-1.0, 1.0), 1.0, 1.0);
+
+	uv.y = 1 - uv.y;
 }
-
-
 
 
 
@@ -32,24 +22,17 @@ void main()
 #shader fragment
 #version 330 core
 
-layout(location = 0) out vec4 color;
+in vec2 uv;
 
-uniform sampler2D low_res_texture;
+out vec4 color;
 
-in DATA
-{
-	vec4 position;
-	vec2 uv;
-	vec4 normal;
-} fs_in;
+uniform sampler2D current_frame;
+uniform sampler2D previous_frame;
 
-void main()
-{
-	//float intensity = 1.0 / length(fs_in.position.xy - light_pos);
+void main() {
 
-	color = texture(low_res_texture, fs_in.uv); //+ fs_in.uv.xyxy;
-	
-	//color = fs_in.color * intensity;
-	//color = fs_in.color;
-	//color = vec4(fs_in.uv.xy, 0.0f, 1.0f);
+	vec4 previous_color = texture(previous_frame, uv);
+	vec4 current_color = texture(current_frame, uv);
+
+	color = current_color * previous_color;
 }

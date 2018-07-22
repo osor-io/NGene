@@ -271,9 +271,25 @@ void Shader::setUniformMat4(const GLchar* name, const glm::mat4 value) {
 
 void Shader::setUniformTexture(const GLchar* name, const sf::Texture& texture, GLuint unit) {
 	glActiveTexture(GL_TEXTURE0 + unit);
+
+	/*
+	glBindTexture(GL_TEXTURE_2D, texture.getNativeHandle());
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR) {
+		LOG_ERROR("ERROR BINDING TEXTURE (" << error << "): " << glewGetErrorString(error));
+	}
+	*/
+
 	sf::Texture::bind(&texture); // Could be replaced by: glBindTexture(GL_TEXTURE_2D, texture.getNativeHandle());
 	glUniform1i(get_uniform_location(name), unit);
 }
+
+void  Shader::setUniformTexture(const GLchar* name, GLuint texture_id, GLuint unit) {
+	glActiveTexture(GL_TEXTURE0 + unit);
+	glBindTexture(GL_TEXTURE_2D, texture_id);
+	glUniform1i(get_uniform_location(name), unit);
+}
+
 
 
 

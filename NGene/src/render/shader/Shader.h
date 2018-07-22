@@ -86,6 +86,8 @@ public:
 	void setUniformMat4(const GLchar* name, const glm::mat4 value);
 
 	void setUniformTexture(const GLchar* name, const sf::Texture& texture, GLuint unit);
+	void setUniformTexture(const GLchar* name, GLuint texture_id, GLuint unit);
+
 
 #pragma endregion
 

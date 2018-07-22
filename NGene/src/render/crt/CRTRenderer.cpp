@@ -4,17 +4,23 @@
 
 #include "../utils/Debug.h"
 
+#include "../window/WindowManager.h"
+
+
+
 CRTRenderer::CRTRenderer(const sf::Window& window) :
 	m_window_ref(window)
 {
 
 	m_window_ref.setActive(true);
 	{
+		create_low_res_render_targets();
 		generate_crt_mesh();
+		init_ntsc_shader();
+		init_composite_shader();
 		init_screen_shader();
 	}
 	m_window_ref.setActive(false);
-
 }
 
 
@@ -26,29 +32,103 @@ CRTRenderer::~CRTRenderer() {
 void CRTRenderer::draw(sf::Texture& texture) {
 
 	m_window_ref.setActive(true);
-
-
-	m_screen_shader->bind();
-
-	auto mouse_pos = sf::Mouse::getPosition(m_window_ref);
-
-	m_screen_shader->setUniformTexture("low_res_texture", texture, 0);
-
-	m_vertex_array_object->bind();
-	m_index_buffer_object->bind();
-
-	glDrawElements(GL_TRIANGLES, m_index_buffer_object->get_component_count(), GL_UNSIGNED_SHORT, 0);
-
-	m_index_buffer_object->unbind();
-	m_vertex_array_object->unbind();
-
-
-	m_screen_shader->unbind();
-
+	{
+		draw_ntsc_color_effect(texture);
+		auto render_buffer_to_use = draw_in_screen();
+		draw_out_screen(render_buffer_to_use);
+	}
 	m_window_ref.setActive(false);
-
 }
 
+
+GLsizei CRTRenderer::draw_ntsc_color_effect(const sf::Texture & texture) {
+
+	auto current_index = m_render_buffer_index;
+
+	// Bind our framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[current_index]);
+	glViewport(0, 0, config::resolutions::internal_resolution_width, config::resolutions::internal_resolution_height);
+
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR) {
+		LOG_ERROR("current index: " << current_index);
+		LOG_ERROR("ERRORRRRR!!! (" << error << "): " << glewGetErrorString(error));
+	}
+
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	m_ntsc_shader->bind();
+	{
+		//
+		// @@DOING: Checking why there is an error here
+		//
+		m_ntsc_shader->setUniformTexture("game_frame", texture, 0);
+
+		glDrawArrays(GL_TRIANGLES, 0, 3); // 2*3 indices starting at 0 -> 2 triangles
+
+	}
+	m_ntsc_shader->unbind();
+
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, m_window_ref.getSize().x, m_window_ref.getSize().y);
+
+
+	return current_index;
+}
+
+GLsizei CRTRenderer::draw_in_screen() {
+
+	auto current_index = m_render_buffer_index;
+	auto previous_index = m_render_buffer_index - 1 < 0 ? RENDER_BUFFER_COUNT - 1 : m_render_buffer_index - 1;
+
+	// Bind our framebuffer
+	glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[FINAL_RENDER_BUFFER]);
+	glViewport(0, 0, config::resolutions::internal_resolution_width, config::resolutions::internal_resolution_height);
+
+
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	m_composite_shader->bind();
+	{
+		m_composite_shader->setUniformTexture("current_frame", m_rendered_textures[current_index], 0);
+		m_composite_shader->setUniformTexture("previous_frame", m_rendered_textures[previous_index], 1);
+
+		// Draw Call for fullscreen shader
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+
+	}
+	m_composite_shader->unbind();
+
+
+	// Update the index to draw to the appropriate render target
+	m_render_buffer_index = m_render_buffer_index + 1 < RENDER_BUFFER_COUNT ? m_render_buffer_index + 1 : 0;
+
+	return FINAL_RENDER_BUFFER;
+}
+
+GLsizei  CRTRenderer::draw_out_screen(GLsizei render_buffer_to_put_in_crt_mesh) {
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, m_window_ref.getSize().x, m_window_ref.getSize().y);
+
+	m_screen_shader->bind();
+	{
+		m_screen_shader->setUniformTexture("low_res_texture", m_rendered_textures[render_buffer_to_put_in_crt_mesh], 0);
+
+		m_vertex_array_object->bind();
+		m_index_buffer_object->bind();
+
+		glDrawElements(GL_TRIANGLES, m_index_buffer_object->get_component_count(), GL_UNSIGNED_SHORT, 0);
+
+		m_index_buffer_object->unbind();
+		m_vertex_array_object->unbind();
+	}
+	m_screen_shader->unbind();
+
+	return 0;
+}
 
 
 void CRTRenderer::generate_crt_mesh() {
@@ -229,42 +309,40 @@ void CRTRenderer::generate_crt_mesh() {
 	m_index_buffer_object = std::make_unique<ElementBuffer>(indices.data(), indices.size(), BufferUsage::STATIC_DRAW);
 
 	// And we add each of the buffers that contain info about the vertices
-	m_vertex_array_object->addBuffer(std::make_unique<ArrayBuffer>(vertices.data(), vertices.size() * 3, 3, BufferUsage::STATIC_DRAW),
+	m_vertex_array_object->addBuffer(std::make_unique<ArrayBuffer>(vertices.data(), vertices.size(), 3, BufferUsage::STATIC_DRAW),
 		0);	// Position
-	m_vertex_array_object->addBuffer(std::make_unique<ArrayBuffer>(textureUVs.data(), textureUVs.size() * 2, 2, BufferUsage::STATIC_DRAW),
+	m_vertex_array_object->addBuffer(std::make_unique<ArrayBuffer>(textureUVs.data(), textureUVs.size(), 2, BufferUsage::STATIC_DRAW),
 		1); // UVs
-	m_vertex_array_object->addBuffer(std::make_unique<ArrayBuffer>(normals.data(), normals.size() * 3, 3, BufferUsage::STATIC_DRAW),
+	m_vertex_array_object->addBuffer(std::make_unique<ArrayBuffer>(normals.data(), normals.size(), 3, BufferUsage::STATIC_DRAW),
 		2);	// Normals
 
 }
 
-
-
 void CRTRenderer::init_ntsc_shader() {
 
-	m_screen_shader = std::make_unique<Shader>("res/shaders/crt/ntsc.shader");
+	m_ntsc_shader = std::make_unique<Shader>("res/shaders/crt/ntsc.shader");
 
-	m_screen_shader->bind();
+	m_ntsc_shader->bind();
 
 	//
 	// Set shader parameters here
 	//
 
 
-	m_screen_shader->unbind();
+	m_ntsc_shader->unbind();
 }
 
 void CRTRenderer::init_composite_shader() {
 
-	m_screen_shader = std::make_unique<Shader>("res/shaders/crt/composite.shader");
+	m_composite_shader = std::make_unique<Shader>("res/shaders/crt/composite.shader");
 
-	m_screen_shader->bind();
+	m_composite_shader->bind();
 
 	//
 	// Set shader parameters here
 	//
 
-	m_screen_shader->unbind();
+	m_composite_shader->unbind();
 }
 
 void CRTRenderer::init_screen_shader() {
@@ -287,9 +365,49 @@ void CRTRenderer::init_screen_shader() {
 	m_screen_shader->unbind();
 }
 
-
 void CRTRenderer::create_low_res_render_targets() {
 
+	for (auto i = 0; i <= RENDER_BUFFER_COUNT; ++i) { // We make an extra buffer to render as the result of low-res phase.
 
+		// Create and bind the framebuffer
+		glGenFramebuffers(1, &m_frame_buffers[i]);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[i]);
+
+		// Create the texture we are going to render to
+		glGenTextures(1, &m_rendered_textures[i]);
+
+		// Bind the texture so we can modify it
+		glBindTexture(GL_TEXTURE_2D, m_rendered_textures[i]);
+
+		// Fill the texture with an empty image
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			config::resolutions::internal_resolution_width,
+			config::resolutions::internal_resolution_height,
+			0,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE,
+			0);
+
+		// Set up filtering for the texture
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+		// Set the texture to the framebuffer
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_rendered_textures[i], 0);
+
+		// Set the draw buffers
+		GLenum draw_buffers[1] = { GL_COLOR_ATTACHMENT0 };
+		glNamedFramebufferDrawBuffers(m_frame_buffers[i], 1, draw_buffers);
+
+		auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		if (status != GL_FRAMEBUFFER_COMPLETE) {
+			LOG("There has been an error generation the framebuffers, the status is: " << status);
+		}
+	}
 }
 
