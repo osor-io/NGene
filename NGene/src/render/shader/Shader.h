@@ -9,6 +9,7 @@
 
 #include <SFML/Graphics/Texture.hpp>
 
+#include <unordered_map>
 
 /**
 
@@ -49,6 +50,8 @@ private:
 	GLuint m_id;
 
 	const char* m_filename;
+
+	std::unordered_map<const GLchar*, GLint> m_name_cache;
 
 public:
 	Shader(const char* filename);

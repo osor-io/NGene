@@ -367,6 +367,9 @@ echo.</Command>
     <None Include="res\scripts\EngineTypes.lua" />
     <None Include="res\scripts\EntityTypes.lua" />
     <None Include="res\scripts\LoadDefaultState.lua" />
+    <None Include="res\shaders\crt\composite.shader" />
+    <None Include="res\shaders\crt\ntsc.shader" />
+    <None Include="res\shaders\crt\screen.shader" />
     <None Include="res\shaders\test.shader" />
     <None Include="src\test\testmain.inl" />
   </ItemGroup>

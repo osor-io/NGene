@@ -228,7 +228,17 @@ void Shader::unbind() const {
 
 
 GLint Shader::get_uniform_location(const GLchar* name) {
-	return glGetUniformLocation(m_id, name);
+
+	auto cached_value = m_name_cache.find(name);
+
+	if (cached_value != m_name_cache.end()) {
+		return cached_value->second;
+	}
+	else {
+		auto location = glGetUniformLocation(m_id, name);
+		m_name_cache[name] = location;
+		return location;
+	}
 }
 
 
@@ -256,7 +266,7 @@ void Shader::setUniform4f(const GLchar* name, const glm::vec4& value) {
 }
 
 void Shader::setUniformMat4(const GLchar* name, const glm::mat4 value) {
-	glUniformMatrix4fv(get_uniform_location(name), 1 ,GL_FALSE, glm::value_ptr(value));
+	glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, glm::value_ptr(value));
 }
 
 void Shader::setUniformTexture(const GLchar* name, const sf::Texture& texture, GLuint unit) {
