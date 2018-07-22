@@ -17,9 +17,40 @@
 #define RENDER_BUFFER_COUNT 2
 #define FINAL_RENDER_BUFFER RENDER_BUFFER_COUNT
 
+
+namespace config {
+	namespace crt {
+		namespace paths {
+			constexpr auto lut = "res/assets/crt/lut.png";
+			constexpr auto scanlines = "res/assets/crt/scanlines.png";
+			constexpr auto ntsc_pattern = "res/assets/crt/ntsc_pattern.bmp";
+		}
+	}
+}
+
 class CRTRenderer {
 
 private:
+
+	struct CRTEffectInputTextures {
+		sf::Texture lut;
+		sf::Texture scanlines;
+		sf::Texture ntsc;
+	};
+	CRTEffectInputTextures m_effect_textures;
+
+	struct CRTEffectInputParameters {
+		
+		// NTSC Shader
+		float color_grading_strength = 0.1f;
+
+		// Composite Shader
+
+		// Screen Shader
+
+	};
+	CRTEffectInputParameters m_effect_parameters;
+
 	const sf::Window& m_window_ref;
 
 	std::unique_ptr<Shader> m_ntsc_shader;
@@ -39,6 +70,8 @@ public:
 	~CRTRenderer();
 
 	void draw(sf::Texture& texture);
+
+	void draw_parameter_gui();
 
 private:
 	void generate_crt_mesh();

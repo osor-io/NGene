@@ -164,10 +164,8 @@ int test_modern_opengl_crt_simulation() {
 
 			auto delta_time = frame_clock.restart();
 			ImGui::SFML::Update(window, delta_time);
-			ImGui::Begin("Parameters");
-
-			ImGui::End();
-
+			
+			crt_renderer.draw_parameter_gui();
 
 
 			window.pushGLStates();

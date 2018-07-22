@@ -34,5 +34,5 @@ void main() {
 	vec4 previous_color = texture(previous_frame, uv);
 	vec4 current_color = texture(current_frame, uv);
 
-	color = current_color * previous_color;
+	color = current_color;
 }

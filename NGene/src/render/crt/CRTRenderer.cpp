@@ -6,11 +6,42 @@
 
 #include "../window/WindowManager.h"
 
+#include "../utils/File.h"
 
+#include <imgui.h>
 
 CRTRenderer::CRTRenderer(const sf::Window& window) :
 	m_window_ref(window)
 {
+
+	// We load and set up the textures for the effect
+	{
+		if (!file_exists(config::crt::paths::lut) ||
+			!file_exists(config::crt::paths::ntsc_pattern) ||
+			!file_exists(config::crt::paths::scanlines)) {
+			
+			LOG_ERROR("We couldn't find the required texture files for the CRT simulation effect.");
+		}
+		if (!m_effect_textures.lut.loadFromFile(config::crt::paths::lut)) {
+			LOG_ERROR("We couldn't load the texture for the CRT effect: " << config::crt::paths::lut);
+		}
+		if (!m_effect_textures.ntsc.loadFromFile(config::crt::paths::ntsc_pattern)) {
+			LOG_ERROR("We couldn't load the texture for the CRT effect: " << config::crt::paths::ntsc_pattern);
+		}
+		if (!m_effect_textures.scanlines.loadFromFile(config::crt::paths::scanlines)) {
+			LOG_ERROR("We couldn't load the texture for the CRT effect: " << config::crt::paths::scanlines);
+		}
+
+		
+		m_effect_textures.lut.setRepeated(true);
+		m_effect_textures.ntsc.setRepeated(false);
+		m_effect_textures.scanlines.setRepeated(false);
+
+		m_effect_textures.lut.setSmooth(false);
+		m_effect_textures.ntsc.setSmooth(false);
+		m_effect_textures.scanlines.setSmooth(false);
+		
+	}
 
 	m_window_ref.setActive(true);
 	{
@@ -49,23 +80,18 @@ GLsizei CRTRenderer::draw_ntsc_color_effect(const sf::Texture & texture) {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[current_index]);
 	glViewport(0, 0, config::resolutions::internal_resolution_width, config::resolutions::internal_resolution_height);
 
-	GLenum error = glGetError();
-	if (error != GL_NO_ERROR) {
-		LOG_ERROR("current index: " << current_index);
-		LOG_ERROR("ERRORRRRR!!! (" << error << "): " << glewGetErrorString(error));
-	}
-
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	m_ntsc_shader->bind();
 	{
 		//
-		// @@DOING: Checking why there is an error here
+		// @TODO: Find out why we need to set this texture in every frame
 		//
-		m_ntsc_shader->setUniformTexture("game_frame", texture, 0);
+		m_ntsc_shader->setUniformTexture("lut_texture", m_effect_textures.lut, 0);
+		m_ntsc_shader->setUniformTexture("game_frame", texture, 1);
+		m_ntsc_shader->setUniform1f("tuning_strength", m_effect_parameters.color_grading_strength);
 
-		glDrawArrays(GL_TRIANGLES, 0, 3); // 2*3 indices starting at 0 -> 2 triangles
-
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
 	m_ntsc_shader->unbind();
 
@@ -323,12 +349,10 @@ void CRTRenderer::init_ntsc_shader() {
 	m_ntsc_shader = std::make_unique<Shader>("res/shaders/crt/ntsc.shader");
 
 	m_ntsc_shader->bind();
-
-	//
-	// Set shader parameters here
-	//
-
-
+	{
+		m_ntsc_shader->setUniformTexture("lut_texture", m_effect_textures.lut, 0);
+		m_ntsc_shader->setUniform1f("lut_resolution", m_effect_textures.lut.getSize().y);
+	}
 	m_ntsc_shader->unbind();
 }
 
@@ -409,5 +433,23 @@ void CRTRenderer::create_low_res_render_targets() {
 			LOG("There has been an error generation the framebuffers, the status is: " << status);
 		}
 	}
+}
+
+void CRTRenderer::draw_parameter_gui() {
+
+	ImGui::Begin("CRT Simulation Parameters");
+	
+
+	ImGui::Separator();
+	{
+		ImGui::SliderFloat("Color Tuning Strength",
+			&m_effect_parameters.color_grading_strength, 0, 1);
+
+	}
+	ImGui::Separator();
+
+
+	ImGui::End();
+
 }
 
