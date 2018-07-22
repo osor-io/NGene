@@ -245,31 +245,31 @@ GLint Shader::get_uniform_location(const GLchar* name) {
 #pragma region Uniform Setters
 
 
-void Shader::setUniform1i(const GLchar* name, int value) {
+void Shader::set_uniform_1i(const GLchar* name, int value) {
 	glUniform1i(get_uniform_location(name), value);
 }
 
-void Shader::setUniform1f(const GLchar* name, float value) {
+void Shader::set_uniform_1f(const GLchar* name, float value) {
 	glUniform1f(get_uniform_location(name), value);
 }
 
-void Shader::setUniform2f(const GLchar* name, const glm::vec2& value) {
+void Shader::set_uniform_2f(const GLchar* name, const glm::vec2& value) {
 	glUniform2f(get_uniform_location(name), value.x, value.y);
 }
 
-void Shader::setUniform3f(const GLchar* name, const glm::vec3& value) {
+void Shader::set_uniform_3f(const GLchar* name, const glm::vec3& value) {
 	glUniform3f(get_uniform_location(name), value.x, value.y, value.z);
 }
 
-void Shader::setUniform4f(const GLchar* name, const glm::vec4& value) {
+void Shader::set_uniform_4f(const GLchar* name, const glm::vec4& value) {
 	glUniform4f(get_uniform_location(name), value.x, value.y, value.z, value.w);
 }
 
-void Shader::setUniformMat4(const GLchar* name, const glm::mat4 value) {
+void Shader::set_uniform_mat4(const GLchar* name, const glm::mat4 value) {
 	glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void Shader::setUniformTexture(const GLchar* name, const sf::Texture& texture, GLuint unit) {
+void Shader::set_uniform_texture(const GLchar* name, const sf::Texture& texture, GLuint unit) {
 	glActiveTexture(GL_TEXTURE0 + unit);
 
 	/*
@@ -284,7 +284,7 @@ void Shader::setUniformTexture(const GLchar* name, const sf::Texture& texture, G
 	glUniform1i(get_uniform_location(name), unit);
 }
 
-void  Shader::setUniformTexture(const GLchar* name, GLuint texture_id, GLuint unit) {
+void  Shader::set_uniform_texture(const GLchar* name, GLuint texture_id, GLuint unit) {
 	glActiveTexture(GL_TEXTURE0 + unit);
 	glBindTexture(GL_TEXTURE_2D, texture_id);
 	glUniform1i(get_uniform_location(name), unit);

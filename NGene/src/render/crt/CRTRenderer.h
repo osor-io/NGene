@@ -40,13 +40,45 @@ private:
 	CRTEffectInputTextures m_effect_textures;
 
 	struct CRTEffectInputParameters {
-		
-		// NTSC Shader
-		float color_grading_strength = 0.1f;
+
+		// Color correction
+		struct CRTColorCorrectionParameters {
+			float color_correction_strength = 0.1f;
+		};
+		CRTColorCorrectionParameters color;
 
 		// Composite Shader
+		struct CRTCompositeParameters {
+			float ntsc_lerp = 0.5f;
+			float tuning_sharp = 0.5f;
+			glm::vec4 tuning_persistence{ 0.5f, 0.5f, 0.5f, 0.5f };
+			float tuning_bleed = 0.5f;
+			float tuning_ntsc = 0.5f;
+		};
+		CRTCompositeParameters composite;
 
 		// Screen Shader
+		struct CRTScreenParameters {
+			glm::vec2 uv_scalar;
+			glm::vec2 uv_offset;
+
+			glm::vec2 crt_mask_scale;
+			glm::vec2 crt_mask_offset;
+
+			float tuning_overscan = 0.5f;
+			float tuning_dimming = 0.5f;
+			float tuning_saturation = 0.5f;
+			float tuning_reflection_scalar = 0.5f;
+			float tuning_barrel_distortion = 0.5f;
+			float tuning_scanline_brightness = 0.5f;
+			float tuning_scanline_opacity = 0.5f;
+			float tuning_diff_brightness = 0.5f;
+			float tuning_specular_brightness = 0.5f;
+			float tuning_specular_power = 0.5f;
+			float tuning_fresnel_brightness = 0.5f;
+		};
+		CRTScreenParameters screen;
+
 
 	};
 	CRTEffectInputParameters m_effect_parameters;
@@ -85,7 +117,6 @@ private:
 	/*
 	These return the id of the FrameBuffer they drew to (0 is screen)
 	*/
-
 	GLsizei draw_ntsc_color_effect(const sf::Texture & texture);
 	GLsizei draw_in_screen();
 	GLsizei draw_out_screen(GLsizei render_buffer_to_put_in_crt_mesh);

@@ -144,7 +144,7 @@ int test_modern_opengl_crt_simulation() {
 
 
 			// Check for errors (it's IMPORTANT that the window is active)
-#if 1
+#if 0
 			GLenum error = glGetError();
 			if (error != GL_NO_ERROR) {
 				LOG_ERROR("OpenGL Error in render loop (" << error << "): " << glewGetErrorString(error));
@@ -160,17 +160,20 @@ int test_modern_opengl_crt_simulation() {
 			{
 				crt_renderer.draw(texture);
 			}
-
-
+			
+			
 			auto delta_time = frame_clock.restart();
 			ImGui::SFML::Update(window, delta_time);
 			
 			crt_renderer.draw_parameter_gui();
 
 
+
 			window.pushGLStates();
 			ImGui::SFML::Render(window);
 			window.popGLStates();
+			
+
 
 			// Finally, display the rendered frame on screen
 			window.display();
@@ -283,11 +286,11 @@ int test_modern_opengl_crt_shape() {
 		Shader shader("res/shaders/test.shader");
 		shader.bind();
 
-		shader.setUniformMat4("pr_matrix", ortho);
-		shader.setUniformMat4("ml_matrix", glm::translate(glm::mat4(), glm::vec3(4, 3, 0)));
+		shader.set_uniform_mat4("pr_matrix", ortho);
+		shader.set_uniform_mat4("ml_matrix", glm::translate(glm::mat4(), glm::vec3(4, 3, 0)));
 
-		shader.setUniform2f("light_pos", glm::vec2(4.0f, 1.5f));
-		shader.setUniform4f("colour", glm::vec4(0.2f, 0.3f, 0.8f, 1.0f));
+		shader.set_uniform_2f("light_pos", glm::vec2(4.0f, 1.5f));
+		shader.set_uniform_4f("colour", glm::vec4(0.2f, 0.3f, 0.8f, 1.0f));
 
 		shader.unbind();
 
@@ -359,18 +362,18 @@ int test_modern_opengl_crt_shape() {
 				shader.bind();
 
 				auto mouse_pos = sf::Mouse::getPosition(window);
-				shader.setUniform2f("light_pos", glm::vec2((float)(mouse_pos.x * 16.0f / 960.0f), (float)(9.0f - mouse_pos.y * 9.0f / 540.0f)));
+				shader.set_uniform_2f("light_pos", glm::vec2((float)(mouse_pos.x * 16.0f / 960.0f), (float)(9.0f - mouse_pos.y * 9.0f / 540.0f)));
 
 				sprite1.bind();
 				ibo.bind();
-				shader.setUniformMat4("ml_matrix", glm::translate(glm::mat4(), glm::vec3(4, 3, 0)));
+				shader.set_uniform_mat4("ml_matrix", glm::translate(glm::mat4(), glm::vec3(4, 3, 0)));
 				glDrawElements(GL_TRIANGLES, ibo.get_component_count(), GL_UNSIGNED_SHORT, 0);
 				ibo.unbind();
 				sprite1.unbind();
 
 				sprite2.bind();
 				ibo.bind();
-				shader.setUniformMat4("ml_matrix", glm::translate(glm::mat4(), glm::vec3(0, 0, 0)));
+				shader.set_uniform_mat4("ml_matrix", glm::translate(glm::mat4(), glm::vec3(0, 0, 0)));
 				glDrawElements(GL_TRIANGLES, ibo.get_component_count(), GL_UNSIGNED_SHORT, 0);
 				ibo.unbind();
 				sprite2.unbind();

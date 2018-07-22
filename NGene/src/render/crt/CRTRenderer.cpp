@@ -13,13 +13,14 @@
 CRTRenderer::CRTRenderer(const sf::Window& window) :
 	m_window_ref(window)
 {
+	m_window_ref.setActive(true);
 
 	// We load and set up the textures for the effect
 	{
 		if (!file_exists(config::crt::paths::lut) ||
 			!file_exists(config::crt::paths::ntsc_pattern) ||
 			!file_exists(config::crt::paths::scanlines)) {
-			
+
 			LOG_ERROR("We couldn't find the required texture files for the CRT simulation effect.");
 		}
 		if (!m_effect_textures.lut.loadFromFile(config::crt::paths::lut)) {
@@ -32,7 +33,7 @@ CRTRenderer::CRTRenderer(const sf::Window& window) :
 			LOG_ERROR("We couldn't load the texture for the CRT effect: " << config::crt::paths::scanlines);
 		}
 
-		
+
 		m_effect_textures.lut.setRepeated(true);
 		m_effect_textures.ntsc.setRepeated(false);
 		m_effect_textures.scanlines.setRepeated(false);
@@ -40,10 +41,9 @@ CRTRenderer::CRTRenderer(const sf::Window& window) :
 		m_effect_textures.lut.setSmooth(false);
 		m_effect_textures.ntsc.setSmooth(false);
 		m_effect_textures.scanlines.setSmooth(false);
-		
+
 	}
 
-	m_window_ref.setActive(true);
 	{
 		create_low_res_render_targets();
 		generate_crt_mesh();
@@ -87,9 +87,9 @@ GLsizei CRTRenderer::draw_ntsc_color_effect(const sf::Texture & texture) {
 		//
 		// @TODO: Find out why we need to set this texture in every frame
 		//
-		m_ntsc_shader->setUniformTexture("lut_texture", m_effect_textures.lut, 0);
-		m_ntsc_shader->setUniformTexture("game_frame", texture, 1);
-		m_ntsc_shader->setUniform1f("tuning_strength", m_effect_parameters.color_grading_strength);
+		m_ntsc_shader->set_uniform_texture("game_frame", texture, 1);
+		m_ntsc_shader->set_uniform_texture("lut_texture", m_effect_textures.lut, 0);
+		m_ntsc_shader->set_uniform_1f("tuning_strength", m_effect_parameters.color.color_correction_strength);
 
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
@@ -117,8 +117,23 @@ GLsizei CRTRenderer::draw_in_screen() {
 
 	m_composite_shader->bind();
 	{
-		m_composite_shader->setUniformTexture("current_frame", m_rendered_textures[current_index], 0);
-		m_composite_shader->setUniformTexture("previous_frame", m_rendered_textures[previous_index], 1);
+		m_composite_shader->set_uniform_texture("ntsc_artifact_tex", m_effect_textures.ntsc, 2);
+		m_composite_shader->set_uniform_texture("previous_frame", m_rendered_textures[previous_index], 1);
+		m_composite_shader->set_uniform_texture("current_frame", m_rendered_textures[current_index], 0);
+
+		// We switch between lerping to the right or the left of the pixel with ntsc lerp
+		static bool pair = true;
+		m_composite_shader->set_uniform_1f("ntsc_lerp",
+			(pair = !pair) ? m_effect_parameters.composite.ntsc_lerp : 1.f - m_effect_parameters.composite.ntsc_lerp);
+		
+
+		m_composite_shader->set_uniform_1f("tuning_sharp", m_effect_parameters.composite.tuning_sharp);
+		m_composite_shader->set_uniform_4f("tuning_persistence", m_effect_parameters.composite.tuning_persistence);
+		m_composite_shader->set_uniform_1f("tuning_bleed", m_effect_parameters.composite.tuning_bleed);
+
+		m_composite_shader->set_uniform_1f("tuning_ntsc", m_effect_parameters.composite.tuning_ntsc);
+		
+
 
 		// Draw Call for fullscreen shader
 		glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -141,7 +156,36 @@ GLsizei  CRTRenderer::draw_out_screen(GLsizei render_buffer_to_put_in_crt_mesh) 
 
 	m_screen_shader->bind();
 	{
-		m_screen_shader->setUniformTexture("low_res_texture", m_rendered_textures[render_buffer_to_put_in_crt_mesh], 0);
+
+		//
+		// @@NOTE: We need to bind texture unit 0 last here, or SFML freaks out about 1 being the last one bound
+		// when it tries to push/pop OpenGL states.
+		//
+
+		m_screen_shader->set_uniform_texture("scanlines_texture", m_effect_textures.scanlines, 1);
+		m_screen_shader->set_uniform_texture("low_res_texture", m_rendered_textures[render_buffer_to_put_in_crt_mesh], 0);
+
+
+
+		m_screen_shader->set_uniform_2f("uv_scalar", m_effect_parameters.screen.uv_scalar);
+		m_screen_shader->set_uniform_2f("uv_offset", m_effect_parameters.screen.uv_offset);
+
+		m_screen_shader->set_uniform_2f("crt_mask_scale", m_effect_parameters.screen.crt_mask_scale);
+		m_screen_shader->set_uniform_2f("crt_mask_offset", m_effect_parameters.screen.crt_mask_offset);
+
+
+		m_screen_shader->set_uniform_1f("tuning_overscan", m_effect_parameters.screen.tuning_overscan);
+		m_screen_shader->set_uniform_1f("tuning_dimming", m_effect_parameters.screen.tuning_dimming);
+		m_screen_shader->set_uniform_1f("tuning_saturation", m_effect_parameters.screen.tuning_saturation);
+		m_screen_shader->set_uniform_1f("tuning_reflection_scalar", m_effect_parameters.screen.tuning_reflection_scalar);
+		m_screen_shader->set_uniform_1f("tuning_barrel_distortion", m_effect_parameters.screen.tuning_barrel_distortion);
+		m_screen_shader->set_uniform_1f("tuning_scanline_brightness", m_effect_parameters.screen.tuning_scanline_brightness);
+		m_screen_shader->set_uniform_1f("tuning_scanline_opacity", m_effect_parameters.screen.tuning_scanline_opacity);
+		m_screen_shader->set_uniform_1f("tuning_diff_brightness", m_effect_parameters.screen.tuning_diff_brightness);
+		m_screen_shader->set_uniform_1f("tuning_specular_brightness", m_effect_parameters.screen.tuning_specular_brightness);
+		m_screen_shader->set_uniform_1f("tuning_specular_power", m_effect_parameters.screen.tuning_specular_power);
+		m_screen_shader->set_uniform_1f("tuning_fresnel_brightness", m_effect_parameters.screen.tuning_fresnel_brightness);
+
 
 		m_vertex_array_object->bind();
 		m_index_buffer_object->bind();
@@ -162,6 +206,7 @@ void CRTRenderer::generate_crt_mesh() {
 	std::vector<GLfloat> vertices;
 	std::vector<GLfloat> textureUVs;
 	std::vector<GLfloat> normals;
+	std::vector<GLfloat> colors;
 	std::vector<GLushort> indices;
 
 	// We populate the vectors with the data from the tesselated quad
@@ -276,6 +321,33 @@ void CRTRenderer::generate_crt_mesh() {
 						normals.push_back(-1.0f);
 					}
 
+					// Add to Colors
+					{
+						//
+						// @@TODO: Darken the pixels that are closer to the edges
+						//
+
+						colors.push_back(1.0f);
+						colors.push_back(1.0f);
+						colors.push_back(1.0f);
+						colors.push_back(1.0f);
+
+						colors.push_back(1.0f);
+						colors.push_back(1.0f);
+						colors.push_back(1.0f);
+						colors.push_back(1.0f);
+
+						colors.push_back(1.0f);
+						colors.push_back(1.0f);
+						colors.push_back(1.0f);
+						colors.push_back(1.0f);
+
+						colors.push_back(1.0f);
+						colors.push_back(1.0f);
+						colors.push_back(1.0f);
+						colors.push_back(1.0f);
+					}
+
 					// Add to indices
 					{
 						auto offset_prod = x_offset * y_offset;
@@ -341,6 +413,8 @@ void CRTRenderer::generate_crt_mesh() {
 		1); // UVs
 	m_vertex_array_object->addBuffer(std::make_unique<ArrayBuffer>(normals.data(), normals.size(), 3, BufferUsage::STATIC_DRAW),
 		2);	// Normals
+	m_vertex_array_object->addBuffer(std::make_unique<ArrayBuffer>(colors.data(), colors.size(), 4, BufferUsage::STATIC_DRAW),
+		3);	// Colors
 
 }
 
@@ -350,8 +424,8 @@ void CRTRenderer::init_ntsc_shader() {
 
 	m_ntsc_shader->bind();
 	{
-		m_ntsc_shader->setUniformTexture("lut_texture", m_effect_textures.lut, 0);
-		m_ntsc_shader->setUniform1f("lut_resolution", m_effect_textures.lut.getSize().y);
+		m_ntsc_shader->set_uniform_texture("lut_texture", m_effect_textures.lut, 0);
+		m_ntsc_shader->set_uniform_1f("lut_resolution", m_effect_textures.lut.getSize().y);
 	}
 	m_ntsc_shader->unbind();
 }
@@ -383,7 +457,8 @@ void CRTRenderer::init_screen_shader() {
 	auto mvp_matrix = projection * view * model;
 
 	// We set theh MVP matrix for the shader
-	m_screen_shader->setUniformMat4("mvp_matrix", mvp_matrix);
+	m_screen_shader->set_uniform_mat4("mvp_matrix", mvp_matrix);
+	m_screen_shader->set_uniform_mat4("model_to_world_matrix", model);
 
 
 	m_screen_shader->unbind();
@@ -438,16 +513,52 @@ void CRTRenderer::create_low_res_render_targets() {
 void CRTRenderer::draw_parameter_gui() {
 
 	ImGui::Begin("CRT Simulation Parameters");
-	
+
+#define MIN_SLIDER 0
+
+#define MAX_SLIDER 3
+
 
 	ImGui::Separator();
 	{
 		ImGui::SliderFloat("Color Tuning Strength",
-			&m_effect_parameters.color_grading_strength, 0, 1);
+			&m_effect_parameters.color.color_correction_strength, 0, 1);
 
 	}
 	ImGui::Separator();
+	{
+		ImGui::SliderFloat("ntsc_lerp",
+			&m_effect_parameters.composite.ntsc_lerp, 0, 1);
+		ImGui::SliderFloat("Sharpness",
+			&m_effect_parameters.composite.tuning_sharp, MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat4("Persistence",
+			&m_effect_parameters.composite.tuning_persistence[0], MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat("Bleed",
+			&m_effect_parameters.composite.tuning_bleed, MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat("NTSC Artifacts",
+			&m_effect_parameters.composite.tuning_ntsc, MIN_SLIDER, MAX_SLIDER);
+	}
+	ImGui::Separator();
+	{
+		ImGui::SliderFloat2("UV Scaling", &m_effect_parameters.screen.uv_scalar[0], MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat2("UV Offset", &m_effect_parameters.screen.uv_offset[0], MIN_SLIDER, MAX_SLIDER);
 
+		ImGui::SliderFloat2("CRT Mask Scale", &m_effect_parameters.screen.crt_mask_scale[0], MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat2("CRT Mask Offset", &m_effect_parameters.screen.crt_mask_offset[0], MIN_SLIDER, MAX_SLIDER);
+
+		ImGui::SliderFloat("Overscan", &m_effect_parameters.screen.tuning_overscan, MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat("Dimming", &m_effect_parameters.screen.tuning_dimming, MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat("Saturation", &m_effect_parameters.screen.tuning_saturation, MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat("Reflection Scalar", &m_effect_parameters.screen.tuning_reflection_scalar, MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat("Barrel Distortion", &m_effect_parameters.screen.tuning_barrel_distortion, MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat("Scanline Brightness", &m_effect_parameters.screen.tuning_scanline_brightness, MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat("Scanline Opacity", &m_effect_parameters.screen.tuning_scanline_opacity, MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat("Diff Brightness", &m_effect_parameters.screen.tuning_diff_brightness, MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat("Specular Brightness", &m_effect_parameters.screen.tuning_specular_brightness, MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat("Specular Power", &m_effect_parameters.screen.tuning_specular_power, MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat("Fresnel Brightness", &m_effect_parameters.screen.tuning_fresnel_brightness, MIN_SLIDER, MAX_SLIDER);
+	}
+	ImGui::Separator();
 
 	ImGui::End();
 

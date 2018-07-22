@@ -76,17 +76,17 @@ public:
 	// Functions to set uniforms to the shader
 #pragma region Uniform Setters
 
-	void setUniform1i(const GLchar* name, int value);
+	void set_uniform_1i(const GLchar* name, int value);
 
-	void setUniform1f(const GLchar* name, float value);
-	void setUniform2f(const GLchar* name, const glm::vec2& value);
-	void setUniform3f(const GLchar* name, const glm::vec3& value);
-	void setUniform4f(const GLchar* name, const glm::vec4& value);
+	void set_uniform_1f(const GLchar* name, float value);
+	void set_uniform_2f(const GLchar* name, const glm::vec2& value);
+	void set_uniform_3f(const GLchar* name, const glm::vec3& value);
+	void set_uniform_4f(const GLchar* name, const glm::vec4& value);
 
-	void setUniformMat4(const GLchar* name, const glm::mat4 value);
+	void set_uniform_mat4(const GLchar* name, const glm::mat4 value);
 
-	void setUniformTexture(const GLchar* name, const sf::Texture& texture, GLuint unit);
-	void setUniformTexture(const GLchar* name, GLuint texture_id, GLuint unit);
+	void set_uniform_texture(const GLchar* name, const sf::Texture& texture, GLuint unit);
+	void set_uniform_texture(const GLchar* name, GLuint texture_id, GLuint unit);
 
 
 #pragma endregion
