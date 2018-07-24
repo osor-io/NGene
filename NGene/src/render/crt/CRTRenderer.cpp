@@ -13,14 +13,12 @@
 CRTRenderer::CRTRenderer(const sf::Window& window) :
 	m_window_ref(window)
 {
-	m_window_ref.setActive(true);
 
 	// We load and set up the textures for the effect
 	{
 		if (!file_exists(config::crt::paths::lut) ||
 			!file_exists(config::crt::paths::ntsc_pattern) ||
 			!file_exists(config::crt::paths::scanlines)) {
-
 			LOG_ERROR("We couldn't find the required texture files for the CRT simulation effect.");
 		}
 		if (!m_effect_textures.lut.loadFromFile(config::crt::paths::lut)) {
@@ -34,9 +32,9 @@ CRTRenderer::CRTRenderer(const sf::Window& window) :
 		}
 
 
-		m_effect_textures.lut.setRepeated(true);
+		m_effect_textures.lut.setRepeated(false);
 		m_effect_textures.ntsc.setRepeated(false);
-		m_effect_textures.scanlines.setRepeated(false);
+		m_effect_textures.scanlines.setRepeated(true);
 
 		m_effect_textures.lut.setSmooth(false);
 		m_effect_textures.ntsc.setSmooth(false);
@@ -44,14 +42,16 @@ CRTRenderer::CRTRenderer(const sf::Window& window) :
 
 	}
 
+	
 	{
 		create_low_res_render_targets();
 		generate_crt_mesh();
 		init_ntsc_shader();
 		init_composite_shader();
-		init_screen_shader();
+		init_screen_shader();		
 	}
-	m_window_ref.setActive(false);
+
+
 }
 
 
@@ -60,15 +60,14 @@ CRTRenderer::~CRTRenderer() {
 }
 
 
-void CRTRenderer::draw(sf::Texture& texture) {
+void CRTRenderer::draw(const sf::Texture& texture) {
 
-	m_window_ref.setActive(true);
 	{
 		draw_ntsc_color_effect(texture);
 		auto render_buffer_to_use = draw_in_screen();
 		draw_out_screen(render_buffer_to_use);
 	}
-	m_window_ref.setActive(false);
+
 }
 
 
@@ -96,10 +95,6 @@ GLsizei CRTRenderer::draw_ntsc_color_effect(const sf::Texture & texture) {
 	m_ntsc_shader->unbind();
 
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, m_window_ref.getSize().x, m_window_ref.getSize().y);
-
-
 	return current_index;
 }
 
@@ -107,14 +102,14 @@ GLsizei CRTRenderer::draw_in_screen() {
 
 	auto current_index = m_render_buffer_index;
 	auto previous_index = m_render_buffer_index - 1 < 0 ? RENDER_BUFFER_COUNT - 1 : m_render_buffer_index - 1;
-
+	
 	// Bind our framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[FINAL_RENDER_BUFFER]);
 	glViewport(0, 0, config::resolutions::internal_resolution_width, config::resolutions::internal_resolution_height);
 
-
+	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
-
+	
 	m_composite_shader->bind();
 	{
 		m_composite_shader->set_uniform_texture("ntsc_artifact_tex", m_effect_textures.ntsc, 2);
@@ -125,14 +120,14 @@ GLsizei CRTRenderer::draw_in_screen() {
 		static bool pair = true;
 		m_composite_shader->set_uniform_1f("ntsc_lerp",
 			(pair = !pair) ? m_effect_parameters.composite.ntsc_lerp : 1.f - m_effect_parameters.composite.ntsc_lerp);
-		
+
 
 		m_composite_shader->set_uniform_1f("tuning_sharp", m_effect_parameters.composite.tuning_sharp);
 		m_composite_shader->set_uniform_4f("tuning_persistence", m_effect_parameters.composite.tuning_persistence);
 		m_composite_shader->set_uniform_1f("tuning_bleed", m_effect_parameters.composite.tuning_bleed);
 
 		m_composite_shader->set_uniform_1f("tuning_ntsc", m_effect_parameters.composite.tuning_ntsc);
-		
+
 
 
 		// Draw Call for fullscreen shader
@@ -165,7 +160,7 @@ GLsizei  CRTRenderer::draw_out_screen(GLsizei render_buffer_to_put_in_crt_mesh) 
 		m_screen_shader->set_uniform_texture("scanlines_texture", m_effect_textures.scanlines, 1);
 		m_screen_shader->set_uniform_texture("low_res_texture", m_rendered_textures[render_buffer_to_put_in_crt_mesh], 0);
 
-
+		m_screen_shader->set_uniform_3f("tuning_light_position", m_effect_parameters.screen.tuning_light_position);
 
 		m_screen_shader->set_uniform_2f("uv_scalar", m_effect_parameters.screen.uv_scalar);
 		m_screen_shader->set_uniform_2f("uv_offset", m_effect_parameters.screen.uv_offset);
@@ -181,7 +176,7 @@ GLsizei  CRTRenderer::draw_out_screen(GLsizei render_buffer_to_put_in_crt_mesh) 
 		m_screen_shader->set_uniform_1f("tuning_barrel_distortion", m_effect_parameters.screen.tuning_barrel_distortion);
 		m_screen_shader->set_uniform_1f("tuning_scanline_brightness", m_effect_parameters.screen.tuning_scanline_brightness);
 		m_screen_shader->set_uniform_1f("tuning_scanline_opacity", m_effect_parameters.screen.tuning_scanline_opacity);
-		m_screen_shader->set_uniform_1f("tuning_diff_brightness", m_effect_parameters.screen.tuning_diff_brightness);
+		m_screen_shader->set_uniform_1f("tuning_diffuse_brightness", m_effect_parameters.screen.tuning_diffuse_brightness);
 		m_screen_shader->set_uniform_1f("tuning_specular_brightness", m_effect_parameters.screen.tuning_specular_brightness);
 		m_screen_shader->set_uniform_1f("tuning_specular_power", m_effect_parameters.screen.tuning_specular_power);
 		m_screen_shader->set_uniform_1f("tuning_fresnel_brightness", m_effect_parameters.screen.tuning_fresnel_brightness);
@@ -306,19 +301,19 @@ void CRTRenderer::generate_crt_mesh() {
 					{
 						normals.push_back(0.0f);
 						normals.push_back(0.0f);
-						normals.push_back(-1.0f);
+						normals.push_back(1.0f);
 
 						normals.push_back(0.0f);
 						normals.push_back(0.0f);
-						normals.push_back(-1.0f);
+						normals.push_back(1.0f);
 
 						normals.push_back(0.0f);
 						normals.push_back(0.0f);
-						normals.push_back(-1.0f);
+						normals.push_back(1.0f);
 
 						normals.push_back(0.0f);
 						normals.push_back(0.0f);
-						normals.push_back(-1.0f);
+						normals.push_back(1.0f);
 					}
 
 					// Add to Colors
@@ -449,22 +444,27 @@ void CRTRenderer::init_screen_shader() {
 
 	m_screen_shader->bind();
 
-
+	auto camera_position = glm::vec3(0, 0, 0);
+	auto mesh_position = glm::vec3(0, 0, -10);
 
 	auto projection = glm::perspective(glm::radians(40.0f), 8.0f / 7.0f, 0.1f, 100.0f);
-	auto view = glm::mat4();
-	auto model = glm::translate(glm::mat4(), glm::vec3(0, 0, -10));
+	auto view = glm::lookAt(camera_position, mesh_position, glm::vec3(0, 1, 0));
+	auto model = glm::translate(glm::mat4(), mesh_position);
 	auto mvp_matrix = projection * view * model;
 
 	// We set theh MVP matrix for the shader
 	m_screen_shader->set_uniform_mat4("mvp_matrix", mvp_matrix);
 	m_screen_shader->set_uniform_mat4("model_to_world_matrix", model);
 
+	m_screen_shader->set_uniform_3f("camera_position", camera_position);
+
+
 
 	m_screen_shader->unbind();
 }
 
 void CRTRenderer::create_low_res_render_targets() {
+
 
 	for (auto i = 0; i <= RENDER_BUFFER_COUNT; ++i) { // We make an extra buffer to render as the result of low-res phase.
 
@@ -508,6 +508,9 @@ void CRTRenderer::create_low_res_render_targets() {
 			LOG("There has been an error generation the framebuffers, the status is: " << status);
 		}
 	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void CRTRenderer::draw_parameter_gui() {
@@ -540,11 +543,13 @@ void CRTRenderer::draw_parameter_gui() {
 	}
 	ImGui::Separator();
 	{
-		ImGui::SliderFloat2("UV Scaling", &m_effect_parameters.screen.uv_scalar[0], MIN_SLIDER, MAX_SLIDER);
-		ImGui::SliderFloat2("UV Offset", &m_effect_parameters.screen.uv_offset[0], MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat3("Light Position", &m_effect_parameters.screen.tuning_light_position[0], -10, 10);
 
-		ImGui::SliderFloat2("CRT Mask Scale", &m_effect_parameters.screen.crt_mask_scale[0], MIN_SLIDER, MAX_SLIDER);
-		ImGui::SliderFloat2("CRT Mask Offset", &m_effect_parameters.screen.crt_mask_offset[0], MIN_SLIDER, MAX_SLIDER);
+		ImGui::DragFloat2("UV Scaling", &m_effect_parameters.screen.uv_scalar[0], 0, 10);
+		ImGui::DragFloat2("UV Offset", &m_effect_parameters.screen.uv_offset[0], -10, 10);
+
+		ImGui::DragFloat2("CRT Mask Scale", &m_effect_parameters.screen.crt_mask_scale[0], 0, 2000);
+		ImGui::DragFloat2("CRT Mask Offset", &m_effect_parameters.screen.crt_mask_offset[0], -10, 10);
 
 		ImGui::SliderFloat("Overscan", &m_effect_parameters.screen.tuning_overscan, MIN_SLIDER, MAX_SLIDER);
 		ImGui::SliderFloat("Dimming", &m_effect_parameters.screen.tuning_dimming, MIN_SLIDER, MAX_SLIDER);
@@ -553,7 +558,7 @@ void CRTRenderer::draw_parameter_gui() {
 		ImGui::SliderFloat("Barrel Distortion", &m_effect_parameters.screen.tuning_barrel_distortion, MIN_SLIDER, MAX_SLIDER);
 		ImGui::SliderFloat("Scanline Brightness", &m_effect_parameters.screen.tuning_scanline_brightness, MIN_SLIDER, MAX_SLIDER);
 		ImGui::SliderFloat("Scanline Opacity", &m_effect_parameters.screen.tuning_scanline_opacity, MIN_SLIDER, MAX_SLIDER);
-		ImGui::SliderFloat("Diff Brightness", &m_effect_parameters.screen.tuning_diff_brightness, MIN_SLIDER, MAX_SLIDER);
+		ImGui::SliderFloat("Diff Brightness", &m_effect_parameters.screen.tuning_diffuse_brightness, MIN_SLIDER, MAX_SLIDER);
 		ImGui::SliderFloat("Specular Brightness", &m_effect_parameters.screen.tuning_specular_brightness, MIN_SLIDER, MAX_SLIDER);
 		ImGui::SliderFloat("Specular Power", &m_effect_parameters.screen.tuning_specular_power, MIN_SLIDER, MAX_SLIDER);
 		ImGui::SliderFloat("Fresnel Brightness", &m_effect_parameters.screen.tuning_fresnel_brightness, MIN_SLIDER, MAX_SLIDER);

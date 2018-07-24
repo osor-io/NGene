@@ -17,36 +17,40 @@ namespace config {
 		constexpr auto minor_version = 6;
 	}
 
-	namespace resolutions{
+	namespace resolutions {
 		constexpr auto internal_resolution_width = 256u;
 		constexpr auto internal_resolution_height = 224u;
 
 		constexpr auto external_resolution_multiplier = 4u;
 	}
-	
+
 }
 
 class WindowManager : public Manager<WindowManager> {
-    friend class CRSP<WindowManager>;
+	friend class CRSP<WindowManager>;
 public:
-    WindowManager();
-    ~WindowManager();
+	WindowManager();
+	~WindowManager();
 
 
-    void start_up() override;
-    void shut_down() override;
+	void start_up() override;
+	void shut_down() override;
 
-    void fill_events();
+	void fill_events();
 
-    sf::RenderWindow* get_window_render_target();
-    bool is_window_open() const;
-    const std::vector<sf::Event>& get_frame_events() const;
+	sf::RenderWindow* get_window_render_target();
+	bool is_window_open() const;
+	const std::vector<sf::Event>& get_frame_events() const;
 
 	sf::WindowHandle get_window_handle() const;
 
+	const sf::Window& get_window_ref() const { return *m_window; }
+
+	void set_opengl_context_active() const { m_window->setActive(); }
+
 private:
-    std::vector<sf::Event> m_frame_events;
-    std::unique_ptr<sf::RenderWindow> m_window;
+	std::vector<sf::Event> m_frame_events;
+	std::unique_ptr<sf::RenderWindow> m_window;
 
 };
 

@@ -16,18 +16,24 @@ void RenderManager::start_up() {
 	We first initialize the window and the debug GUI.
 	*/
 	m_window_target = WindowManager::get().get_window_render_target();
+	
+	/*
+	Init ImGui
+	*/
+	ImGui::SFML::Init(*m_window_target);
+
 
 	/*
 	We set up the opengl context
 	*/
-	m_window_target->setActive(true);
 	glViewport(0, 0, m_window_target->getSize().x, m_window_target->getSize().y);
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glClearDepth(1.f);
 	glewInit();
-	glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.f);
 
+	m_crt_renderer = std::make_unique<CRTRenderer>(WindowManager::get().get_window_ref());
 
 	/*
 	We create the lower resolution render target
@@ -47,7 +53,8 @@ void RenderManager::start_up() {
 		std::terminate();
 	}
 
-	ImGui::SFML::Init(*m_window_target);
+	WindowManager::get().set_opengl_context_active();
+
 }
 
 void RenderManager::shut_down() {
@@ -85,6 +92,18 @@ float RenderManager::get_current_zoom() const {
 	return m_current_zoom;
 }
 
+void RenderManager::draw_debug_gui() {
+
+	if (ImGui::BeginMenu("Render")) {
+
+		{
+			ImGui::Checkbox("Simulate CRT", &m_simulating_crt);
+		}
+		ImGui::EndMenu();
+	}
+
+}
+
 void RenderManager::begin_frame() {
 	m_main_target->clear(m_clear_color);
 	m_window_target->clear(m_clear_color);
@@ -107,9 +126,13 @@ void RenderManager::end_frame() {
 
 	if (m_simulating_crt) {
 
+		WindowManager::get().set_opengl_context_active();
+
 		/*
 
-		@@TODO @@DOING: Rendering main target texture with OpenGL. We have to look into what
+		@@TODO @@DOING: Paste CRT renderer in to this section
+		
+		Rendering main target texture with OpenGL. We have to look into what
 		are the places where some of this code should be. For example, I believe the glViewport should be
 		on initialization and on resize of the window.
 
@@ -127,29 +150,14 @@ void RenderManager::end_frame() {
 
 		*/
 
-		m_window_target->setActive(true);
-		m_window_target->pushGLStates();
-		{
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
-			glPushMatrix();
+		auto image = m_main_target->getTexture().copyToImage();
 
-			sf::Texture::bind(&m_main_target.get()->getTexture());
+		auto texture = sf::Texture();
+		texture.loadFromImage(image);
 
-			glBegin(GL_QUADS);
+		m_crt_renderer->draw(texture);
 
-			auto size = 1.f;
-
-			glTexCoord2f(0, 1); glVertex3f(-size, -size, 0.f);
-			glTexCoord2f(0, 0); glVertex3f(-size, size, 0.f);
-			glTexCoord2f(1, 0); glVertex3f(size, size, 0.f);
-			glTexCoord2f(1, 1); glVertex3f(size, -size, 0.f);
-
-			glEnd();
-			glPopMatrix();
-		}
-		m_window_target->popGLStates();
+		
 	}
 	else {
 		/*

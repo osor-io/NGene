@@ -36,6 +36,8 @@ void WindowManager::start_up() {
 	*/
 
 	m_window->setVerticalSyncEnabled(true);
+
+	m_window->setActive(true);
 }
 
 void WindowManager::shut_down() {

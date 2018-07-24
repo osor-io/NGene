@@ -229,15 +229,7 @@ void DeveloperModeManager::draw_gui() {
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Render")) {
-
-			{
-				static bool simulating_crt = false;
-				ImGui::Checkbox("Simulate CRT", &simulating_crt);
-				RenderManager::get().set_simulating_crt(simulating_crt);
-			}
-			ImGui::EndMenu();
-		}
+		RenderManager::get().draw_debug_gui();
 
 
 		// Chunk configuration

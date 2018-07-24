@@ -59,23 +59,25 @@ private:
 
 		// Screen Shader
 		struct CRTScreenParameters {
-			glm::vec2 uv_scalar;
-			glm::vec2 uv_offset;
+			glm::vec3 tuning_light_position{ 2, 1.5f, -6.5f };
 
-			glm::vec2 crt_mask_scale;
-			glm::vec2 crt_mask_offset;
+			glm::vec2 uv_scalar{ 1,1 };
+			glm::vec2 uv_offset{ 0,0 };
 
-			float tuning_overscan = 0.5f;
-			float tuning_dimming = 0.5f;
-			float tuning_saturation = 0.5f;
-			float tuning_reflection_scalar = 0.5f;
+			glm::vec2 crt_mask_scale{ 256/2, 224/2 };
+			glm::vec2 crt_mask_offset{ 0,0 };
+
+			float tuning_overscan = 0.9f;
+			float tuning_dimming = 1.f;
+			float tuning_saturation = 1.f;
+			float tuning_reflection_scalar = 0.7f;
 			float tuning_barrel_distortion = 0.5f;
-			float tuning_scanline_brightness = 0.5f;
-			float tuning_scanline_opacity = 0.5f;
-			float tuning_diff_brightness = 0.5f;
+			float tuning_scanline_brightness = 0.05f;
+			float tuning_scanline_opacity = 0.2f;
+			float tuning_diffuse_brightness = 0.5f;
 			float tuning_specular_brightness = 0.5f;
-			float tuning_specular_power = 0.5f;
-			float tuning_fresnel_brightness = 0.5f;
+			float tuning_specular_power = 3.0f;
+			float tuning_fresnel_brightness = 1.0f;
 		};
 		CRTScreenParameters screen;
 
@@ -101,7 +103,7 @@ public:
 	CRTRenderer(const sf::Window& window);
 	~CRTRenderer();
 
-	void draw(sf::Texture& texture);
+	void draw(const sf::Texture& texture);
 
 	void draw_parameter_gui();
 

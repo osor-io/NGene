@@ -84,7 +84,7 @@ uniform float tuning_reflection_scalar;
 uniform float tuning_barrel_distortion;
 uniform float tuning_scanline_brightness;
 uniform float tuning_scanline_opacity;
-uniform float tuning_diff_brightness;
+uniform float tuning_diffuse_brightness;
 uniform float tuning_specular_brightness;
 uniform float tuning_specular_power;
 uniform float tuning_fresnel_brightness;
@@ -101,15 +101,58 @@ in DATA
 	vec3 light_direction;
 } fragment_in;
 
+vec4 sample_crt(vec2 uv) {
+
+	vec2 scaled_uv = uv;
+	scaled_uv *= uv_scalar;
+	scaled_uv += uv_offset;
+
+	vec2 scan_uv = (scaled_uv * crt_mask_scale) + crt_mask_offset;
+	vec3 scan_tex_color = texture(scanlines_texture, scan_uv).rgb;
+	scan_tex_color += tuning_scanline_brightness;
+	scan_tex_color = mix(vec3(1, 1, 1), scan_tex_color, tuning_scanline_opacity);
+
+	vec2 overscan_uv = (scaled_uv * tuning_overscan) - ((tuning_overscan - 1.0f) * 0.5);
+
+	overscan_uv = overscan_uv - vec2(0.5, 0.5);
+	float rsq = dot(overscan_uv, overscan_uv);
+	overscan_uv = overscan_uv + (overscan_uv * (tuning_barrel_distortion * rsq)) + vec2(0.5, 0.5);
+
+
+	vec3 game_color = texture(low_res_texture, overscan_uv).rgb;
+
+
+	vec4 emmissive = vec4(game_color * scan_tex_color, 1);
+	float dessaturation = dot(vec4(0.299, 0.587, 0.114, 0.0), emmissive);
+	emmissive = mix(vec4(dessaturation, dessaturation, dessaturation, 1), emmissive, tuning_saturation);
+
+	return emmissive;
+}
+
+
 void main()
 {
-	color = texture(low_res_texture, fragment_in.uv);
-	color = texture(scanlines_texture, fragment_in.uv);
-	color = vec4(fragment_in.uv, 1.0, 1.0);
-	color = vec4(fragment_in.normal, 1.0);
-	color = fragment_in.color;
-	color = vec4(fragment_in.camera_direction, 1.0);
-	color = vec4(fragment_in.light_direction, 1.0);
 
-	color = texture(low_res_texture, fragment_in.uv);
+	vec3 normal = normalize(fragment_in.normal);
+
+	vec3 camera_direction = normalize(fragment_in.camera_direction);
+	vec3 light_direction = normalize(fragment_in.light_direction);
+
+	vec3 reflection = reflect(camera_direction, normal);
+
+	float diffuse = clamp(dot(normal, light_direction), 0, 1);
+	vec4 color_diffuse = vec4(0.175, 0.15, 0.2, 1) * diffuse * tuning_diffuse_brightness;
+
+	vec3 half_vector = normalize(light_direction + camera_direction);
+	float specular = clamp(dot(normal, half_vector), 0, 1);
+	specular = pow(specular, tuning_specular_power);
+	vec4 color_specular = vec4(0.25, 0.25, 0.25, 1) * specular * tuning_specular_brightness;
+
+	float fresnel = 1.0 - dot(camera_direction, normal);
+	fresnel = (fresnel * fresnel) * tuning_fresnel_brightness;
+	vec4 color_fresnel = vec4(0.45, 0.4, 0.5, 1) * fresnel;
+
+	color = sample_crt(fragment_in.uv) + color_diffuse + color_specular + color_fresnel;
+
+	(color * mix(vec4(1, 1, 1, 1), fragment_in.color, tuning_dimming));
 }

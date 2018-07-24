@@ -86,16 +86,12 @@ int test_modern_opengl_crt_simulation() {
 		CRTRenderer crt_renderer(window);
 
 
-		window.setActive(true);
 
 		GLenum error = glGetError();
 		if (error != GL_NO_ERROR) {
 			LOG_ERROR("OpenGL Error while initializing CRT renderer (" << error << "): " << glewGetErrorString(error));
 		}
 		
-
-		// Make the window no longer the active window for OpenGL calls
-		window.setActive(false);
 
 		// Create a clock for measuring the time elapsed
 		sf::Clock clock;
@@ -138,9 +134,6 @@ int test_modern_opengl_crt_simulation() {
 					window.setActive(false);
 				}
 			}
-
-			// Make the window the active window for OpenGL calls
-			window.setActive(true);
 
 
 			// Check for errors (it's IMPORTANT that the window is active)
