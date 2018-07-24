@@ -23,7 +23,7 @@
 #include "../render/buffers/ElementBuffer.h"
 #include "../render/buffers/VertexArray.h"
 
-
+int test_render_texture_crt_simulation();
 int test_modern_opengl_crt_simulation();
 int test_modern_opengl_crt_shape();
 int test_legacy_opengl_crt_shape();
@@ -31,12 +31,167 @@ int test_spritesheets();
 
 
 int test() {
-	return test_modern_opengl_crt_simulation();
+	return test_render_texture_crt_simulation();
 }
 
 
 
 #include "../render/crt/CRTRenderer.h"
+
+
+int test_render_texture_crt_simulation() {
+
+
+	// Settings for the window
+	sf::ContextSettings settings;
+	settings.depthBits = 24;
+	settings.stencilBits = 8;
+	settings.antialiasingLevel = 8;
+	settings.majorVersion = 4;
+	settings.minorVersion = 6;
+
+	bool exit = false;
+
+	while (!exit)
+	{
+
+		// Create the main window
+
+		sf::RenderWindow window(sf::VideoMode(256 * 4, 224 * 4), "Modern OpenGL Test", sf::Style::Default, settings);
+		window.setVerticalSyncEnabled(true);
+		ImGui::SFML::Init(window);
+
+		// Make the window the active window for OpenGL calls
+		window.setActive(true);
+
+		// Enable Z-buffer read and write
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
+		glClearDepth(1.f);
+
+		glewInit();
+
+		// Set Clear Color
+		glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+
+
+		//
+		// Set up things to render HERE
+		//
+		CRTRenderer crt_renderer(window);
+
+		sf::RenderTexture texture;
+		texture.create(200,200);
+		texture.setSmooth(false);
+		texture.setRepeated(false);
+
+		GLenum error = glGetError();
+		if (error != GL_NO_ERROR) {
+			LOG_ERROR("OpenGL Error while initializing CRT renderer (" << error << "): " << glewGetErrorString(error));
+		}
+
+
+		// Create a clock for measuring the time elapsed
+		sf::Clock clock;
+		sf::Clock frame_clock;
+
+		// Start game loop
+		while (window.isOpen())
+		{
+
+			// Process events
+			sf::Event event;
+			while (window.pollEvent(event))
+			{
+				ImGui::SFML::ProcessEvent(event);
+
+				// Close window: exit
+				if (event.type == sf::Event::Closed)
+				{
+					exit = true;
+					window.close();
+				}
+
+				// Escape key: exit
+				if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+				{
+					exit = true;
+					window.close();
+				}
+
+
+				// Adjust the viewport when the window is resized
+				if (event.type == sf::Event::Resized)
+				{
+					// Make the window the active window for OpenGL calls
+					window.setActive(true);
+
+					glViewport(0, 0, event.size.width, event.size.height);
+
+					// Make the window no longer the active window for OpenGL calls
+					window.setActive(false);
+				}
+			}
+
+
+			// Render something to the texture
+			texture.clear();
+			sf::CircleShape circle;
+			circle.setFillColor(sf::Color::Magenta);
+			circle.setOrigin(10, 10);
+			circle.setPosition(100 + sin(clock.getElapsedTime().asSeconds() * 5) * 50, 50);
+			circle.setRadius(20);
+			texture.draw(circle);
+
+			window.setActive(true);
+
+
+			// Check for errors (it's IMPORTANT that the window is active)
+#if 0
+			GLenum error = glGetError();
+			if (error != GL_NO_ERROR) {
+				LOG_ERROR("OpenGL Error in render loop (" << error << "): " << glewGetErrorString(error));
+			}
+#endif
+
+			// Clear the depth buffer
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			//
+			// DRAW HERE
+			//
+			{
+				crt_renderer.draw(texture.getTexture());
+			}
+
+
+			auto delta_time = frame_clock.restart();
+			ImGui::SFML::Update(window, delta_time);
+
+			crt_renderer.draw_parameter_gui();
+
+
+
+			window.pushGLStates();
+			ImGui::SFML::Render(window);
+			window.popGLStates();
+
+
+
+			// Finally, display the rendered frame on screen
+			window.display();
+		}
+
+		ImGui::SFML::Shutdown();
+	}
+
+
+	//press_to_continue();
+
+	return EXIT_SUCCESS;
+}
+
+
 
 int test_modern_opengl_crt_simulation() {
 
