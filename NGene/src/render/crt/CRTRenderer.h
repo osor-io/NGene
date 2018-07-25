@@ -90,6 +90,8 @@ private:
 	std::unique_ptr<Shader> m_ntsc_shader;
 	std::unique_ptr<Shader> m_composite_shader;
 	std::unique_ptr<Shader> m_screen_shader;
+	std::unique_ptr<Shader> m_copy_shader;
+
 
 	std::unique_ptr<VertexArray> m_vertex_array_object;
 	std::unique_ptr<ElementBuffer> m_index_buffer_object;

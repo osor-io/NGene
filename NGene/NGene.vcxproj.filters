@@ -529,5 +529,6 @@
     <None Include="res\shaders\crt\ntsc.shader" />
     <None Include="res\shaders\crt\screen.shader" />
     <None Include="packages.config" />
+    <None Include="res\shaders\crt\copy.shader" />
   </ItemGroup>
 </Project>

@@ -42,13 +42,13 @@ CRTRenderer::CRTRenderer(const sf::Window& window) :
 
 	}
 
-	
+
 	{
 		create_low_res_render_targets();
 		generate_crt_mesh();
 		init_ntsc_shader();
 		init_composite_shader();
-		init_screen_shader();		
+		init_screen_shader();
 	}
 
 
@@ -102,14 +102,14 @@ GLsizei CRTRenderer::draw_in_screen() {
 
 	auto current_index = m_render_buffer_index;
 	auto previous_index = m_render_buffer_index - 1 < 0 ? RENDER_BUFFER_COUNT - 1 : m_render_buffer_index - 1;
-	
+
 	// Bind our framebuffer
 	glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[FINAL_RENDER_BUFFER]);
 	glViewport(0, 0, config::resolutions::internal_resolution_width, config::resolutions::internal_resolution_height);
 
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
-	
+
 	m_composite_shader->bind();
 	{
 		m_composite_shader->set_uniform_texture("ntsc_artifact_tex", m_effect_textures.ntsc, 2);
@@ -138,13 +138,22 @@ GLsizei CRTRenderer::draw_in_screen() {
 	m_composite_shader->unbind();
 
 
+	glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[current_index]);
+	glViewport(0, 0, config::resolutions::internal_resolution_width, config::resolutions::internal_resolution_height);
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
+	m_copy_shader->bind();
+	m_copy_shader->set_uniform_texture("tex", m_rendered_textures[FINAL_RENDER_BUFFER], 0);
+	m_copy_shader->unbind();
+
+
 	// Update the index to draw to the appropriate render target
 	m_render_buffer_index = m_render_buffer_index + 1 < RENDER_BUFFER_COUNT ? m_render_buffer_index + 1 : 0;
 
 	return FINAL_RENDER_BUFFER;
 }
 
-GLsizei  CRTRenderer::draw_out_screen(GLsizei render_buffer_to_put_in_crt_mesh) {
+GLsizei CRTRenderer::draw_out_screen(GLsizei render_buffer_to_put_in_crt_mesh) {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, m_window_ref.getSize().x, m_window_ref.getSize().y);
@@ -428,14 +437,22 @@ void CRTRenderer::init_ntsc_shader() {
 void CRTRenderer::init_composite_shader() {
 
 	m_composite_shader = std::make_unique<Shader>("res/shaders/crt/composite.shader");
-
 	m_composite_shader->bind();
-
 	//
 	// Set shader parameters here
 	//
-
 	m_composite_shader->unbind();
+
+
+
+	m_copy_shader = std::make_unique<Shader>("res/shaders/crt/copy.shader");
+	m_composite_shader->bind();
+	//
+	// Set copy shader parameters here
+	//
+	m_composite_shader->unbind();
+
+
 }
 
 void CRTRenderer::init_screen_shader() {
@@ -537,7 +554,7 @@ void CRTRenderer::draw_parameter_gui() {
 		ImGui::SliderFloat4("Persistence",
 			&m_effect_parameters.composite.tuning_persistence[0], MIN_SLIDER, MAX_SLIDER);
 		ImGui::SliderFloat("Bleed",
-			&m_effect_parameters.composite.tuning_bleed, MIN_SLIDER, MAX_SLIDER);
+			&m_effect_parameters.composite.tuning_bleed, 0, 100);
 		ImGui::SliderFloat("NTSC Artifacts",
 			&m_effect_parameters.composite.tuning_ntsc, MIN_SLIDER, MAX_SLIDER);
 	}

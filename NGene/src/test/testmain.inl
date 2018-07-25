@@ -137,7 +137,6 @@ int test_render_texture_crt_simulation() {
 			// Render something to the texture
 			texture.clear();
 			sf::CircleShape circle;
-			circle.setFillColor(sf::Color::Magenta);
 			circle.setOrigin(10, 10);
 			circle.setPosition(100 + sin(clock.getElapsedTime().asSeconds() * 5) * 50, 50);
 			circle.setRadius(20);
