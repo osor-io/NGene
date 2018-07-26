@@ -210,7 +210,7 @@ int test_modern_opengl_crt_simulation() {
 
 		// Create the main window
 
-		sf::RenderWindow window(sf::VideoMode(256 * 4, 224 * 4), "Modern OpenGL Test", sf::Style::Default, settings);
+		sf::RenderWindow window(sf::VideoMode(256 * 4, 224 * 4), "CRT Simulation Test", sf::Style::Default, settings);
 		window.setVerticalSyncEnabled(true);
 		ImGui::SFML::Init(window);
 

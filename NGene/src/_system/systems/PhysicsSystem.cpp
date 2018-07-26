@@ -247,6 +247,7 @@ void PhysicsSystem::update() {
 		@see: https://en.wikipedia.org/wiki/Verlet_integration
 		@see: https://gafferongames.com/post/integration_basics/
 		@see: https://www.av8n.com/physics/symplectic-integrator.htm
+		@see: https://www.saylor.org/site/wp-content/uploads/2011/06/MA221-6.1.pdf
 
 		*/
 
