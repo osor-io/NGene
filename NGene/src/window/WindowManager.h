@@ -21,7 +21,7 @@ namespace config {
 		constexpr auto internal_resolution_width = 256u;
 		constexpr auto internal_resolution_height = 224u;
 
-		constexpr auto external_resolution_multiplier = 4u;
+		constexpr auto external_resolution_multiplier = 6u;
 	}
 
 }

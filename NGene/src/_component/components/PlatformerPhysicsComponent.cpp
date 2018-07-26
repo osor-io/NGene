@@ -83,36 +83,43 @@ void COMPONENT_TYPE::draw_component_inspector() {
 	ImGui::SetNextWindowSize(ImVec2(400, 100), ImGuiCond_FirstUseEver);
 	ImGui::Begin(calculate_showname().c_str(), &m_gui_open);
 
-	ImGui::Text("Max Foot Speed: "); ImGui::SameLine(230);
+	ImGui::Text("Maximum Foot Speed (units): "); ImGui::SameLine(350);
 	if (ImGui::InputFloat("##MaxFootSpeed", &m_max_foot_speed)) m_need_recalculation = true;
 
-	ImGui::Text("Time to Max Foot Speed: "); ImGui::SameLine(230);
+	ImGui::Text("Time to Maximum Foot Speed (seconds): "); ImGui::SameLine(350);
 	if (ImGui::InputFloat("##TimeToMaxFootSpeed", &m_time_to_max_foot_speed)) m_need_recalculation = true;
 
-	ImGui::Text("Time to Stop: "); ImGui::SameLine(230);
+	ImGui::Text("Time to Stop (seconds): "); ImGui::SameLine(350);
 	if (ImGui::InputFloat("##TimeToStop", &m_time_to_stop)) m_need_recalculation = true;
 
-	ImGui::Text("Distance to Peak: "); ImGui::SameLine(230);
+	ImGui::Text("Horizontal Distance to Peak (units): "); ImGui::SameLine(350);
 	if (ImGui::InputFloat("##DistanceToPeak", &m_horizontal_distance_to_peak)) m_need_recalculation = true;
 
-	ImGui::Text("Jump Height: "); ImGui::SameLine(230);
+	ImGui::Text("Jump Height (units): "); ImGui::SameLine(350);
 	if (ImGui::InputFloat("##JumpHeight", &m_jump_height)) m_need_recalculation = true;
 
-	ImGui::Text("Downwards Gravity Scale: "); ImGui::SameLine(230);
+	ImGui::Text("Downwards Gravity Scale (multiplier): "); ImGui::SameLine(350);
 	if (ImGui::InputFloat("##DownwardsGravityScale", &m_downwards_gravity_scale)) m_need_recalculation = true;
 
 	ImGui::Separator();
 
-	ImGui::Text("State: %s", m_grounded ? "Grounded" : "Not Grounded");
-	ImGui::Text("Current Velocity: (%f, %f)", m_current_velocity.x, m_current_velocity.y);
-	ImGui::Text("Current Gravity: (%f, %f)", m_our_gravity.x, m_our_gravity.y);
-	ImGui::Text("Current Horizontal Acceleration: (%f, %f)", m_our_horizontal_acceleration.x, m_our_horizontal_acceleration.y);
-	ImGui::Text("Current Horizontal Deceleration: (%f, %f)", m_our_horizontal_deceleration.x, m_our_horizontal_deceleration.y);
-	ImGui::Text("Current Downwards Gravity: (%f, %f)",
-		m_our_gravity.x * m_downwards_gravity_scale,
-		m_our_gravity.y * m_downwards_gravity_scale);
-	ImGui::Text("Current Jump Initial Velocity: (%f, %f)", m_initial_jump_velocity.x, m_initial_jump_velocity.y);
-	ImGui::Text("Current Max Velocity: (%f, %f)", m_max_velocity.x, m_max_velocity.y);
+	ImGui::Text("Physical Constants: ");
+	ImGui::Indent();
+	ImGui::Indent();
+	{
+		ImGui::Text(" - State: %s", m_grounded ? "Grounded" : "Not Grounded");
+		ImGui::Text(" - Velocity: (%f, %f)", m_current_velocity.x, m_current_velocity.y);
+		ImGui::Text(" - Gravity: (%f, %f)", m_our_gravity.x, m_our_gravity.y);
+		ImGui::Text(" - Horizontal Acceleration: (%f, %f)", m_our_horizontal_acceleration.x, m_our_horizontal_acceleration.y);
+		ImGui::Text(" - Horizontal Deceleration: (%f, %f)", m_our_horizontal_deceleration.x, m_our_horizontal_deceleration.y);
+		ImGui::Text(" - Downwards Gravity: (%f, %f)",
+			m_our_gravity.x * m_downwards_gravity_scale,
+			m_our_gravity.y * m_downwards_gravity_scale);
+		ImGui::Text(" - Jump Initial Velocity: (%f, %f)", m_initial_jump_velocity.x, m_initial_jump_velocity.y);
+		ImGui::Text(" - Maximum Velocity: (%f, %f)", m_max_velocity.x, m_max_velocity.y);
+	}
+	ImGui::Unindent();
+	ImGui::Unindent();
 
 
 	ImGui::End();
