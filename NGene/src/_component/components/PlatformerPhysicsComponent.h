@@ -23,9 +23,9 @@ for a character in a 2D plattformer.
 
 */
 enum InputMovementDirection {
-    INPUT_MOVEMENT_RIGHT,
+    INPUT_MOVEMENT_RIGHT = 0,
     INPUT_MOVEMENT_LEFT,
-    INPUT_MOVEMENT_NONE
+	INPUT_MOVEMENT_DIRECTION_COUNT
 };
 
 /**
@@ -95,11 +95,15 @@ public:
     */
 
     float get_max_foot_speed() const { return m_max_foot_speed; }
+	float get_time_to_max_foot_speed() const { return m_time_to_max_foot_speed; }
+	float get_time_to_stop() const { return m_time_to_stop; }
     float get_horizontal_distance_to_peak() const { return m_horizontal_distance_to_peak; }
     float get_jump_height() const { return m_jump_height; }
     float get_downwards_gravity_scale() const { return m_downwards_gravity_scale; }
 
     void set_max_foot_speed(float value) { m_max_foot_speed = value; m_need_recalculation = true; }
+	void set_time_to_max_foot_speed(float value) { m_time_to_max_foot_speed = value; m_need_recalculation = true; }
+	void set_time_to_stop(float value) { m_time_to_stop = value; m_need_recalculation = true; }
     void set_horizontal_distance_to_peak(float value) { m_horizontal_distance_to_peak = value; m_need_recalculation = true; }
     void set_jump_height(float value) { m_jump_height = value; m_need_recalculation = true; }
     void set_downwards_gravity_scale(float value) { m_downwards_gravity_scale = value; m_need_recalculation = true; }
@@ -126,6 +130,20 @@ public:
 
     */
     float m_max_foot_speed;
+
+	/**
+
+	Represents the time it takes to reach max speed.
+
+	*/
+	float m_time_to_max_foot_speed;
+
+	/**
+
+	Represents the time it takes to stop from max speed.
+
+	*/
+	float m_time_to_stop;
 
     /**
     
@@ -186,6 +204,22 @@ public:
     */
     sf::Vector2f m_our_gravity;
 
+	/**
+
+	Here we store the gravity that is applyed normally to this entity based on the
+	set parameters.
+
+	*/
+	sf::Vector2f m_our_horizontal_acceleration;
+
+	/**
+
+	Here we store the gravity that is applyed normally to this entity based on the
+	set parameters.
+
+	*/
+	sf::Vector2f m_our_horizontal_deceleration;
+
     /**
     
     Here we store the initial jump velocity that we have to apply to the entity
@@ -227,6 +261,14 @@ public:
     */
     bool m_requested_jump{ false };
 
+	/**
+
+	Here we store if some event or player input has requested the entity to
+	move in a particular direction.
+
+	*/
+	bool m_requested_movement[INPUT_MOVEMENT_DIRECTION_COUNT]{false, false};
+
     // ====== END OF MEMBERS ======
 
 };
@@ -240,10 +282,14 @@ template<>
 inline auto meta::registerMembers<PlatformerPhysicsComponent>() {
     return members(
         member("maxFootSpeed", &PlatformerPhysicsComponent::m_max_foot_speed),
+		member("timeToMaxFootSpeed", &PlatformerPhysicsComponent::m_time_to_max_foot_speed),
+		member("timeToStop", &PlatformerPhysicsComponent::m_time_to_stop),
         member("distanceToPeak", &PlatformerPhysicsComponent::m_horizontal_distance_to_peak),
         member("jumpHeight", &PlatformerPhysicsComponent::m_jump_height),
         member("downwardsGravityScale", &PlatformerPhysicsComponent::m_downwards_gravity_scale),
         member("ourGravity", &PlatformerPhysicsComponent::m_our_gravity),
+		member("ourHorizontalAcceleration", &PlatformerPhysicsComponent::m_our_horizontal_acceleration),
+		member("ourHorizontalDeceleration", &PlatformerPhysicsComponent::m_our_horizontal_deceleration),
         member("initialJumpVelocity", &PlatformerPhysicsComponent::m_initial_jump_velocity),
         member("maxVelocity", &PlatformerPhysicsComponent::m_max_velocity),
         member("currentVelocity", &PlatformerPhysicsComponent::m_current_velocity),

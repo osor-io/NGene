@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="right-down" width="20" height="10" tilewidth="8" tileheight="8" infinite="0" nextobjectid="4">
+<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="right-down" width="20" height="10" tilewidth="8" tileheight="8" infinite="0" nextobjectid="8">
  <tileset firstgid="1" source="Candy.tsx"/>
  <layer name="Base" width="20" height="10">
   <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,30,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,2,8,8,8,8,8,3,0,0,0,0,0,0,0,0,
-0,0,0,0,0,6,18,18,18,18,18,7,0,0,0,0,0,0,0,0,
-0,0,0,0,0,6,18,18,18,18,18,7,0,0,0,0,0,0,0,0,
-0,0,0,0,0,11,13,13,13,13,13,12,0,0,0,0,0,0,0,0,
+21,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,21,0,0,
+27,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,27,0,0,
+27,0,0,0,0,0,0,30,0,0,0,0,0,0,0,0,0,27,0,0,
+6,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,7,0,0,
+6,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,7,0,0,
+6,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,7,0,0,
+11,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,12,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -44,6 +44,8 @@
 </data>
  </layer>
  <objectgroup name="Collisions">
-  <object id="1" name="Col1" type="Collider" x="40" y="23.8182" width="55.8182" height="31.8182"/>
+  <object id="1" name="Col1" type="Collider" x="0.181818" y="23.8182" width="143.636" height="31.8182"/>
+  <object id="6" name="Col2" type="Collider" x="0.182" y="-0.0909182" width="7.81782" height="31.8182"/>
+  <object id="7" name="Col3" type="Collider" x="136.091" y="-0.0909182" width="7.81782" height="31.8182"/>
  </objectgroup>
 </map>

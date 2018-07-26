@@ -18,6 +18,18 @@ CTOR(COMPONENT_TYPE)(EntityId id, const sol::table& table)
 		}
 
 		{
+			sol::object value = table["timeToMaxFootSpeed"];
+			assert(value.valid());
+			m_time_to_max_foot_speed = value.as<float>();
+		}
+
+		{
+			sol::object value = table["timeToStop"];
+			assert(value.valid());
+			m_time_to_stop = value.as<float>();
+		}
+
+		{
 			sol::object value = table["distanceToPeak"];
 			assert(value.valid());
 			m_horizontal_distance_to_peak = value.as<float>();
@@ -47,6 +59,8 @@ json COMPONENT_TYPE::to_json() {
 	auto j = json{};
 
 	j["maxFootSpeed"] = m_max_foot_speed;
+	j["timeToMaxFootSpeed"] = m_time_to_max_foot_speed;
+	j["timeToStop"] = m_time_to_stop;
 	j["distanceToPeak"] = m_horizontal_distance_to_peak;
 	j["jumpHeight"] = m_jump_height;
 	j["downwardsGravityScale"] = m_downwards_gravity_scale;
@@ -56,6 +70,8 @@ json COMPONENT_TYPE::to_json() {
 
 void COMPONENT_TYPE::load_json(const json& j) {
 	m_max_foot_speed = j["maxFootSpeed"];
+	m_time_to_max_foot_speed = j["timeToMaxFootSpeed"];
+	m_time_to_stop = j["timeToStop"];
 	m_horizontal_distance_to_peak = j["distanceToPeak"];
 	m_jump_height = j["jumpHeight"];
 	m_downwards_gravity_scale = j["downwardsGravityScale"];
@@ -70,7 +86,13 @@ void COMPONENT_TYPE::draw_component_inspector() {
 	ImGui::Text("Max Foot Speed: "); ImGui::SameLine(230);
 	if (ImGui::InputFloat("##MaxFootSpeed", &m_max_foot_speed)) m_need_recalculation = true;
 
-	ImGui::Text("Distance To Peak: "); ImGui::SameLine(230);
+	ImGui::Text("Time to Max Foot Speed: "); ImGui::SameLine(230);
+	if (ImGui::InputFloat("##TimeToMaxFootSpeed", &m_time_to_max_foot_speed)) m_need_recalculation = true;
+
+	ImGui::Text("Time to Stop: "); ImGui::SameLine(230);
+	if (ImGui::InputFloat("##TimeToStop", &m_time_to_stop)) m_need_recalculation = true;
+
+	ImGui::Text("Distance to Peak: "); ImGui::SameLine(230);
 	if (ImGui::InputFloat("##DistanceToPeak", &m_horizontal_distance_to_peak)) m_need_recalculation = true;
 
 	ImGui::Text("Jump Height: "); ImGui::SameLine(230);
@@ -84,6 +106,8 @@ void COMPONENT_TYPE::draw_component_inspector() {
 	ImGui::Text("State: %s", m_grounded ? "Grounded" : "Not Grounded");
 	ImGui::Text("Current Velocity: (%f, %f)", m_current_velocity.x, m_current_velocity.y);
 	ImGui::Text("Current Gravity: (%f, %f)", m_our_gravity.x, m_our_gravity.y);
+	ImGui::Text("Current Horizontal Acceleration: (%f, %f)", m_our_horizontal_acceleration.x, m_our_horizontal_acceleration.y);
+	ImGui::Text("Current Horizontal Deceleration: (%f, %f)", m_our_horizontal_deceleration.x, m_our_horizontal_deceleration.y);
 	ImGui::Text("Current Downwards Gravity: (%f, %f)",
 		m_our_gravity.x * m_downwards_gravity_scale,
 		m_our_gravity.y * m_downwards_gravity_scale);
@@ -101,8 +125,7 @@ void COMPONENT_TYPE::expose_to_lua()
 
 	LUA.new_enum("MovementDirection",
 		"Right", INPUT_MOVEMENT_RIGHT,
-		"Left", INPUT_MOVEMENT_LEFT,
-		"None", INPUT_MOVEMENT_NONE
+		"Left", INPUT_MOVEMENT_LEFT
 	);
 
 	LUA.new_usertype<COMPONENT_TYPE>(STRINGIFY(COMPONENT_TYPE),
@@ -111,11 +134,15 @@ void COMPONENT_TYPE::expose_to_lua()
 		"jump", &COMPONENT_TYPE::jump,
 
 		"maxFootSpeed", sol::property(&COMPONENT_TYPE::get_max_foot_speed, &COMPONENT_TYPE::set_max_foot_speed),
+		"timeToMaxFootSpeed", sol::property(&COMPONENT_TYPE::get_time_to_max_foot_speed, &COMPONENT_TYPE::set_time_to_max_foot_speed),
+		"timeToStop", sol::property(&COMPONENT_TYPE::get_time_to_stop, &COMPONENT_TYPE::set_time_to_stop),
 		"jumpHeight", sol::property(&COMPONENT_TYPE::get_jump_height, &COMPONENT_TYPE::set_jump_height),
 		"distanceToPeak", sol::property(&COMPONENT_TYPE::get_horizontal_distance_to_peak, &COMPONENT_TYPE::set_horizontal_distance_to_peak),
 		"downwardsGravityScale", sol::property(&COMPONENT_TYPE::get_downwards_gravity_scale, &COMPONENT_TYPE::set_downwards_gravity_scale),
 
 		"ourGravity", sol::readonly(&COMPONENT_TYPE::m_our_gravity),
+		"ourHorizontalAcceleration", sol::readonly(&COMPONENT_TYPE::m_our_horizontal_acceleration),
+		"ourHorizontalDeceleration", sol::readonly(&COMPONENT_TYPE::m_our_horizontal_deceleration),
 		"initialJumpVelocity", sol::readonly(&COMPONENT_TYPE::m_initial_jump_velocity)
 
 		);
@@ -124,7 +151,7 @@ void COMPONENT_TYPE::expose_to_lua()
 void PlatformerPhysicsComponent::move(InputMovementDirection direction) {
 
 	/*
-	@@TODO: Rewrite this to set movement flags than then are used in
+	@@DOING: Rewrite this to set movement flags than then are used in
 	the Physics System to accelerate/decelerate appropriately (ala Mario)
 
 	It might be the case that we need new members here (such as horizontal
@@ -134,15 +161,9 @@ void PlatformerPhysicsComponent::move(InputMovementDirection direction) {
 	@see PhysicsSystem
 	*/
 
-	if (direction == INPUT_MOVEMENT_LEFT) {
-		m_current_velocity.x = -m_max_foot_speed;
-	}
-	else if (direction == INPUT_MOVEMENT_RIGHT) {
-		m_current_velocity.x = m_max_foot_speed;
-	}
-	else if (direction == INPUT_MOVEMENT_NONE) {
-		m_current_velocity.x = 0;
-	}
+	m_requested_movement[direction] = true;
+
+
 }
 
 void PlatformerPhysicsComponent::jump() {

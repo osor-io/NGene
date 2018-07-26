@@ -3,6 +3,12 @@
 #include <map>
 #include <memory>
 
+
+namespace config {
+	constexpr auto velocity_zero_threshold = 0.01f;
+	constexpr auto max_timestep = 1.f/15.f;
+}
+
 class PhysicsSystem : public System<PhysicsSystem> {
     using EntitiesGroup = std::map<EntityId, Entity*>;
     friend class CRSP<PhysicsSystem>;

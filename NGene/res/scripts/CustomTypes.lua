@@ -20,6 +20,8 @@ Entities = {
         },
         PlatformerPhysicsComponent = {
             maxFootSpeed = 64.0,
+			timeToMaxFootSpeed = 0.1,
+			timeToStop = 0.05,
             distanceToPeak = 25.0,
             jumpHeight = 40.0,
             downwardsGravityScale = 2.5
@@ -36,10 +38,9 @@ Entities = {
                 if(movement) then
                     if (isKeyPressed(Key.A)) then
                         movement:move(MovementDirection.Left)
-                    elseif (isKeyPressed(Key.D)) then
+					end
+                    if (isKeyPressed(Key.D)) then
                         movement:move(MovementDirection.Right)
-                    else
-                        movement:move(MovementDirection.None)
                     end
 
                     if (isKeyPressed(Key.Space)) then
