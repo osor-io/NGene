@@ -20,8 +20,3 @@ In general, smaller @@TODO tasks that are not big or relevant enough to be writt
 
 * **Bake the static parts of the loaded map** into a vertex array:
 	* Although, keep in mind that this will make it harder to use different textures (different spritesheets with different tilesets) in the same layer D:
-
-## @@DOING
-
-* Checking correct behaviour and tweaking the platformer physics component (mario like movement).
-	* Also, deciding whether the player should have full control in the air and in the movement should just accelerate to max speed when pressing the button or accelerate slowly like in mario games.
