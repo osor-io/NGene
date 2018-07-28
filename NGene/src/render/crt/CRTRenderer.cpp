@@ -94,9 +94,6 @@ GLsizei CRTRenderer::draw_ntsc_color_effect(const sf::Texture & texture) {
 
 	m_ntsc_shader->bind();
 	{
-		//
-		// @TODO: Find out why we need to set this texture in every frame
-		//
 		m_ntsc_shader->set_uniform_texture("game_frame", texture, 1);
 		m_ntsc_shader->set_uniform_texture("lut_texture", m_effect_textures.lut, 0);
 		m_ntsc_shader->set_uniform_1f("tuning_strength", m_effect_parameters.color.color_correction_strength);
@@ -574,7 +571,7 @@ void CRTRenderer::draw_parameter_gui() {
 		ImGui::SliderFloat3("Persistence", 
 			&m_effect_parameters.composite.tuning_persistence[0], 0, 1);
 		ImGui::SliderFloat("Bleed",
-			&m_effect_parameters.composite.tuning_bleed, 0, 100);
+			&m_effect_parameters.composite.tuning_bleed, MIN_SLIDER, MAX_SLIDER);
 		ImGui::SliderFloat("NTSC Artifacts",
 			&m_effect_parameters.composite.tuning_ntsc, MIN_SLIDER, MAX_SLIDER);
 	}
