@@ -40,6 +40,7 @@ public:
 
 	sf::RenderWindow* get_window_render_target();
 	bool is_window_open() const;
+	void manage_window_requests();
 	const std::vector<sf::Event>& get_frame_events() const;
 
 	sf::WindowHandle get_window_handle() const;
@@ -51,6 +52,7 @@ public:
 private:
 	std::vector<sf::Event> m_frame_events;
 	std::unique_ptr<sf::RenderWindow> m_window;
+	bool m_requested_close{ false };
 
 };
 

@@ -115,6 +115,7 @@ inline void render() {
 
 inline void post_render() {
     EntityManager::get().update_entities();
+	WindowManager::get().manage_window_requests();
 }
 
 
@@ -206,7 +207,6 @@ int main() {
 
         render();
         post_render();
-
     }
 
     auto es = EntityManager::get().serialize_entities();
@@ -214,6 +214,7 @@ int main() {
     write_to_file("lastRunState.json", es.dump(4).c_str());
 
     shut_down();
+
 
     //@@NOTE: Use this to see the console when shutting down
     //ENDL;

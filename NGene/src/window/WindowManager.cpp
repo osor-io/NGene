@@ -1,6 +1,7 @@
 #include "WindowManager.h"
 #include "../time/TimeManager.h"
 
+#include <SFML/OpenGL.hpp>
 
 
 WindowManager::WindowManager() {}
@@ -36,16 +37,12 @@ void WindowManager::start_up() {
 	*/
 
 	m_window->setVerticalSyncEnabled(true);
-
-	m_window->setActive(true);
 }
 
 void WindowManager::shut_down() {
 	m_window.reset();
 }
 
-
-#include <SFML/OpenGL.hpp>
 
 void WindowManager::fill_events() {
 	auto event = sf::Event{};
@@ -54,12 +51,12 @@ void WindowManager::fill_events() {
 		ImGui::SFML::ProcessEvent(event);
 		m_frame_events.push_back(event);
 		if (event.type == sf::Event::Closed) {
-			m_window->close();
-			return;
+			m_requested_close = true;
 		}
 		else if (event.type == sf::Event::Resized) {
 			m_window->setActive(true);
 			glViewport(0, 0, event.size.width, event.size.height);
+			LOG("Resized window to (" << event.size.width << ", " << event.size.height << ")");
 		}
 	}
 }
@@ -70,6 +67,13 @@ sf::RenderWindow * WindowManager::get_window_render_target() {
 
 bool WindowManager::is_window_open() const {
 	return m_window->isOpen();
+}
+
+void WindowManager::manage_window_requests(){
+
+	if (m_requested_close) {
+		m_window->close();
+	}
 }
 
 const std::vector<sf::Event>& WindowManager::get_frame_events() const {
