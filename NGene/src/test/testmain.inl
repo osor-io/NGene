@@ -35,7 +35,6 @@ int test() {
 }
 
 
-
 #include "../render/crt/CRTRenderer.h"
 
 
@@ -65,14 +64,20 @@ int test_render_texture_crt_simulation() {
 		window.setActive(true);
 
 		// Enable Z-buffer read and write
+		/*
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_TRUE);
 		glClearDepth(1.f);
-
+		glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+		*/
 		glewInit();
 
-		// Set Clear Color
-		glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+		
+
+		sf::RenderTexture texture;
+		texture.create(200,200);
+		texture.setSmooth(false);
+		texture.setRepeated(false);
 
 
 		//
@@ -80,10 +85,6 @@ int test_render_texture_crt_simulation() {
 		//
 		CRTRenderer crt_renderer(window);
 
-		sf::RenderTexture texture;
-		texture.create(200,200);
-		texture.setSmooth(false);
-		texture.setRepeated(false);
 
 		GLenum error = glGetError();
 		if (error != GL_NO_ERROR) {
@@ -101,6 +102,7 @@ int test_render_texture_crt_simulation() {
 
 			// Process events
 			sf::Event event;
+			auto break_of_outer_loop = false;
 			while (window.pollEvent(event))
 			{
 				ImGui::SFML::ProcessEvent(event);
@@ -110,6 +112,7 @@ int test_render_texture_crt_simulation() {
 				{
 					exit = true;
 					window.close();
+					break_of_outer_loop = true;
 				}
 
 				// Escape key: exit
@@ -117,6 +120,7 @@ int test_render_texture_crt_simulation() {
 				{
 					exit = true;
 					window.close();
+					break_of_outer_loop = true;
 				}
 
 
@@ -132,6 +136,7 @@ int test_render_texture_crt_simulation() {
 					window.setActive(false);
 				}
 			}
+			if (break_of_outer_loop) break;
 
 
 			// Render something to the texture
@@ -141,6 +146,7 @@ int test_render_texture_crt_simulation() {
 			circle.setPosition(100 + sin(clock.getElapsedTime().asSeconds() * 5) * 50, 50);
 			circle.setRadius(20);
 			texture.draw(circle);
+			texture.display();
 
 			window.setActive(true);
 
@@ -181,15 +187,18 @@ int test_render_texture_crt_simulation() {
 			window.display();
 		}
 
+
+		LOG("Exited draw loop");
+
 		ImGui::SFML::Shutdown();
 	}
 
+	LOG("Exited exit loop (finishing program)");
 
 	//press_to_continue();
 
 	return EXIT_SUCCESS;
 }
-
 
 
 int test_modern_opengl_crt_simulation() {
@@ -335,9 +344,7 @@ int test_modern_opengl_crt_simulation() {
 	return EXIT_SUCCESS;
 }
 
-
 #include "../render/shader/Shader.h"
-
 int test_modern_opengl_crt_shape() {
 
 

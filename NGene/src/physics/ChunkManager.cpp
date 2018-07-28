@@ -322,9 +322,6 @@ void ChunkManager::clear() {
 
 }
 
-/*
-@@TODO: Recode this to use SFML rendering into the main render target for the game
-*/
 void ChunkManager::draw_debug_chunks() {
 
 	auto current_chunk = m_min_relevant_chunk;

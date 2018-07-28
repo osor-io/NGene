@@ -13,7 +13,11 @@ void main() {
 
 	gl_Position = vec4(uv*vec2(2.0, -2.0) + vec2(-1.0, 1.0), 1.0, 1.0);
 
-	uv.y = 1 - uv.y;
+	//
+	// @@NOTE: We need to flip the texture just once (Since SFML Texture come flipped,
+	// this is always the case and consistent so we can rely on it)
+	//
+	uv.y = 1 - uv.y; 
 }
 
 
@@ -30,9 +34,7 @@ out vec4 color;
 uniform sampler2D lut_texture; // Look Up Texture for color grading
 uniform sampler2D game_frame; // Our rendered image from the game
 
-
 uniform float tuning_strength; // From [0,1]: Defines how strong the color grading effect is from original pixel to full color graded
-
 uniform float lut_resolution; // The resolution in one axis of the Look Up Texture, normally 16, 32
 
 

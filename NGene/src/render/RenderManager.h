@@ -49,6 +49,6 @@ private:
 
 	std::unique_ptr<CRTRenderer> m_crt_renderer;
 
-	bool m_simulating_crt = false;
+	bool m_simulating_crt{true};
 
 };

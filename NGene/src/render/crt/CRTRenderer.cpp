@@ -10,9 +10,11 @@
 
 #include <imgui.h>
 
-CRTRenderer::CRTRenderer(const sf::Window& window) :
+CRTRenderer::CRTRenderer(const sf::RenderWindow& window) :
 	m_window_ref(window)
 {
+
+	m_window_ref.setActive(true);
 
 	// We load and set up the textures for the effect
 	{
@@ -57,10 +59,19 @@ CRTRenderer::CRTRenderer(const sf::Window& window) :
 
 CRTRenderer::~CRTRenderer() {
 
+	//
+	// Set the OpenGL context to active because we might need it
+	// when destructing the buffers/shaders/etc. that we have as 
+	// members of this class.
+	//
+	m_window_ref.setActive(true);
+
 }
 
 
 void CRTRenderer::draw(const sf::Texture& texture) {
+
+	m_window_ref.setActive(true);
 
 	{
 		draw_ntsc_color_effect(texture);
@@ -103,49 +114,59 @@ GLsizei CRTRenderer::draw_in_screen() {
 	auto current_index = m_render_buffer_index;
 	auto previous_index = m_render_buffer_index - 1 < 0 ? RENDER_BUFFER_COUNT - 1 : m_render_buffer_index - 1;
 
-	// Bind our framebuffer
-	glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[FINAL_RENDER_BUFFER]);
-	glViewport(0, 0, config::resolutions::internal_resolution_width, config::resolutions::internal_resolution_height);
-
-	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	m_composite_shader->bind();
+	//
+	// Draw the in screen effects to the final render buffer that will be pasted on the CRT Mesh
+	//
 	{
-		m_composite_shader->set_uniform_texture("ntsc_artifact_tex", m_effect_textures.ntsc, 2);
-		m_composite_shader->set_uniform_texture("previous_frame", m_rendered_textures[previous_index], 1);
-		m_composite_shader->set_uniform_texture("current_frame", m_rendered_textures[current_index], 0);
+		// Bind our framebuffer
+		glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[FINAL_RENDER_BUFFER]);
+		glViewport(0, 0, config::resolutions::internal_resolution_width, config::resolutions::internal_resolution_height);
 
-		// We switch between lerping to the right or the left of the pixel with ntsc lerp
-		static bool pair = true;
-		m_composite_shader->set_uniform_1f("ntsc_lerp",
-			(pair = !pair) ? m_effect_parameters.composite.ntsc_lerp : 1.f - m_effect_parameters.composite.ntsc_lerp);
+		glClearColor(0, 0, 0, 1);
+		glClear(GL_COLOR_BUFFER_BIT);
 
+		m_composite_shader->bind();
+		{
+			m_composite_shader->set_uniform_texture("ntsc_artifact_tex", m_effect_textures.ntsc, 2);
+			m_composite_shader->set_uniform_texture("previous_frame", m_rendered_textures[previous_index], 1);
+			m_composite_shader->set_uniform_texture("current_frame", m_rendered_textures[current_index], 0);
 
-		m_composite_shader->set_uniform_1f("tuning_sharp", m_effect_parameters.composite.tuning_sharp);
-		m_composite_shader->set_uniform_4f("tuning_persistence", m_effect_parameters.composite.tuning_persistence);
-		m_composite_shader->set_uniform_1f("tuning_bleed", m_effect_parameters.composite.tuning_bleed);
-
-		m_composite_shader->set_uniform_1f("tuning_ntsc", m_effect_parameters.composite.tuning_ntsc);
-
-
-
-		// Draw Call for fullscreen shader
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+			// We switch between lerping to the right or the left of the pixel with ntsc lerp
+			static bool pair = true;
+			m_composite_shader->set_uniform_1f("ntsc_lerp",
+				(pair = !pair) ? m_effect_parameters.composite.ntsc_lerp : 1.f - m_effect_parameters.composite.ntsc_lerp);
 
 
+			m_composite_shader->set_uniform_1f("tuning_sharp", m_effect_parameters.composite.tuning_sharp);
+			m_composite_shader->set_uniform_4f("tuning_persistence", m_effect_parameters.composite.tuning_persistence);
+			m_composite_shader->set_uniform_1f("tuning_bleed", m_effect_parameters.composite.tuning_bleed);
+
+			m_composite_shader->set_uniform_1f("tuning_ntsc", m_effect_parameters.composite.tuning_ntsc);
+
+
+
+			// Draw Call for fullscreen shader
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		}
+		m_composite_shader->unbind();
 	}
-	m_composite_shader->unbind();
 
-
-	glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[current_index]);
-	glViewport(0, 0, config::resolutions::internal_resolution_width, config::resolutions::internal_resolution_height);
-	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
-	m_copy_shader->bind();
-	m_copy_shader->set_uniform_texture("tex", m_rendered_textures[FINAL_RENDER_BUFFER], 0);
-	m_copy_shader->unbind();
-
+	//
+	// Copy the texture we just rendered to to the buffer that will be the previous buffer in the next iteration
+	//
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[current_index]);
+		glViewport(0, 0, config::resolutions::internal_resolution_width, config::resolutions::internal_resolution_height);
+		glClearColor(0, 0, 0, 1);
+		glClear(GL_COLOR_BUFFER_BIT);
+		m_copy_shader->bind();
+		{
+			m_copy_shader->set_uniform_texture("tex", m_rendered_textures[FINAL_RENDER_BUFFER], 0);
+			glDrawArrays(GL_TRIANGLES, 0, 3);
+		}
+		m_copy_shader->unbind();
+	}
 
 	// Update the index to draw to the appropriate render target
 	m_render_buffer_index = m_render_buffer_index + 1 < RENDER_BUFFER_COUNT ? m_render_buffer_index + 1 : 0;
@@ -530,14 +551,12 @@ void CRTRenderer::create_low_res_render_targets() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+
+#define MIN_SLIDER 0
+#define MAX_SLIDER 3
 void CRTRenderer::draw_parameter_gui() {
 
 	ImGui::Begin("CRT Simulation Parameters");
-
-#define MIN_SLIDER 0
-
-#define MAX_SLIDER 3
-
 
 	ImGui::Separator();
 	{
@@ -551,8 +570,9 @@ void CRTRenderer::draw_parameter_gui() {
 			&m_effect_parameters.composite.ntsc_lerp, 0, 1);
 		ImGui::SliderFloat("Sharpness",
 			&m_effect_parameters.composite.tuning_sharp, MIN_SLIDER, MAX_SLIDER);
-		ImGui::SliderFloat4("Persistence",
-			&m_effect_parameters.composite.tuning_persistence[0], MIN_SLIDER, MAX_SLIDER);
+		// This is a Color with Alpha but, alpha persistence doesn't make sense so we'll just expose the RGB values
+		ImGui::SliderFloat3("Persistence", 
+			&m_effect_parameters.composite.tuning_persistence[0], 0, 1);
 		ImGui::SliderFloat("Bleed",
 			&m_effect_parameters.composite.tuning_bleed, 0, 100);
 		ImGui::SliderFloat("NTSC Artifacts",

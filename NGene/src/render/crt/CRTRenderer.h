@@ -85,7 +85,7 @@ private:
 	};
 	CRTEffectInputParameters m_effect_parameters;
 
-	const sf::Window& m_window_ref;
+	const sf::RenderWindow& m_window_ref;
 
 	std::unique_ptr<Shader> m_ntsc_shader;
 	std::unique_ptr<Shader> m_composite_shader;
@@ -102,7 +102,7 @@ private:
 	GLsizei m_render_buffer_index{ 0 };
 
 public:
-	CRTRenderer(const sf::Window& window);
+	CRTRenderer(const sf::RenderWindow& window);
 	~CRTRenderer();
 
 	void draw(const sf::Texture& texture);

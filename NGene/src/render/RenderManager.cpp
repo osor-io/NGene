@@ -16,7 +16,8 @@ void RenderManager::start_up() {
 	We first initialize the window and the debug GUI.
 	*/
 	m_window_target = WindowManager::get().get_window_render_target();
-	
+
+
 	/*
 	Init ImGui
 	*/
@@ -26,14 +27,10 @@ void RenderManager::start_up() {
 	/*
 	We set up the opengl context
 	*/
-	glViewport(0, 0, m_window_target->getSize().x, m_window_target->getSize().y);
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glClearDepth(1.f);
+	m_window_target->setActive(true);
 	glewInit();
-	glClearColor(0.0f, 0.0f, 0.0f, 1.f);
 
-	m_crt_renderer = std::make_unique<CRTRenderer>(WindowManager::get().get_window_ref());
+	m_crt_renderer = std::make_unique<CRTRenderer>(*m_window_target);
 
 	/*
 	We create the lower resolution render target
@@ -52,12 +49,12 @@ void RenderManager::start_up() {
 			std::endl;
 		std::terminate();
 	}
-
-	WindowManager::get().set_opengl_context_active();
-
 }
 
 void RenderManager::shut_down() {
+
+	m_main_target.release();
+	m_crt_renderer.release();
 
 	/*
 	In reverse order of creation first we shutdown the debug GUI
@@ -125,38 +122,12 @@ void RenderManager::end_frame() {
 
 
 	if (m_simulating_crt) {
-
-		WindowManager::get().set_opengl_context_active();
-
-		/*
-
-		@@TODO @@DOING: Paste CRT renderer in to this section
 		
-		Rendering main target texture with OpenGL. We have to look into what
-		are the places where some of this code should be. For example, I believe the glViewport should be
-		on initialization and on resize of the window.
-
-		Also, the RenderTextures are always flipped: https://stackoverflow.com/questions/22424124/sfml-rendertexture-flipped-output
-
-		The next step is to actually do the crt shaped mesh and try to paste the texture in it, then we'll start to look into the shaders
-		for low res and high res.
-
-		A nice shape for the CRT mesh could be this one that I did:
-
-			z=(-(sqrt(x^2+y^2))^7)/7
-
-			See it here: https://academo.org/demos/3d-surface-plotter/?expression=(-(sqrt(x%5E2%2By%5E2))%5E7)%2F7&xRange=-1%2C1&yRange=-1.333333%2C1.333333&resolution=100
-			And here to implement the faster version of the formula by wolfram alpha: http://www.wolframalpha.com/input/?i=(-sqrt(x%5E2+%2B++y%5E2)%5E7)%2F7
-
+		/*
+		We just give the texture with the game to our CRT Renderer and
+		let it handle the magic :D
 		*/
-
-		auto image = m_main_target->getTexture().copyToImage();
-
-		auto texture = sf::Texture();
-		texture.loadFromImage(image);
-
-		m_crt_renderer->draw(texture);
-
+		m_crt_renderer->draw(m_main_target->getTexture());
 		
 	}
 	else {
@@ -175,12 +146,12 @@ void RenderManager::end_frame() {
 	/*
 	Now we set up everything we want to render for the debug GUI
 
-	We must create all widgets between Update and Render
+	We must draw all widgets between Update and Render
 	*/
 	ImGui::SFML::Update(*m_window_target, DELTA_TIME);
 
 	DeveloperModeManager::get().draw_gui();
-
+	if(m_simulating_crt) m_crt_renderer->draw_parameter_gui();
 
 	/*
 	Now we render overlayed things such as the debug GUI
