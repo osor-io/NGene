@@ -47,12 +47,13 @@ CRTRenderer::CRTRenderer(const sf::RenderWindow& window) :
 
 	{
 		create_low_res_render_targets();
+		create_window_render_target();
 		generate_crt_mesh();
 		init_ntsc_shader();
 		init_composite_shader();
 		init_screen_shader();
+		init_final_fullscreen_shader();
 	}
-
 
 }
 
@@ -76,7 +77,8 @@ void CRTRenderer::draw(const sf::Texture& texture) {
 	{
 		draw_ntsc_color_effect(texture);
 		auto render_buffer_to_use = draw_in_screen();
-		draw_out_screen(render_buffer_to_use);
+		render_buffer_to_use = draw_out_screen(render_buffer_to_use);
+		draw_final_fullscreen(render_buffer_to_use);
 	}
 
 }
@@ -173,7 +175,7 @@ GLsizei CRTRenderer::draw_in_screen() {
 
 GLsizei CRTRenderer::draw_out_screen(GLsizei render_buffer_to_put_in_crt_mesh) {
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, m_window_frame_buffer[0]);
 	glViewport(0, 0, m_window_ref.getSize().x, m_window_ref.getSize().y);
 
 	m_screen_shader->bind();
@@ -218,6 +220,65 @@ GLsizei CRTRenderer::draw_out_screen(GLsizei render_buffer_to_put_in_crt_mesh) {
 		m_vertex_array_object->unbind();
 	}
 	m_screen_shader->unbind();
+
+	return m_window_render_texture[0];
+}
+
+GLsizei CRTRenderer::draw_final_fullscreen(GLsizei render_buffer_to_draw) {
+
+	auto window_size = m_window_ref.getSize();
+	auto resolution = glm::vec2(window_size.x, window_size.y);
+
+	assert(m_window_render_texture[0] == render_buffer_to_draw);
+
+#define PASSES 9
+
+	for (auto i = 0; i < PASSES; ++i) {
+		// Render first pass of the fullscreen effects
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, m_window_frame_buffer[1]);
+			glViewport(0, 0, m_window_ref.getSize().x, m_window_ref.getSize().y);
+
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			m_final_fullscreen_shader->bind();
+			{
+				m_final_fullscreen_shader->set_uniform_texture("image", m_window_render_texture[0], 0);
+				m_final_fullscreen_shader->set_uniform_1f("tuning_blur", m_effect_parameters.final.tuning_blur);
+				m_final_fullscreen_shader->set_uniform_2f("direction", glm::vec2(1, 0));
+				m_final_fullscreen_shader->set_uniform_2f("resolution", resolution);
+
+				// Draw Call for fullscreen shader
+				glDrawArrays(GL_TRIANGLES, 0, 3);
+			}
+			m_final_fullscreen_shader->unbind();
+		}
+
+		// Render second (and last) pass of the fullscreen effects
+		{
+			if (i == PASSES - 1) {
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			}
+			else {
+				glBindFramebuffer(GL_FRAMEBUFFER, m_window_frame_buffer[0]);
+			}
+			glViewport(0, 0, m_window_ref.getSize().x, m_window_ref.getSize().y);
+
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			m_final_fullscreen_shader->bind();
+			{
+				m_final_fullscreen_shader->set_uniform_texture("image", m_window_render_texture[1], 0);
+				m_final_fullscreen_shader->set_uniform_1f("tuning_blur", m_effect_parameters.final.tuning_blur);
+				m_final_fullscreen_shader->set_uniform_2f("direction", glm::vec2(0, 1));
+				m_final_fullscreen_shader->set_uniform_2f("resolution", resolution);
+
+				// Draw Call for fullscreen shader
+				glDrawArrays(GL_TRIANGLES, 0, 3);
+			}
+			m_final_fullscreen_shader->unbind();
+		}
+	}
 
 	return 0;
 }
@@ -498,28 +559,36 @@ void CRTRenderer::init_screen_shader() {
 	m_screen_shader->unbind();
 }
 
-void CRTRenderer::create_low_res_render_targets() {
+void CRTRenderer::init_final_fullscreen_shader() {
+
+	m_final_fullscreen_shader = std::make_unique<Shader>("res/shaders/crt/final.shader");
+
+	m_final_fullscreen_shader->bind();
+
+	m_final_fullscreen_shader->unbind();
+}
 
 
-	for (auto i = 0; i <= RENDER_BUFFER_COUNT; ++i) { // We make an extra buffer to render as the result of low-res phase.
+void CRTRenderer::create_render_target(GLuint& frame_buffer, GLuint& render_texture, GLsizei width, GLsizei height) {
 
+	{
 		// Create and bind the framebuffer
-		glGenFramebuffers(1, &m_frame_buffers[i]);
-		glBindFramebuffer(GL_FRAMEBUFFER, m_frame_buffers[i]);
+		glGenFramebuffers(1, &frame_buffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer);
 
 		// Create the texture we are going to render to
-		glGenTextures(1, &m_rendered_textures[i]);
+		glGenTextures(1, &render_texture);
 
 		// Bind the texture so we can modify it
-		glBindTexture(GL_TEXTURE_2D, m_rendered_textures[i]);
+		glBindTexture(GL_TEXTURE_2D, render_texture);
 
 		// Fill the texture with an empty image
 		glTexImage2D(
 			GL_TEXTURE_2D,
 			0,
 			GL_RGBA,
-			config::resolutions::internal_resolution_width,
-			config::resolutions::internal_resolution_height,
+			width,
+			height,
 			0,
 			GL_RGBA,
 			GL_UNSIGNED_BYTE,
@@ -532,22 +601,82 @@ void CRTRenderer::create_low_res_render_targets() {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 		// Set the texture to the framebuffer
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_rendered_textures[i], 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, render_texture, 0);
 
 		// Set the draw buffers
 		GLenum draw_buffers[1] = { GL_COLOR_ATTACHMENT0 };
-		glNamedFramebufferDrawBuffers(m_frame_buffers[i], 1, draw_buffers);
+		glNamedFramebufferDrawBuffers(frame_buffer, 1, draw_buffers);
 
 		auto status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (status != GL_FRAMEBUFFER_COMPLETE) {
-			LOG("There has been an error generation the framebuffers, the status is: " << status);
+			LOG("There has been an error generation the framebuffer, the status is: " << status);
 		}
+
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+} // create_render_target
+
+void CRTRenderer::create_low_res_render_targets() {
+
+
+	for (auto i = 0; i <= RENDER_BUFFER_COUNT; ++i) { // We make an extra buffer to render as the result of low-res phase.
+
+		create_render_target(
+			m_frame_buffers[i],
+			m_rendered_textures[i],
+			config::resolutions::internal_resolution_width,
+			config::resolutions::internal_resolution_height
+		);
+
+	}
+
 }
 
+void CRTRenderer::create_window_render_target() {
+
+	auto window_size = m_window_ref.getSize();
+
+	for (auto i = 0; i < FULLSCREEN_PASSES; ++i) {
+		create_render_target(
+			m_window_frame_buffer[i],
+			m_window_render_texture[i],
+			window_size.x,
+			window_size.y
+		);
+	}
+
+	LOG_NAMED(m_window_frame_buffer);
+	LOG_NAMED(m_window_render_texture);
+
+}
+
+void CRTRenderer::on_resize(GLuint width, GLuint height) {
+
+	//
+	// We resize the texture we use to then directly render to the screen
+	//
+	for (auto i = 0; i < FULLSCREEN_PASSES; ++i)
+	{
+		// Bind the texture so we can modify it
+		glBindTexture(GL_TEXTURE_2D, m_window_render_texture[i]);
+
+		// Fill the texture with an empty image
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			width,
+			height,
+			0,
+			GL_RGBA,
+			GL_UNSIGNED_BYTE,
+			0);
+	}
+
+}
 
 #define MIN_SLIDER 0
 #define MAX_SLIDER 3
@@ -568,7 +697,7 @@ void CRTRenderer::draw_parameter_gui() {
 		ImGui::SliderFloat("Sharpness",
 			&m_effect_parameters.composite.tuning_sharp, MIN_SLIDER, MAX_SLIDER);
 		// This is a Color with Alpha but, alpha persistence doesn't make sense so we'll just expose the RGB values
-		ImGui::SliderFloat3("Persistence", 
+		ImGui::SliderFloat3("Persistence",
 			&m_effect_parameters.composite.tuning_persistence[0], 0, 1);
 		ImGui::SliderFloat("Bleed",
 			&m_effect_parameters.composite.tuning_bleed, MIN_SLIDER, MAX_SLIDER);
@@ -596,6 +725,10 @@ void CRTRenderer::draw_parameter_gui() {
 		ImGui::SliderFloat("Specular Brightness", &m_effect_parameters.screen.tuning_specular_brightness, MIN_SLIDER, MAX_SLIDER);
 		ImGui::SliderFloat("Specular Power", &m_effect_parameters.screen.tuning_specular_power, MIN_SLIDER, MAX_SLIDER);
 		ImGui::SliderFloat("Fresnel Brightness", &m_effect_parameters.screen.tuning_fresnel_brightness, MIN_SLIDER, MAX_SLIDER);
+	}
+	ImGui::Separator();
+	{
+		ImGui::SliderFloat("Blur", &m_effect_parameters.final.tuning_blur, 0, 1);
 	}
 	ImGui::Separator();
 
