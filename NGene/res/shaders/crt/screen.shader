@@ -148,11 +148,20 @@ void main()
 	specular = pow(specular, tuning_specular_power);
 	vec4 color_specular = vec4(0.25, 0.25, 0.25, 1) * specular * tuning_specular_brightness;
 
+	//
+	// @NOTE: Currently the normals of the mesh are always pointing in the same direction
+	// which is towards the camera in this case so tweaking the fresnel won't do anything.
+	//
 	float fresnel = 1.0 - dot(camera_direction, normal);
 	fresnel = (fresnel * fresnel) * tuning_fresnel_brightness;
 	vec4 color_fresnel = vec4(0.45, 0.4, 0.5, 1) * fresnel;
 
 	color = sample_crt(fragment_in.uv) + color_diffuse + color_specular + color_fresnel;
 
-	(color * mix(vec4(1, 1, 1, 1), fragment_in.color, tuning_dimming));
+	//
+	// @NOTE: Currently the vartex colors of the mesh are not different based on position
+	// so the dimming parameter won't darken the corners/sides of the screen until they
+	// have a differen colour than full white.
+	//
+	color = (color * mix(vec4(1, 1, 1, 1), fragment_in.color, tuning_dimming));
 }

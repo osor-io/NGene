@@ -2,8 +2,8 @@
 Entities = {
     DynamicObject = {
         TransformComponent = {
-            x = 50, 
-            y = 18
+            x = 171, 
+            y = 253
         }, 
         ExtentComponent = {
             extentX = 6, 
@@ -102,8 +102,8 @@ Entities = {
 
     DummyDynamicObject = {
         TransformComponent = {
-            x = 71, 
-            y = 18
+            x = 220, 
+            y = 253
         }, 
         ExtentComponent = {
             extentX = 6, 
@@ -159,14 +159,14 @@ Entities = {
     DefaultMap = {
         TiledMapComponent = {
             filename = "res/assets/maps/CandyTest.lua", 
-            mainLayer = 1
+            mainLayer = 2
         }
     },
 
     DefaultCamera = {
         TransformComponent = {
-            x = 70, 
-            y = -50,
+            x = 200, 
+            y = 235,
         }, 
         CameraComponent = {
             mainCamera = true,

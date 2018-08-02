@@ -304,8 +304,9 @@ void CRTRenderer::generate_crt_mesh() {
 			auto x_uv_increment = 1.f / columns;
 			auto y_uv_increment = 1.f / rows;
 
+			// 4:3 resolution for the image to be stretched from 8:7
 			auto x_total_side = 8.f;
-			auto y_total_side = 7.f;
+			auto y_total_side = 6.f;
 
 			auto x_side = x_total_side / columns;
 			auto y_side = y_total_side / rows;
@@ -387,6 +388,11 @@ void CRTRenderer::generate_crt_mesh() {
 
 					// Add to Normals
 					{
+						//
+						// @@TODO: Calculate the normal direction based on the
+						// position of the vertex in the quad.
+						//
+
 						normals.push_back(0.0f);
 						normals.push_back(0.0f);
 						normals.push_back(1.0f);

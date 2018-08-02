@@ -2,6 +2,16 @@
 
 #include "BufferCommon.h"
 
+/**
+
+VBO (Vertex Buffer Object). Holds the data related to one attribute of all the vertices of a renderable object.
+This could be any information tied to the vertex such as position, normal, UVs, etc.
+
+These should be stored in a VAO, represented in a VertexArray
+
+@see VertexArray
+
+*/
 class ArrayBuffer {
 
 private:

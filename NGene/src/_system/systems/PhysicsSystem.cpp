@@ -97,11 +97,21 @@ void PhysicsSystem::update() {
 		// We check if we are grounded or not
 		platformer_component->m_grounded = ((collision_component->m_moving_collision_direction_flags & CollisionDirectionFlags::COLLISION_DIRECTION_DOWN) != 0u);
 
+		//
+		// @@TODO: Check why this flag seems to not be set every time.
+		//
+		auto hitting_top = ((collision_component->m_moving_collision_direction_flags & CollisionDirectionFlags::COLLISION_DIRECTION_UP) != 0u);
+
 		auto acceleration = sf::Vector2f(0.0f, 0.0f);
 
-		if (platformer_component->m_grounded) { // Update the velocity and acceleration when we are grounded
+		if (hitting_top) { // The entity can't go upwards
+			
+			// The velocity going up is reduced to zero
+			platformer_component->m_current_velocity.y = 0.f;
+		}
+		else if (platformer_component->m_grounded) { // Update the velocity and acceleration when we are grounded
 
-			// Y Gravity stays at zero since the ground applies an exact force that opposes it.
+			// Y Gravity stays at zero since the ground applies an exact force that opposes it
 			platformer_component->m_current_velocity.y = 0.f;
 
 			/*

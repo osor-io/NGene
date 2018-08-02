@@ -2,7 +2,7 @@
 print("Loading Default State")
 
 requestLoadEntity("DynamicObject")
-requestLoadEntity("DummyDynamicObject")
+--requestLoadEntity("DummyDynamicObject")
 requestLoadEntity("DefaultMap")
 requestLoadEntity("DefaultCamera")
 requestLoadEntity("TestingThing")

@@ -7,7 +7,15 @@
 
 #include "ArrayBuffer.h"
 
+/**
 
+VAO (Vertex Array Object) that stores one or more VBO (Vertex Buffer Objects).
+It stores the information for a complete renderable object including all the required
+attributes (Positions, UVs, Colors, etc.)
+
+@see ArrayBuffer
+
+*/
 class VertexArray {
 
 private:
